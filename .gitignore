@@ -10,14 +10,14 @@ __pycache__/
 wandb/
 
 # vision: keep the trained model, skip raw recordings and MediaPipe downloads
-vision/data/
-vision/models/*.task
+**/vision/data/
+**/vision/models/*.task
 
 # language model: keep train/test data, skip Adaption working files
-lang/data/adapted*
-lang/data/adaption_*.json
-lang/data/eval_results.json
-lang/data/model_artifact*
+**/lang/data/adapted*
+**/lang/data/adaption_*.json
+**/lang/data/eval_results.json
+**/lang/data/model_artifact*
 
 # backend
-backend/audio_cache/
+**/backend/audio_cache/
