@@ -70,6 +70,7 @@ main { max-width: 1360px; margin: 0 auto; padding: 0 max(16px, 3vw) 40px; }
 @media (min-width: 901px) { .view, .av { max-height: max(340px, 50vh); } .av { width: 100%; } }
 .view svg.sil { position: absolute; inset: 0; width: 100%; height: 100%; }
 .view video.cam, .view canvas.lmk { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+.view img.cam { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; } /* live.py stream: already mirrored */
 .view video.clip { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #141c22; }
 .view .off { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: #c3ccd2; padding: 20px; font-size: 1.05rem; }
 .view .off .ic { width: 40px; height: 40px; margin: 0 auto 10px; display: block; }
