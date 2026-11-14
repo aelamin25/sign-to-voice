@@ -1,5 +1,9 @@
 import { Brand, Icon } from "./Icon";
+import { PY_BACKEND, RECOGNITION_SOURCE } from "../app/config";
 import { useStore } from "../state/store";
+
+/** live.py has the camera and watches the whole time, so the camera is on, not off. */
+const BRIDGE = !!PY_BACKEND && RECOGNITION_SOURCE === "python";
 
 export function Header() {
   const phase = useStore((s) => s.phase);
@@ -11,7 +15,7 @@ export function Header() {
     <header className="top">
       <div className="brand"><Brand />SignBridge</div>
       <div className="status" aria-label="Device status">
-        <span><i className={phase === "signing" ? "on" : ""} />Camera {phase === "signing" ? "on" : "off"}</span>
+        <span><i className={phase === "signing" || BRIDGE ? "on" : ""} />Camera {phase === "signing" || BRIDGE ? "on" : "off"}</span>
         <span><i className={`md${phase === "listening" ? " on" : ""}`} />Mic {phase === "listening" ? "on" : "off"}</span>
         <span className="ns"><Icon name="shield" />Nothing stored</span>
       </div>

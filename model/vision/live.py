@@ -2,8 +2,10 @@
 
     python live.py                          # prints one JSON line per sign and per phrase
     python live.py --translate              # also turns each phrase into English (needs ../lang + ANTHROPIC_API_KEY)
-    python live.py --send http://localhost:8000/phrase   # POSTs each finished turn to the backend (model/backend)
-    python live.py --replay samples/*.npy --send http://localhost:8000/phrase
+    python live.py --send http://localhost:8000/phrase --stream 8001 --no-window
+                                            # for the web app: finished turns to the backend (model/backend),
+                                            # camera view inside the page
+    python live.py --replay samples/*/take1.npy --send http://localhost:8000/phrase
                                             # no camera: plays recorded takes through the same code, to test the link
 
 Sign one sign at a time: hands up, sign, hands down briefly (~0.3 s).
@@ -73,6 +75,57 @@ class Classifier:
         return str(self.labels[i]), float(probs[i])
 
 
+class _Stream:
+    """Latest camera frame as JPEG, served as an MJPEG stream (an <img> tag can show it)."""
+
+    def __init__(self):
+        self.jpeg, self.cond = b"", threading.Condition()
+
+    def publish(self, frame):
+        ok, buf = cv2.imencode(".jpg", frame, [int(cv2.IMWRITE_JPEG_QUALITY), 70])
+        if ok:
+            with self.cond:
+                self.jpeg = buf.tobytes()
+                self.cond.notify_all()
+
+
+def start_stream(port):
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+    stream = _Stream()
+
+    class Handler(BaseHTTPRequestHandler):
+        def log_message(self, *a):  # keep the terminal quiet
+            pass
+
+        def do_GET(self):
+            if not self.path.startswith("/video"):
+                self.send_response(404)
+                self.end_headers()
+                return
+            self.send_response(200)
+            self.send_header("Content-Type", "multipart/x-mixed-replace; boundary=frame")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            try:
+                while True:
+                    with stream.cond:
+                        stream.cond.wait(timeout=1.0)
+                        jpeg = stream.jpeg
+                    if not jpeg:
+                        continue
+                    self.wfile.write(b"--frame\r\nContent-Type: image/jpeg\r\nContent-Length: "
+                                     + str(len(jpeg)).encode() + b"\r\n\r\n" + jpeg + b"\r\n")
+            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+                pass
+
+    server = ThreadingHTTPServer(("0.0.0.0", port), Handler)
+    server.daemon_threads = True
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    print(f"Camera stream: http://localhost:{port}/video", flush=True)
+    return stream
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--camera", type=int, default=0)
@@ -81,6 +134,9 @@ def main():
     ap.add_argument("--phrase-gap", type=float, default=1.5)
     ap.add_argument("--send", default=None, help="URL to POST each phrase to")
     ap.add_argument("--translate", action="store_true")
+    ap.add_argument("--stream", type=int, default=0, metavar="PORT",
+                    help="serve the camera view (with tracking) at http://localhost:PORT/video for the web app")
+    ap.add_argument("--no-window", action="store_true", help="don't open the OpenCV window (use with --stream)")
     ap.add_argument("--rest", action="store_true",
                     help="hands lowered below the yellow line count as resting, so they need not leave the picture")
     ap.add_argument("--plain", action="store_true",
@@ -110,6 +166,8 @@ def main():
             print("Can't open the camera. On Mac: System Settings > Privacy & Security > Camera, allow Terminal.",
                   flush=True)
             raise SystemExit(1)
+
+    stream = start_stream(args.stream) if args.stream else None
 
     t0 = time.time()
 
@@ -243,6 +301,10 @@ def main():
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
         if hands_seen and not resting:
             cv2.circle(frame, (frame.shape[1] - 30, 30), 12, (0, 0, 255), -1)
+        if stream is not None:
+            stream.publish(frame)
+        if args.no_window:
+            continue
         cv2.imshow("live", frame)
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):

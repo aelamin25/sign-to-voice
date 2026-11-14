@@ -32,3 +32,5 @@ export const RECOGNITION_SOURCE = env.VITE_RECOGNITION ?? "browser";
 /** With VITE_RECOGNITION=python: a finished turn from live.py starts the patient's turn by itself,
  *  so nobody has to press "Start signing" / "Reply in sign" with their hands full. Off unless set to true. */
 export const AUTO_SIGN = truthy(env.VITE_AUTO_SIGN);
+/** Camera view served by model/vision/live.py --stream PORT, shown in the patient panel, e.g. http://localhost:8001/video */
+export const CAMERA_STREAM = env.VITE_CAMERA_STREAM ?? "";

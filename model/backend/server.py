@@ -152,13 +152,22 @@ async def simplify_only(d: DoctorText):
 
 
 @app.post("/phrase")
-async def phrase_only(p: Phrase):
-    """From vision/live.py: pass the recognised signs straight to the web app (no model call here;
-    the web app asks /translate itself). THUMBS-UP and non-signs are dropped."""
-    tokens = [t for t in p.tokens if t not in ("THUMBS-UP", "FIDGET", "NOTHING")]
-    event = {"type": "phrase", "tokens": tokens, "confs": (p.confs or [])[:len(p.tokens)]}
-    if p.confs:
-        event["confs"] = [c for t, c in zip(p.tokens, p.confs) if t not in ("THUMBS-UP", "FIDGET", "NOTHING")]
+async def phrase_only(body: dict):
+    """From vision/live.py --send .../phrase. Passed straight to the web app (no model call here).
+    {"type": "sign", "token": ..., "conf": ...}  one sign as it is recognised (shown live)
+    {"type": "phrase", "tokens": [...], ...}      the finished turn
+    THUMBS-UP and non-signs are dropped."""
+    skip = ("THUMBS-UP", "FIDGET", "NOTHING")
+    if "tokens" not in body:
+        token = body.get("token")
+        if not token or token in skip:
+            return {"type": "noop"}
+        event = {"type": "sign", "token": token, "conf": body.get("conf")}
+        await broadcast(event)
+        return event
+    tokens, confs = body.get("tokens") or [], body.get("confs") or []
+    pairs = [(t, confs[i] if i < len(confs) else None) for i, t in enumerate(tokens) if t not in skip]
+    event = {"type": "phrase", "tokens": [t for t, _ in pairs], "confs": [c for _, c in pairs]}
     await broadcast(event)
     return event
 
