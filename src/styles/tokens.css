@@ -1,0 +1,38 @@
+/* SignBridge design tokens — copied from the index.html mockup.
+   White theme only. Teal = patient, coral = doctor, amber = "not sure". */
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --soft: #f5f5f2;
+  --soft2: #efeeea;
+  --line: #e9e8e4;
+  --line-strong: #cfcdc7;
+  --ink: #121417;
+  --muted: #5d6269;
+  --faint: #9a9ea4;
+
+  --teal: #0d7166;
+  --teal-hover: #0a5f55;
+  --teal-soft: #e7f3f0;
+  --teal-glow: #6edccc;
+  --coral: #c2453a;
+  --coral-hover: #a93a30;
+  --coral-soft: #fceeea;
+  --amber: #8a5300;
+  --amber-soft: #fff3dc;
+
+  --font: "Geist", "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --track-display: -0.035em;
+
+  --r-card: 30px;
+  --r-card-sm: 22px;
+  --r-pill: 999px;
+  --btn-h: 60px;
+
+  --ease-out: cubic-bezier(0.2, 1, 0.3, 1);
+  --ease-pop: cubic-bezier(0.2, 1.4, 0.4, 1);
+  --shadow-float: 0 24px 50px -24px rgba(18, 20, 23, 0.35);
+
+  --ts: 1; /* text size multiplier, set from the menu */
+}

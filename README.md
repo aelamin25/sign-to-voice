@@ -1,45 +1,129 @@
-# Sign to voice (working title)
+# SignBridge (sign-to-voice)
 
-A prototype built at Imperial AI Hack 2026. A Deaf patient signs to the camera, sees the sentence the
-system understood, and approves it with a thumbs up. Only then does a voice speak it to the doctor.
-The doctor's spoken reply comes back as a short caption.
+A prototype built at Imperial AI Hack 2026 (Voice, Vision & Generative Media track, ElevenLabs and Anam).
+A Deaf patient signs to the camera, and a voice speaks the sentence to the doctor. The doctor's spoken reply comes back
+in plain words and as sign video. It recognises a small, fixed set of signs for a doctor's visit. It is a helper
+for when an interpreter isn't available, not a replacement for a certified medical interpreter.
 
-It recognises a small, fixed set of British Sign Language signs for a doctor's visit. It is a helper
-for when an interpreter doesn't arrive, not a translator and not a replacement for interpreters.
+## What's in this repository
 
-## Run it
-
-```
-npm install
-cp .env.example .env     # then fill in the values (see below)
-npm run dev
-```
-
-Open http://localhost:5173 in Chrome.
-
-With an empty `.env` the app runs in **practice mode**: a stand-in voice in the browser, and you type
-the doctor's reply. Add `ELEVENLABS_AGENT_ID` (and `ELEVENLABS_API_KEY` if the agent is private) to
-use the real voice agent.
-
-## How the pieces fit
-
-| Piece | Where | What it does |
+| Folder | What | Run it |
 |---|---|---|
-| Recogniser | `src/recognizer.js` | Watches the camera and reports each sign. Currently a keyboard stand-in. |
-| Page | `src/main.js`, `index.html` | Sign row, approval card, doctor captions. |
-| Agent link | `src/agent.js` | Connects the page to the ElevenLabs agent, or to the practice stand-in. |
-| Agreed names | `src/signs.js` | Sign names, the message format and the tool names. |
-| Server | `server/index.js` | Keeps the secret key off the page. |
+| `src/`, `index.html`, `server/index.ts` | **Web app** (React + TypeScript): the patient/doctor screen | `npm install` then `npm run dev:mock` (demo) or `npm run dev` (real) |
+| `model/vision/` | **Sign recognition**: MediaPipe landmarks + trained classifier (`models/sign_model.pt`) | `python model/vision/live.py --send http://localhost:8000/tokens` |
+| `model/lang/` | **Language model**: signs to sentence, doctor's words to plain words / sign gloss | used by the backend |
+| `model/backend/` | **Python backend** (FastAPI): `/translate`, `/simplify`, `/reply`, `/stt`, `/ws` events | `cd model/backend && uvicorn server:app --port 8000` |
+| `server/index.js` | ElevenLabs Agent + Anam session server from the first prototype | `npm run agent-server` (port 3001) |
+| `legacy/web/` | The first prototype page (kept as it was) | `npm run legacy:web` |
 
-The recogniser calls `onSign({ sign, confidence, tone, question })`. The page sends the agent a line
-such as `SIGNS: PAIN HOW_LONG | tone=urgent | question=true`. The agent calls three tools on the page:
-`propose_sentence`, `show_caption` and `request_interpreter`.
+Python setup: `python -m venv .venv`, activate it, then `pip install -r requirements.txt`.
+See the docstring at the top of `model/backend/server.py` for the backend's endpoints and environment variables.
 
-## APIs, models and libraries
+---
 
-- ElevenLabs Agents (`@elevenlabs/client`) for the real-time voice agent.
-- Anam (`@anam-ai/js-sdk`) for the avatar that speaks with the agent's voice.
-- Vite and Express.
-- To be added: MediaPipe for hand and body tracking.
+Real-time "Google Translate for Deaf patients at the doctor's".
+Imperial AI Hackathon, Voice, Vision & Generative Media track (ElevenLabs, Anam).
 
-All code in this repository was written during the hackathon.
+- **Patient signs** → MediaPipe landmarks → sign classifier → **Claude** writes one natural English sentence → **ElevenLabs** voice → **Anam** avatar "Maya" says it to the doctor, lip-synced, with word-by-word captions.
+- **Doctor speaks** → **ElevenLabs Scribe v2 Realtime** transcribes live → **Claude** rewrites it in plain words and explains jargon → a **sign video** plays back to the patient, captions synced.
+- Scope: a **20-sign medical ASL prototype** (HELLO, DOCTOR, HURT/PAIN, HEAD, STOMACH, CHEST, THROAT, FEVER, SICK, DIZZY, MEDICINE, ALLERGY, HOW-LONG, DAY, YES, NO, PLEASE, THANK-YOU, AGAIN, HELP) plus numbers 1–10. It does not translate general ASL.
+- Safety: if recognition is **< 0.6** confident, nothing is spoken. The patient sees "Not sure — please sign again. Nothing was spoken."
+
+Not a replacement for a certified medical interpreter.
+
+---
+
+## Web app: quick start (demo mode, no keys)
+
+```bash
+npm install
+npm run dev:mock        # http://localhost:5173
+```
+
+Everything runs on scripted mock adapters: no keys, no server, no camera. **This is the demo fallback.**
+Menu → **Play the full visit** runs the whole scripted conversation on its own (it always uses the mocks, even in real mode).
+
+## Real mode
+
+```bash
+cp .env.example .env    # fill in the keys, set VITE_MOCK=false
+npm run dev             # web on :5173 + API server on :8787 (Vite proxies /api)
+```
+
+Any service that fails (missing key, network, mic/camera denied) falls back on its own, so the flow never dead-ends:
+
+| Service | Real adapter | Falls back to |
+|---|---|---|
+| recognition | webcam + MediaPipe Hand + Pose landmarker, landmark overlay, auto-ends 1.2 s after hands drop | keyboard classifier still works with no camera |
+| translate | `POST /api/translate`, `/api/simplify`, `/api/summary` (Claude) | local gloss composer / exact words / local summary |
+| tts | `POST /api/tts` → ElevenLabs `with-timestamps` (word timings for captions) | captions only, estimated timing |
+| stt | ElevenLabs Scribe v2 Realtime, VAD commits, single-use token from `/api/scribe-token` | "Try again" with a clear error |
+| avatar | Anam JS SDK, session from `/api/anam-session`, `llmId: CUSTOMER_CLIENT_V1` so Maya only says our text via `talk()` | illustrated Maya + ElevenLabs voice |
+| signVideo | `POST /api/sign-video` → `{clips:[url], words:[...]}`, clips play in sequence | animated signer with synced captions |
+
+### Mixing mock and real
+
+With `VITE_MOCK=false`, keep any single service mocked while you build the others:
+
+```
+VITE_MOCK_RECOGNITION=true
+VITE_MOCK_AVATAR=true
+```
+
+Menu → How it works → "Running now" shows which services are live.
+
+### Environment variables
+
+| Variable | Where | What |
+|---|---|---|
+| `VITE_MOCK` | web | `true` = everything mocked (default if unset) |
+| `VITE_MOCK_<SERVICE>` | web | per-service override: `RECOGNITION`, `TRANSLATE`, `TTS`, `STT`, `AVATAR`, `SIGNVIDEO` |
+| `PORT` | server | API port, default 8787 |
+| `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | server | Claude (default model `claude-sonnet-5-5`) |
+| `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`, `ELEVENLABS_TTS_MODEL` | server | TTS + Scribe |
+| `ANAM_API_KEY`, `ANAM_AVATAR_ID`, `ANAM_VOICE_ID` | server | Maya. Pick an avatar and voice in lab.anam.ai |
+| `SIGN_VIDEO_API_URL` | server | optional external sign-video generator |
+
+Keys live only in `.env` on the server. The browser never sees them. `GET /api/health` shows what is configured.
+
+## For the team
+
+**ML: plug in the classifier.** `src/services/recognition.ts` → implement `SignClassifier` (`push(frame) → {gloss, confidence} | null`). Each frame carries both hands' 21 landmarks + upper-body pose. Pass it to `createRealRecognition(() => new YourClassifier())` in `src/services/index.ts`. Until then the stub reads keys:
+`1` HELLO · `2` DOCTOR · `3` HURT · `4` HEAD · `5` FEVER · `6` YES · `7` NO · `8` THANK-YOU · `9` unclear (0.41) · `Shift`+digit = number (Shift+0 = 10).
+
+**Sign video.** Drop clips in `server/sign-clips/<WORD>.mp4` (e.g. `TAKE.mp4`, `MEDICINE.mp4`) or set `SIGN_VIDEO_API_URL` to a generator that returns `{clips, words}`.
+
+**Anam tools.** Tool calls (`speak_patient_message`, `request_clarification`, `generate_sign_video`, `create_visit_summary`, plus `show_pain_scale`) show as a small "Anam tool" toast. Real `TOOL_CALL_STARTED` events from Anam go through the same toast.
+
+## How it's built
+
+```
+src/
+  app/         App.tsx (two-column layout), config.ts (mock/real switches)
+  state/       machine.ts (single state machine), store.ts (zustand: orchestration), media.ts
+  components/  CameraPanel, SignChips, LiveTranslation, AvatarStage, ListenView, SignVideoPlayer,
+               StepBar, PrimaryAction, Menu, ConversationLog, VisitSummary, TabletopView, Toast, Header
+  services/    types.ts (interfaces), recognition, translate, tts, stt, avatar, signVideo, index.ts (picks adapters)
+  mocks/       script.ts (the scripted visit)
+  lib/         signs.ts (vocabulary), compose.ts (gloss → English), timing.ts (caption timing)
+  styles/      tokens.css (design tokens), app.css
+server/        index.ts (Express: /api/translate, simplify, summary, tts, scribe-token, anam-session, sign-video, health)
+```
+
+**State machine:** `start → signing → speaking → listening → generating → watching → (Reply in sign) signing …`, with `signing → uncertain` (confidence < 0.6) and `→ ended` (End visit). `src/state/machine.ts` holds the transition table; every action goes through it.
+
+**UX rule:** one thing at a time. Exactly one primary button per step (`PrimaryAction.tsx` derives it from the state, so no layout can show two). The inactive column dims (and collapses on phones); the active one moves first on narrow screens. The step bar is teal for patient steps and coral for doctor steps.
+
+**Accessibility:** WCAG AA colours from the mockup tokens, visible focus, focus moves to each step's button, `aria-live` on everything that changes, focus-trapped dialogs with Escape, text size control, reduced motion (menu toggle + `prefers-reduced-motion`). No emoji.
+
+**Privacy:** camera frames are processed in the browser and never stored or uploaded. Nothing is saved unless the patient taps "Save with my permission" on the visit summary (saved to this browser only).
+
+## Scripts
+
+| | |
+|---|---|
+| `npm run dev:mock` | web only, all mocks |
+| `npm run dev` | web + API server (real mode, reads `.env`) |
+| `npm run server` | API server only |
+| `npm run build` / `build:mock` | typecheck + production build to `dist/` |
+| `npm run typecheck` | web + server |

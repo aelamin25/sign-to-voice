@@ -1,99 +1,18 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign to voice</title>
-    <link rel="stylesheet" href="/src/style.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#FFFFFF" />
+    <meta name="description" content="SignBridge: ASL to voice, and the doctor's words back to sign, for Deaf patients at the doctor's." />
+    <title>SignBridge</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect width='34' height='34' rx='11' fill='%23121417'/%3E%3Cpath d='M7 23C10 13 24 13 27 23' stroke='%236EDCCC' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3Cpath d='M6 24h22' stroke='%23fff' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='17' cy='11' r='2.4' fill='%23FFB4A6'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <header class="topbar">
-      <h1>Sign to voice <span class="tag">prototype</span></h1>
-      <div class="topbar-right">
-        <span id="mode-badge" class="badge" hidden></span>
-        <span id="status" class="status status-off" role="status" aria-live="polite">Not started</span>
-        <button id="start" class="btn btn-primary" type="button">Start conversation</button>
-      </div>
-    </header>
-
-    <p id="notice" class="notice" role="alert" hidden></p>
-
-    <main class="layout">
-      <!-- Left: the patient's side -->
-      <section class="panel" aria-labelledby="patient-heading">
-        <h2 id="patient-heading">Patient</h2>
-
-        <div class="camera">
-          <video id="video" autoplay playsinline muted></video>
-          <!-- Shruti draws the tracked points on this canvas. -->
-          <canvas id="overlay"></canvas>
-          <p id="camera-message" class="camera-message" hidden></p>
-        </div>
-
-        <div class="row-header">
-          <h3>Signs so far</h3>
-          <span id="tone" class="chip chip-quiet">calm</span>
-        </div>
-        <ol id="sign-row" class="sign-row" aria-live="polite"></ol>
-        <p id="row-hint" class="hint">Sign, then pause. The sentence appears below for you to approve.</p>
-        <div class="row-actions">
-          <button id="undo" class="btn" type="button">Remove last</button>
-          <button id="send" class="btn" type="button">Send now</button>
-        </div>
-
-        <div id="approval" class="approval" hidden>
-          <p class="approval-label">Say this to the doctor?</p>
-          <p id="approval-sentence" class="approval-sentence"></p>
-          <div class="approval-actions">
-            <button id="approve" class="btn btn-approve" type="button">👍 Yes, say it</button>
-            <button id="reject" class="btn btn-reject" type="button">No, try again</button>
-          </div>
-          <p class="hint">A thumbs up sign also approves. Nothing is spoken until you do.</p>
-        </div>
-      </section>
-
-      <!-- Right: the doctor's side -->
-      <section class="panel" aria-labelledby="doctor-heading">
-        <h2 id="doctor-heading">Doctor</h2>
-
-        <!-- Face mode only: the Anam avatar that speaks the patient's words and repeats the doctor's. -->
-        <div id="avatar" class="avatar" hidden>
-          <video id="avatar-video" autoplay playsinline></video>
-        </div>
-
-        <div class="caption-box">
-          <p class="caption-label">The doctor said</p>
-          <p id="caption" class="caption" aria-live="polite">Waiting for the doctor to speak.</p>
-        </div>
-
-        <form id="practice-doctor" class="practice-doctor" hidden>
-          <label for="doctor-text">Practice mode: type what the doctor says</label>
-          <div class="practice-row">
-            <input id="doctor-text" type="text" autocomplete="off" placeholder="How long have you had the pain?" />
-            <button class="btn" type="submit">Show</button>
-          </div>
-        </form>
-
-        <div id="interpreter" class="interpreter" hidden>
-          Video interpreter requested. This helper covers the basics until they join.
-        </div>
-
-        <h3>Conversation</h3>
-        <ol id="log" class="log"></ol>
-      </section>
-    </main>
-
-    <footer id="keys" class="keys" hidden>
-      <strong>Test keys:</strong>
-      <span id="key-list"></span>
-      <span><kbd>U</kbd> calm / urgent</span>
-      <span><kbd>Q</kbd> question</span>
-      <span><kbd>X</kbd> unknown sign</span>
-      <span><kbd>Enter</kbd> send</span>
-      <span><kbd>Backspace</kbd> remove last</span>
-      <span><kbd>Esc</kbd> clear or reject</span>
-    </footer>
-
-    <script type="module" src="/src/main.js"></script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
