@@ -74,6 +74,8 @@ export interface State {
 
 export interface Actions {
   startSigning(): Promise<void>;
+  /** Retry the camera while still on the signing step (e.g. after the permission prompt was dismissed). */
+  restartSigning(): Promise<void>;
   doneSigning(): Promise<void>;
   sayAgain(): Promise<void>;
   doctorSpeak(): Promise<void>;
@@ -236,6 +238,10 @@ export const useStore = create<State & Actions>()((set, get) => {
       });
       const S = svc();
       if (S.avatar.kind === "real" && !S.avatar.isLive()) void S.avatar.connect(AVATAR_VIDEO_ID);
+      // Let the view that owns the camera element mount first (the mobile sign screen appears
+      // only after this state change). One frame; no visible effect on the web view.
+      await new Promise<void>((done) => requestAnimationFrame(() => done()));
+      if (!alive(r)) return;
       const script = s.unclearNext ? UNCLEAR_TURN : pickPatient(s.patientTurn);
       const session = await S.recognition.start({ video: media.video, canvas: media.canvas, script }, {
         onGloss: (e) => {
@@ -250,6 +256,15 @@ export const useStore = create<State & Actions>()((set, get) => {
       });
       if (!alive(r)) { session.stop(); return; }
       active.recognition = session;
+    },
+
+    async restartSigning() {
+      if (get().phase !== "signing") return;
+      cancelActive();
+      ++run;
+      // Step back to the state the signing step came from, then start it again.
+      set({ phase: "start" });
+      await get().startSigning();
     },
 
     async doneSigning() {

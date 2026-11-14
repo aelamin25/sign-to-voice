@@ -32,6 +32,37 @@ export function timerPlayback(words: WordTiming[]): Playback {
   };
 }
 
+/* ── Audio unlock (iOS Safari) ───────────────────────────────────────
+   iOS only lets an <audio> element play if it was first played inside a user gesture.
+   unlockAudio() is called on the first tap; real TTS then reuses that same element. */
+let sharedAudio: HTMLAudioElement | null = null;
+let unlocked = false;
+const SILENT_WAV = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
+
+export function getSharedAudio(): HTMLAudioElement {
+  if (!sharedAudio) sharedAudio = new Audio();
+  return sharedAudio;
+}
+
+export function unlockAudio() {
+  if (unlocked || typeof window === "undefined") return;
+  unlocked = true;
+  try {
+    const a = getSharedAudio();
+    a.src = SILENT_WAV;
+    a.muted = true;
+    void a.play().then(() => { a.pause(); a.muted = false; }).catch(() => { a.muted = false; });
+  } catch { /* noop */ }
+  try {
+    const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (AC) { const ctx = new AC(); void ctx.resume().then(() => ctx.close()); }
+  } catch { /* noop */ }
+  try {
+    const ss = window.speechSynthesis;
+    if (ss) { const u = new SpeechSynthesisUtterance(""); u.volume = 0; ss.speak(u); }
+  } catch { /* noop */ }
+}
+
 /* ── Real: ElevenLabs TTS with character timestamps (via /api/tts) ───── */
 interface TtsResponse {
   audioBase64: string;
@@ -56,14 +87,17 @@ export function createRealTts(): TtsService {
       if (words.length !== splitWords(text).length) words = estimateTimings(text); // keep captions aligned to the text shown
       const bytes = Uint8Array.from(atob(res.audioBase64), (c) => c.charCodeAt(0));
       const url = URL.createObjectURL(new Blob([bytes], { type: res.mimeType || "audio/mpeg" }));
-      const audio = new Audio(url);
+      const audio = getSharedAudio();
       let ended = false;
-      audio.addEventListener("ended", () => { ended = true; });
-      audio.addEventListener("error", () => { ended = true; });
+      const onDone = () => { ended = true; };
+      audio.onended = onDone;
+      audio.onerror = onDone;
       return {
         words,
         async play(onWord) {
           ended = false;
+          audio.muted = false;
+          if (audio.src !== url) audio.src = url;
           audio.currentTime = 0;
           try { await audio.play(); } catch (e) {
             console.warn("[tts] autoplay blocked, showing captions only", e);
