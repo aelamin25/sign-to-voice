@@ -13,7 +13,8 @@ Env vars:
     ELEVENLABS_STT_MODEL      default scribe_v1
 
 Endpoints:
-    POST /tokens     from vision/live.py --send   {"tokens": [...], "confs": [...]}  -> speaks the sentence
+    POST /phrase     from vision/live.py --send   {"tokens": [...], "confs": [...]}  -> passed to the web app as-is
+    POST /tokens     same input, but also translates (and speaks, with ElevenLabs) here: for the test page
     POST /translate  {"tokens": [...], "doctor_said": "..."} -> {"text": "..."}       (no side effects)
     POST /reply      {"text": "doctor's words"}   -> {"gloss": [...]}, shown to the patient
     POST /simplify   {"text": "doctor's words"}   -> {"text": "plain-words version"}
@@ -150,6 +151,18 @@ async def simplify_only(d: DoctorText):
     return {"text": await run_in_threadpool(translate.simplify, d.text)}
 
 
+@app.post("/phrase")
+async def phrase_only(p: Phrase):
+    """From vision/live.py: pass the recognised signs straight to the web app (no model call here;
+    the web app asks /translate itself). THUMBS-UP and non-signs are dropped."""
+    tokens = [t for t in p.tokens if t not in ("THUMBS-UP", "FIDGET", "NOTHING")]
+    event = {"type": "phrase", "tokens": tokens, "confs": (p.confs or [])[:len(p.tokens)]}
+    if p.confs:
+        event["confs"] = [c for t, c in zip(p.tokens, p.confs) if t not in ("THUMBS-UP", "FIDGET", "NOTHING")]
+    await broadcast(event)
+    return event
+
+
 @app.post("/sign")
 async def live_sign(s: Sign):
     event = {"type": "sign", "token": s.token, "conf": s.conf}
@@ -208,8 +221,9 @@ async def health():
 async def ws(websocket: WebSocket):
     await websocket.accept()
     clients.add(websocket)
-    for event in state["history"]:
-        await websocket.send_json(event)
+    if websocket.query_params.get("replay") != "0":  # the web app connects with ?replay=0
+        for event in state["history"]:
+            await websocket.send_json(event)
     try:
         while True:
             await websocket.receive_text()  # keep-alive; clients only listen

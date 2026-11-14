@@ -2,7 +2,7 @@ import type {
   GlossEvent, Landmark, LandmarkFrame, RecognitionHandlers, RecognitionService, RecognitionSession,
   RecognitionStartOptions, SignClassifier,
 } from "./types";
-import type { Gloss } from "../lib/signs";
+import { isKnownGloss, type Gloss } from "../lib/signs";
 import { pickPatient } from "../mocks/script";
 
 /** Hands down for this long (after at least one sign) ends the turn on its own. */
@@ -236,6 +236,70 @@ export function createMockRecognition(): RecognitionService {
       timers.push(window.setTimeout(() => { if (!stopped) h.onHands?.(false); }, lowered));
       timers.push(window.setTimeout(() => { if (!stopped) h.onAutoEnd(); }, lowered + AUTO_END_MS));
       return { stop() { stopped = true; timers.forEach(clearTimeout); } };
+    },
+  };
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   Bridge adapter: signs come from the trained recogniser (model/vision/live.py),
+   which owns the camera, through the Python backend (model/backend) websocket.
+     live.py --send http://<backend>:8000/phrase   → {"type":"phrase","tokens":[...],"confs":[...]}
+   A phrase ends the patient's turn (live.py sends it on THUMBS-UP or after ~1.5 s of rest).
+   ════════════════════════════════════════════════════════════════════ */
+const MODEL_TO_GLOSS: Record<string, Gloss> = {};
+const toGloss = (t: string): Gloss | null => {
+  if (t === "THUMBS-UP" || t === "FIDGET" || t === "NOTHING") return null; // approval / non-signs: never shown
+  if (t === "?") return "?";
+  if (MODEL_TO_GLOSS[t]) return MODEL_TO_GLOSS[t];
+  return isKnownGloss(t) ? t : "?";
+};
+
+export function createBridgeRecognition(base: string): RecognitionService {
+  return {
+    kind: "real",
+    async start(_opts: RecognitionStartOptions, h: RecognitionHandlers): Promise<RecognitionSession> {
+      h.onStatus?.({ camera: "starting", message: "Connecting to the sign recogniser…" });
+      const url = base.replace(/^http/, "ws") + "/ws?replay=0";
+      let ws: WebSocket | null = null;
+      let stopped = false;
+      let emitted = 0; // signs already shown this turn
+      const emit = (token: string, conf: number) => {
+        const g = toGloss(token);
+        if (!g) return;
+        emitted++;
+        h.onGloss({ gloss: g, confidence: conf });
+      };
+      const connect = () => {
+        if (stopped) return;
+        ws = new WebSocket(url);
+        ws.onopen = () => h.onStatus?.({ camera: "live", message: "Signing camera: sign recognition app" });
+        ws.onclose = () => {
+          if (stopped) return;
+          h.onStatus?.({ camera: "unavailable", message: "Sign recogniser not connected. Is model/backend running?" });
+          setTimeout(connect, 1500);
+        };
+        ws.onmessage = (m) => {
+          let ev: { type?: string; token?: string; conf?: number; tokens?: string[]; confs?: number[] };
+          try { ev = JSON.parse(String(m.data)); } catch { return; }
+          if (ev.type === "sign" && ev.token) {
+            h.onHands?.(true);
+            emit(ev.token, ev.conf ?? 0.9);
+          } else if (ev.type === "phrase" && ev.tokens) {
+            // Any signs not already shown live, then the turn is over.
+            const signs = ev.tokens.map((t, i) => ({ t, c: ev.confs?.[i] ?? 0.9 })).filter((x) => toGloss(x.t) !== null);
+            signs.slice(emitted).forEach((x) => emit(x.t, x.c));
+            h.onHands?.(false);
+            if (emitted > 0) h.onAutoEnd();
+          }
+        };
+      };
+      connect();
+      return {
+        stop() {
+          stopped = true;
+          try { ws?.close(); } catch { /* already closed */ }
+        },
+      };
     },
   };
 }

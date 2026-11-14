@@ -75,3 +75,37 @@ export function createMockTranslate(): TranslateService {
     },
   };
 }
+
+/* ── Trained language model (model/lang via model/backend) ────────────
+   Sentences come from our model, which also sees the doctor's last line as context.
+   Plain-words and the visit summary stay with the inner adapter. Any failure falls back to it. */
+const MODEL_ALIAS: Record<string, string> = { HURT: "PAIN", "3": "THREE" };
+
+export function createModelTranslate(base: string, inner: TranslateService): TranslateService {
+  let lastDoctor: string | null = null;
+  return {
+    kind: "real",
+    async translate(glosses) {
+      const tokens = glosses.map((g) => MODEL_ALIAS[g] ?? g);
+      try {
+        const r = await fetch(`${base}/translate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tokens, doctor_said: lastDoctor }),
+        });
+        if (!r.ok) throw new Error(`model backend ${r.status}`);
+        const { text } = (await r.json()) as { text: string };
+        if (!text?.trim()) throw new Error("empty sentence");
+        return { sentence: text.trim(), confidence: glosses.includes("?") ? 0.45 : 0.95 };
+      } catch (e) {
+        console.warn("[translate] model backend failed, using fallback:", e);
+        return inner.translate(glosses);
+      }
+    },
+    async simplify(text) {
+      lastDoctor = text;
+      return inner.simplify(text);
+    },
+    summarize: (log) => inner.summarize(log),
+  };
+}
