@@ -207,9 +207,9 @@ def main():
     tokens, confs = [], []
     status = {"last": "", "sentence": ""}
 
-    # The team backend (/phrase) wants one message per finished turn. Only the first prototype
-    # page (legacy, /api/signs) also took each sign as it happened.
-    signs_too = bool(args.send) and args.send.rstrip("/").endswith("/api/signs")
+    # The team backend's /phrase takes both: each sign as it is recognised (the web app shows it
+    # live as a chip) and then the finished turn. Its older /tokens only takes finished turns.
+    signs_too = bool(args.send) and args.send.rstrip("/").endswith(("/phrase", "/api/signs"))
 
     def post(msg):
         if not args.send:
