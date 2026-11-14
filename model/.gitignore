@@ -10,3 +10,4 @@ lang/data/model_artifact*
 wandb/
 .env
 vision/data_old*/
+vision/rehearse_log.txt

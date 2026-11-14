@@ -143,13 +143,14 @@ def main():
     raw_tr, raw_va, ytr0, yva = train_test_split(X, y, test_size=0.2, stratify=y, random_state=0)
     Xtr, ytr = [], []
     for seq, label in zip(raw_tr, ytr0):
-        for v in variants(seq):
+        # no cut-down copies of a multi-sign movement: its first part alone is a different sign
+        for v in ([seq] if "+" in label else variants(seq)):
             Xtr.append(enrich(v))
             ytr.append(label)
     Xtr, ytr = np.stack(Xtr), np.array(ytr)
     Xva = np.stack([enrich(s) for s in raw_va])
     # the same held-back takes, cut where hold mode would cut them
-    held = [(enrich(s[:hold_cut(s)]), l) for s, l in zip(raw_va, yva) if hold_cut(s)]
+    held = [(enrich(s[:hold_cut(s)]), l) for s, l in zip(raw_va, yva) if hold_cut(s) and "+" not in l]
     os.makedirs(os.path.join(HERE, "models"), exist_ok=True)
 
     if args.wandb:

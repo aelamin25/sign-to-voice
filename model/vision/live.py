@@ -101,6 +101,10 @@ def main():
     tokens, confs = [], []
     status = {"last": "", "sentence": ""}
 
+    # The team backend (/tokens) only wants finished phrases. Our own page (/api/signs) also wants
+    # each sign as it happens, so it can show the row filling up.
+    signs_too = bool(args.send) and args.send.rstrip("/").endswith("/api/signs")
+
     def post(msg):
         if not args.send:
             return
@@ -159,7 +163,7 @@ def main():
                     msgs.append(msg)
                 # one thread, so the page gets the signs in order
                 def send_all(ms=msgs, done=(list(tokens), list(confs)) if ends_turn else None):
-                    for m in ms:
+                    for m in ms if signs_too else []:
                         post(m)
                     if done:
                         finish_phrase(*done)
