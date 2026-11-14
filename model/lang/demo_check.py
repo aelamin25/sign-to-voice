@@ -15,7 +15,7 @@ from translate import gloss_to_sentence, simplify
 # (doctor's line, signs, what the script expects the voice to say)
 SCRIPT = [
     ("Hello, I'm Dr Veer. What's brought you in today?", "PAIN HEAD", "I have a headache."),
-    ("I'm sorry to hear that. How long has it been going on?", "THREE DAY", "For three days."),
+    ("I'm sorry to hear that. How long has it been going on?", "THREE DAY", "About three days."),
     ("Any changes to your vision, or feeling sick?", "NONE", "None."),
     ("Have you taken any analgesia for it?", "DONT-UNDERSTAND", "Sorry, I don't understand."),
     (None, "NO", "No."),  # doctor line = the simplified caption
