@@ -10,13 +10,32 @@ for when an interpreter isn't available, not a replacement for a certified medic
 | Folder | What | Run it |
 |---|---|---|
 | `src/`, `index.html`, `server/index.ts` | **Web app** (React + TypeScript): the patient/doctor screen | `npm install` then `npm run dev:mock` (demo) or `npm run dev` (real) |
-| `model/vision/` | **Sign recognition**: MediaPipe landmarks + trained classifier (`models/sign_model.pt`) | `python model/vision/live.py --send http://localhost:8000/tokens` |
+| `model/vision/` | **Sign recognition**: MediaPipe landmarks + trained classifier (`models/sign_model.pt`) | `sh scripts/signs.sh` (camera), or `sh scripts/replay.sh` (no camera, recorded takes) |
 | `model/lang/` | **Language model**: signs to sentence, doctor's words to plain words / sign gloss | used by the backend |
 | `model/backend/` | **Python backend** (FastAPI): `/translate`, `/simplify`, `/reply`, `/stt`, `/ws` events | `cd model/backend && uvicorn server:app --port 8000` |
 | `server/index.js` | ElevenLabs Agent + Anam session server from the first prototype | `npm run agent-server` (port 3001) |
 | `legacy/web/` | The first prototype page (kept as it was) | `npm run legacy:web` |
 
 Python setup: `python -m venv .venv`, activate it, then `pip install -r requirements.txt`.
+
+### Running the real signs end to end
+
+Three terminals, from the repository root:
+
+```bash
+sh scripts/backend.sh     # 1. Python backend on :8000 (reads the keys in .env)
+npm run dev               # 2. web app on :5173 (set VITE_MOCK=false, VITE_PY_BACKEND=http://localhost:8000, VITE_RECOGNITION=python in .env)
+sh scripts/signs.sh       # 3. the camera recogniser; it sends each finished turn to the backend
+```
+
+In the web app press **Start signing**, then sign. A turn is one movement: hands come up, the signs, a thumbs up,
+hands leave the picture. The recogniser knows nine single signs and the five turns of the demo script as whole
+movements (`model/vision/models/labels.json`). It was trained on one signer's recordings.
+
+No camera or signer to hand? `sh scripts/replay.sh` plays the five demo turns from recorded takes
+(`model/vision/samples/`) through the same recogniser, so the backend and web app can be tested by anyone.
+`sh scripts/replay.sh 3` plays only turn 3. The web app must be waiting for the patient: set `VITE_AUTO_SIGN=true`
+(a finished turn then starts the patient's turn by itself), or press **Start signing** / **Reply in sign** before each turn.
 See the docstring at the top of `model/backend/server.py` for the backend's endpoints and environment variables.
 
 ---
