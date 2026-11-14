@@ -2,7 +2,9 @@
 
     python live.py                          # prints one JSON line per sign and per phrase
     python live.py --translate              # also turns each phrase into English (needs ../lang + ANTHROPIC_API_KEY)
-    python live.py --send http://localhost:8000/tokens   # POSTs each phrase to the backend
+    python live.py --send http://localhost:8000/phrase   # POSTs each finished turn to the backend (model/backend)
+    python live.py --replay samples/*.npy --send http://localhost:8000/phrase
+                                            # no camera: plays recorded takes through the same code, to test the link
 
 Sign one sign at a time: hands up, sign, hands down briefly (~0.3 s).
 Rest your hands for ~1.5 s to finish the phrase.
@@ -81,6 +83,12 @@ def main():
     ap.add_argument("--translate", action="store_true")
     ap.add_argument("--rest", action="store_true",
                     help="hands lowered below the yellow line count as resting, so they need not leave the picture")
+    ap.add_argument("--plain", action="store_true",
+                    help="camera window shows only the picture and the dots, no words (for the demo)")
+    ap.add_argument("--replay", nargs="+", metavar="TAKE.npy",
+                    help="no camera: feed these recorded takes through the recogniser, one turn each")
+    ap.add_argument("--replay-pause", type=float, default=0.0,
+                    help="seconds to wait after each replayed take (gives the web app time to speak)")
     ap.add_argument("--hold", action="store_true",
                     help="end a sign when the hands hold still, so they can stay in view between signs")
     args = ap.parse_args()
@@ -91,18 +99,58 @@ def main():
         from translate import gloss_to_sentence as translate
 
     clf = Classifier()
-    tracker = Tracker()
     seg = Segmenter(args.sign_gap, args.phrase_gap, hold=args.hold)
-    cap = cv2.VideoCapture(args.camera)
-    if not cap.isOpened():
-        raise SystemExit("Can't open the camera. On Mac: System Settings > Privacy > Camera.")
+    replaying = bool(args.replay)
+    cap = None
+    if not replaying:
+        tracker = Tracker()
+        cap = cv2.VideoCapture(args.camera)
+        if not cap.isOpened():
+            # printed as well as raised: the start scripts hide the error stream
+            print("Can't open the camera. On Mac: System Settings > Privacy & Security > Camera, allow Terminal.",
+                  flush=True)
+            raise SystemExit(1)
 
     t0 = time.time()
+
+    def camera_frames():
+        """One item per camera frame: (picture, time, features, hands seen, points to draw)."""
+        while True:
+            ok, frame = cap.read()
+            if not ok:
+                continue
+            frame = cv2.flip(frame, 1)
+            now = time.time()
+            vec, hands_seen, points = tracker.process(frame, (now - t0) * 1000)
+            yield frame, now, vec, hands_seen, points
+
+    def replay_frames():
+        """The same items, read from recorded takes: each take, then two seconds of no hands."""
+        now = 0.0
+        for path in args.replay:
+            print(json.dumps({"type": "replay", "take": os.path.basename(os.path.dirname(os.path.abspath(path)))}),
+                  flush=True)
+            for vec in np.load(path):
+                now += 1 / 15
+                yield None, now, vec, True, []
+            for _ in range(30):
+                now += 1 / 15
+                yield None, now, None, False, []
+            if args.replay_pause:
+                time.sleep(args.replay_pause)
+
+    def background(fn, *a):
+        """Sending must not freeze the camera picture. A replay has no picture, so it just waits."""
+        if replaying:
+            fn(*a)
+        else:
+            threading.Thread(target=fn, args=a, daemon=True).start()
+
     tokens, confs = [], []
     status = {"last": "", "sentence": ""}
 
-    # The team backend (/tokens) only wants finished phrases. Our own page (/api/signs) also wants
-    # each sign as it happens, so it can show the row filling up.
+    # The team backend (/phrase) wants one message per finished turn. Only the first prototype
+    # page (legacy, /api/signs) also took each sign as it happened.
     signs_too = bool(args.send) and args.send.rstrip("/").endswith("/api/signs")
 
     def post(msg):
@@ -113,7 +161,8 @@ def main():
                                          headers={"Content-Type": "application/json"})
             urllib.request.urlopen(req, timeout=3)
         except Exception as e:
-            print("send failed:", e, file=sys.stderr)
+            # on the normal output, so it is seen even when the start scripts hide the error stream
+            print(json.dumps({"type": "send_failed", "to": args.send, "error": str(e)}), flush=True)
 
     def finish_phrase(toks, cs):
         msg = {"type": "phrase", "tokens": toks, "confs": cs}
@@ -124,13 +173,7 @@ def main():
             status["sentence"] = translate(toks)
             print(json.dumps({"type": "sentence", "text": status["sentence"]}), flush=True)
 
-    while True:
-        ok, frame = cap.read()
-        if not ok:
-            continue
-        frame = cv2.flip(frame, 1)
-        now = time.time()
-        vec, hands_seen, points = tracker.process(frame, (now - t0) * 1000)
+    for frame, now, vec, hands_seen, points in (replay_frames() if replaying else camera_frames()):
         resting = args.rest and hands_resting(vec)
         event, frames = seg.update(vec, hands_seen and not resting, now)
 
@@ -145,8 +188,13 @@ def main():
                 # A thumbs up on its own is the patient approving the sentence on screen.
                 if label == APPROVE and conf >= args.threshold and tokens:
                     print(json.dumps({"type": "turn_done", "by": APPROVE, "conf": round(conf, 2)}), flush=True)
-                    threading.Thread(target=finish_phrase, args=(tokens, confs), daemon=True).start()
+                    background(finish_phrase, tokens, confs)
                     tokens, confs = [], []
+                    continue
+                # A half-seen thumbs up after real signs must not spoil the turn: it only meant "done",
+                # and the turn still ends by itself when the hands rest.
+                if label == APPROVE and conf < args.threshold and tokens:
+                    print(json.dumps({"type": "ignored", "guess": label, "conf": round(conf, 2)}), flush=True)
                     continue
                 # A label like "PAIN+HEAD" is two signs recorded as one flowing movement: report both, in order.
                 parts = label.split("+") if conf >= args.threshold else ["?"]
@@ -167,19 +215,23 @@ def main():
                         post(m)
                     if done:
                         finish_phrase(*done)
-                threading.Thread(target=send_all, daemon=True).start()
+                background(send_all)
                 if ends_turn:
                     print(json.dumps({"type": "turn_done", "by": APPROVE, "conf": round(conf, 2)}), flush=True)
                     tokens, confs = [], []
         elif event == "phrase_end" and tokens:
-            threading.Thread(target=finish_phrase, args=(tokens, confs), daemon=True).start()
+            background(finish_phrase, tokens, confs)
             tokens, confs = [], []
+
+        if frame is None:  # replay: nothing to draw
+            continue
 
         for p in points:
             cv2.circle(frame, p, 2, (0, 255, 0), -1)
-        cv2.putText(frame, " ".join(tokens) or "...", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.1, (255, 255, 255), 3)
-        cv2.putText(frame, status["last"], (20, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (200, 200, 200), 2)
-        if status["sentence"]:
+        if not args.plain:
+            cv2.putText(frame, " ".join(tokens) or "...", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.1, (255, 255, 255), 3)
+            cv2.putText(frame, status["last"], (20, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (200, 200, 200), 2)
+        if status["sentence"] and not args.plain:
             cv2.putText(frame, status["sentence"], (20, frame.shape[0] - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8,
                         (0, 255, 255), 2)
         if args.rest and len(points) >= 7 and vec is not None:
@@ -198,8 +250,9 @@ def main():
         if key == ord("c"):
             tokens, confs, status["sentence"] = [], [], ""
 
-    cap.release()
-    cv2.destroyAllWindows()
+    if cap is not None:
+        cap.release()
+        cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
