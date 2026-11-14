@@ -44,6 +44,11 @@ const P: Record<string, string> = {
   info: "M12 21a9 9 0 100-18 9 9 0 000 18zM12 11v6M12 7.5h.01",
   text: "M4 7V5h12v2M10 5v14M8 19h4M14 13v-1.5h6V13M17 11.5V19M15.5 19h3",
   motion: "M3 12h4l3-8 4 16 3-8h4",
+  trash: "M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3",
+  list: "M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01",
+  sliders: "M4 7h10M18 7h2M4 17h4M12 17h8M16 9a2 2 0 100-4 2 2 0 000 4zM10 19a2 2 0 100-4 2 2 0 000 4z",
+  tabletop: "M3 15h18l-2 4H5zM6 15l2-9h8l2 9",
+  lines: "M5 6h14M5 11h14M5 16h9",
   question: "M12 21a9 9 0 100-18 9 9 0 000 18zM9.5 9a2.5 2.5 0 114 2c-.9.6-1.5 1.2-1.5 2.3M12 17h.01",
 };
 

@@ -9,7 +9,8 @@ const fmt = (args: Record<string, unknown>) =>
     .join(", ");
 
 /** Small, subtle "Anam tool" toast whenever the avatar agent calls a tool. */
-export function Toast() {
+/** Subscribes to avatar tool calls and auto-hides the toast. Shared by the web and mobile views. */
+export function useToolToasts(hideAfterMs = 2800) {
   const toast = useStore((s) => s.toast);
   const show = useStore((s) => s.showToast);
 
@@ -21,9 +22,17 @@ export function Toast() {
 
   useEffect(() => {
     if (!toast) return;
-    const t = setTimeout(() => useStore.setState({ toast: null }), 2800);
+    const t = setTimeout(() => useStore.setState({ toast: null }), hideAfterMs);
     return () => clearTimeout(t);
-  }, [toast]);
+  }, [toast, hideAfterMs]);
+
+  return toast;
+}
+
+export const formatToolArgs = fmt;
+
+export function Toast() {
+  const toast = useToolToasts();
 
   return (
     <div aria-live="polite" className="sr-live">

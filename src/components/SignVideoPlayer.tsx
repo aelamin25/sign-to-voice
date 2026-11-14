@@ -7,11 +7,12 @@ import { useStore } from "../state/store";
 
 /** Plays the doctor's reply as sign video, with plain-word captions synced.
     Real clips play in sequence; with no clips, the animated signer stands in. */
-export function SignVideoPlayer() {
+/** Drives sign-video playback and caption sync for the current reply. Shared by the web and mobile views.
+    Real clips play in sequence on the given <video>; with no clips, a timer drives the captions. */
+export function useSignVideoPlayback() {
   const reply = useStore((s) => s.reply);
   const replyIndex = useStore((s) => s.replyIndex);
   const replyEnded = useStore((s) => s.replyEnded);
-  const watchAgain = useStore((s) => s.watchAgain);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [clip, setClip] = useState(0);
 
@@ -50,11 +51,19 @@ export function SignVideoPlayer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clip, reply?.playKey, reply?.playing]);
 
-  if (!reply) return null;
   const onEnded = () => {
+    if (!reply) return;
     if (clip + 1 < reply.clips.length) setClip(clip + 1);
     else replyEnded();
   };
+  return { reply, videoRef, onEnded };
+}
+
+export function SignVideoPlayer() {
+  const watchAgain = useStore((s) => s.watchAgain);
+  const { reply, videoRef, onEnded } = useSignVideoPlayback();
+
+  if (!reply) return null;
   const playing = reply.playing;
 
   return (
