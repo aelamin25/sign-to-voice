@@ -26,7 +26,7 @@
 {"prompt": "Patient signs: STOMACH PAIN ?\nPatient means:", "completion": "I have stomach pain."}
 {"prompt": "Patient signs: HELLO\nPatient means:", "completion": "Hello."}
 {"prompt": "Patient signs: CHEST ? THREE DAY\nPatient means:", "completion": "Something about my chest, for three days."}
-{"prompt": "Patient signs: PAIN HEAD\nPatient means:", "completion": "My head hurts."}
+{"prompt": "Patient signs: PAIN HEAD\nPatient means:", "completion": "I have a headache."}
 {"prompt": "Patient signs: STOMACH PAIN SLEEP CANT\nPatient means:", "completion": "My stomach hurts so much I can't sleep."}
 {"prompt": "Patient signs: HEAD HEAD PAIN\nPatient means:", "completion": "My head hurts."}
 {"prompt": "Doctor: Are you sleeping okay?\nPatient signs: YES\nPatient means:", "completion": "Yes, I'm sleeping okay."}
@@ -68,7 +68,7 @@
 {"prompt": "Doctor: What's brought you in today?\nPatient signs: HEAD PAIN\nPatient means:", "completion": "I've got a headache."}
 {"prompt": "Doctor: How can I help you today?\nPatient signs: PAIN HEAD\nPatient means:", "completion": "I have a headache."}
 {"prompt": "Doctor: What's brought you in today?\nPatient signs: PAIN HEAD THREE DAY\nPatient means:", "completion": "I've had a headache for three days."}
-{"prompt": "Doctor: I'm sorry to hear that. How long has it been going on?\nPatient signs: THREE DAY\nPatient means:", "completion": "For three days."}
+{"prompt": "Doctor: I'm sorry to hear that. How long has it been going on?\nPatient signs: THREE DAY\nPatient means:", "completion": "About three days."}
 {"prompt": "Doctor: How long has it been going on?\nPatient signs: DAY THREE\nPatient means:", "completion": "For three days."}
 {"prompt": "Doctor: How long have you had the headache?\nPatient signs: THREE DAY\nPatient means:", "completion": "About three days."}
 {"prompt": "Doctor: Any changes to your vision, or feeling sick?\nPatient signs: NONE\nPatient means:", "completion": "No, nothing like that."}
@@ -83,7 +83,7 @@
 {"prompt": "Doctor: Any photophobia?\nPatient signs: DONT-UNDERSTAND\nPatient means:", "completion": "Sorry, I don't understand."}
 {"prompt": "Patient signs: DONT-UNDERSTAND\nPatient means:", "completion": "Sorry, I don't understand."}
 {"prompt": "Patient signs: DONT-UNDERSTAND HELP\nPatient means:", "completion": "Sorry, I don't understand. Can you help?"}
-{"prompt": "Doctor: Have you taken any painkillers, like paracetamol?\nPatient signs: NO\nPatient means:", "completion": "No, I haven't taken any painkillers."}
+{"prompt": "Doctor: Have you taken any painkillers, like paracetamol?\nPatient signs: NO\nPatient means:", "completion": "No."}
 {"prompt": "Doctor: Have you taken any analgesia for it?\nPatient signs: NO\nPatient means:", "completion": "No, I haven't."}
 {"prompt": "Doctor: Have you taken any painkillers, like paracetamol?\nPatient signs: NO MEDICINE\nPatient means:", "completion": "No, I haven't taken any."}
 {"prompt": "Doctor: Have you taken any painkillers, like paracetamol?\nPatient signs: YES\nPatient means:", "completion": "Yes, I have."}
