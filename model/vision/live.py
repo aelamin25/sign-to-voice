@@ -3,14 +3,14 @@
     python live.py                          # prints one JSON line per sign and per phrase
     python live.py --translate              # also turns each phrase into English (needs ../lang + ANTHROPIC_API_KEY)
     python live.py --send http://localhost:8000/phrase --stream 8001 --no-window
-                                            # for the web app: finished turns to the backend (model/backend),
-                                            # camera view inside the page
+                                            # for the web app: each sign, then the finished turn, to the
+                                            # backend (model/backend); camera view inside the page
     python live.py --replay samples/*/take1.npy --send http://localhost:8000/phrase
                                             # no camera: plays recorded takes through the same code, to test the link
 
 Sign one sign at a time: hands up, sign, hands down briefly (~0.3 s).
 Rest your hands for ~1.5 s to finish the phrase.
-Keys: C clear   Q quit
+Keys in the camera window: C clear   Q quit   (with --no-window there is no window: stop with Ctrl+C)
 Output per sign:   {"type": "sign", "token": "HEAD", "conf": 0.91}
 Output per phrase: {"type": "phrase", "tokens": ["HEAD", "PAIN"], "confs": [0.91, 0.88]}
 """

@@ -1,5 +1,5 @@
 #!/bin/sh
-# Starts the sign recogniser with the camera and sends each finished turn to the backend.
+# Starts the sign recogniser with the camera. It sends each sign, then the finished turn, to the backend.
 #   sh scripts/signs.sh                      backend on this laptop
 #   sh scripts/signs.sh http://HOST:8000     backend somewhere else
 cd "$(dirname "$0")/../model/vision"

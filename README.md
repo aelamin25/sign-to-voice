@@ -24,9 +24,16 @@ Three terminals, from the repository root:
 
 ```bash
 sh scripts/backend.sh     # 1. Python backend on :8000 (reads the keys in .env)
-npm run dev               # 2. web app on :5173 (set VITE_MOCK=false, VITE_PY_BACKEND=http://localhost:8000, VITE_RECOGNITION=python in .env)
-sh scripts/signs.sh       # 3. the camera recogniser; it sends each finished turn to the backend
+npm run dev               # 2. web app on :5173
+sh scripts/signs.sh       # 3. the camera recogniser: sends each sign, then the finished turn, to the backend
 ```
+
+`.env` for step 2: `VITE_MOCK=false`, `VITE_PY_BACKEND=http://localhost:8000`, `VITE_RECOGNITION=python`, and
+`VITE_CAMERA_STREAM=http://localhost:8001/video`. The last one matters: `scripts/signs.sh` opens no window of its
+own, so the camera picture (with the tracking dots) is only seen inside the web app's patient panel.
+`WINDOW=1 sh scripts/signs.sh` also opens a separate test window. Stop the recogniser with Ctrl+C.
+`scripts/backend.sh` listens on all network addresses (0.0.0.0), so a phone or second laptop on the same
+network can reach it.
 
 In the web app press **Start signing**, then sign. A turn is one movement: hands come up, the signs, a thumbs up,
 hands leave the picture. The recogniser knows nine single signs and the five turns of the demo script as whole
