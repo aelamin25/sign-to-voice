@@ -19,6 +19,9 @@ wandb/
 **/lang/data/adaption_*.json
 **/lang/data/eval_results.json
 **/lang/data/model_artifact*
+# real consultation text collected with USAGE_LOG=1: private, never commit
+**/lang/data/usage_log.jsonl
+**/lang/data/from_usage.jsonl
 
 # backend
 **/backend/audio_cache/

@@ -32,6 +32,25 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 APPROVE = "THUMBS-UP"
 
 
+def same_signs(label):
+    """The signs a label stands for, without a thumbs up that only ends the turn.
+    "NO" and "NO+THUMBS-UP" are the same signs; "THUMBS-UP" on its own stays itself."""
+    parts = [p for p in str(label).split("+") if p != APPROVE]
+    return "+".join(parts) if parts else APPROVE
+
+
+def read_answer(probs, labels):
+    """Pick the answer. Labels that stand for the same signs share their confidence, so the model
+    being torn between "NO" and "NO, thumbs up" no longer comes out as "not sure".
+    Returns (the most likely label in the winning group, the group's total confidence)."""
+    groups = {}
+    for p, l in zip(probs, labels):
+        groups[same_signs(l)] = groups.get(same_signs(l), 0.0) + float(p)
+    best = max(groups, key=groups.get)
+    top = max((float(p), str(l)) for p, l in zip(probs, labels) if same_signs(l) == best)[1]
+    return top, min(1.0, groups[best])
+
+
 class Classifier:
     def __init__(self):
         pt = os.path.join(HERE, "models", "sign_model.pt")
@@ -71,8 +90,7 @@ class Classifier:
                 probs = self.torch.softmax(self.model(self.torch.tensor(x[None])), dim=1)[0].numpy()
         else:
             probs = self.model.predict_proba(x.reshape(1, -1))[0]
-        i = int(np.argmax(probs))
-        return str(self.labels[i]), float(probs[i])
+        return read_answer(probs, self.labels)
 
 
 class _Stream:

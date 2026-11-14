@@ -39,6 +39,18 @@ In the web app press **Start signing**, then sign. A turn is one movement: hands
 hands leave the picture. The recogniser knows nine single signs and the five turns of the demo script as whole
 movements (`model/vision/models/labels.json`). It was trained on one signer's recordings.
 
+### Learning from use (Adaption)
+
+Two optional pieces, both off unless switched on, so the default behaviour is unchanged:
+
+- **A self-improving sentence writer.** `TRANSLATE_BACKEND=stack` with `ADAPTION_STACK=<slug>` and that account's
+  `ADAPTION_API_KEY` sends each turn to an Adaption *inference stack*: a hosted model that searches our example
+  sentences and that Adaption keeps tuning from its own usage. Try it: `cd model/lang && python translate.py PAIN HEAD`.
+- **Saving real turns as training data.** `USAGE_LOG=1` (only with the patient's agreement: by default nothing is
+  stored) makes the backend save each turn's signs, the doctor's last line and the sentence.
+  `python model/lang/usage_log.py` turns them into the same rows `adaption_pipeline.py` trains on. A person who
+  signs should check them first.
+
 No camera or signer to hand? `sh scripts/replay.sh` plays the five demo turns from recorded takes
 (`model/vision/samples/`) through the same recogniser, so the backend and web app can be tested by anyone.
 `sh scripts/replay.sh 3` plays only turn 3. The web app must be waiting for the patient: set `VITE_AUTO_SIGN=true`
