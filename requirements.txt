@@ -1,0 +1,14 @@
+mediapipe>=0.10.14
+opencv-python
+numpy
+scikit-learn
+joblib
+torch
+anthropic  # optional, only if LLM_PROVIDER=anthropic
+adaption
+requests
+wandb
+fastapi
+uvicorn[standard]
+python-multipart
+httpx

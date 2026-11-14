@@ -1,0 +1,245 @@
+prompt,completion
+"Doctor: Are you sleeping okay?
+Patient signs: NO
+Patient means:","No, I'm not sleeping well."
+"Patient signs: HELP
+Patient means:",I need help.
+"Doctor: What brings you in today?
+Patient signs: HELLO CHEST PAIN
+Patient means:",Hello. I have chest pain.
+"Patient signs: HELP SLEEP CANT
+Patient means:","I need help, I can't sleep."
+"Doctor: Have you taken any medicine?
+Patient signs: ?
+Patient means:","Sorry, let me sign that again."
+"Patient signs: CHEST PAIN YESTERDAY
+Patient means:",I've had chest pain since yesterday.
+"Patient signs: YESTERDAY SLEEP CANT
+Patient means:",I couldn't sleep yesterday.
+"Patient signs: HEAD PAIN
+Patient means:",I have a headache.
+"Patient signs: YESTERDAY HEAD PAIN
+Patient means:",I've had a headache since yesterday.
+"Doctor: Come back if it gets worse, okay?
+Patient signs: THANK-YOU YES
+Patient means:","Yes, thank you."
+"Patient signs: HELP PAIN
+Patient means:","Please help, I'm in pain."
+"Doctor: Do you understand?
+Patient signs: NO HELP
+Patient means:","No, can you help me understand?"
+"Doctor: Where does it hurt?
+Patient signs: STOMACH
+Patient means:",In my stomach.
+"Patient signs: SLEEP CANT THREE DAY
+Patient means:",I haven't been able to sleep for three days.
+"Patient signs: HEAD ? PAIN
+Patient means:",My head hurts.
+"Patient signs: HEAD PAIN THREE DAY
+Patient means:",I've had a headache for three days.
+"Doctor: Did you sleep last night?
+Patient signs: SLEEP NO
+Patient means:","No, I didn't sleep."
+"Patient signs: HEAD PAIN SLEEP CANT
+Patient means:",I have a headache and I can't sleep.
+"Patient signs: NO MEDICINE
+Patient means:",I haven't taken any medicine.
+"Doctor: Is this your first visit?
+Patient signs: YES
+Patient means:","Yes, it is."
+"Patient signs: MEDICINE HELP NO
+Patient means:",The medicine hasn't helped.
+"Doctor: Hello, what brings you in today?
+Patient signs: HELLO HEAD PAIN
+Patient means:","Hello, I have a headache."
+"Patient signs: MEDICINE THREE DAY
+Patient means:",I've been taking medicine for three days.
+"Doctor: Is the pain in your chest?
+Patient signs: YES CHEST
+Patient means:","Yes, in my chest."
+"Doctor: Have you taken any medicine?
+Patient signs: NO
+Patient means:","No, I haven't."
+"Patient signs: STOMACH PAIN ?
+Patient means:",I have stomach pain.
+"Patient signs: HELLO
+Patient means:",Hello.
+"Patient signs: CHEST ? THREE DAY
+Patient means:","Something about my chest, for three days."
+"Patient signs: PAIN HEAD
+Patient means:",My head hurts.
+"Patient signs: STOMACH PAIN SLEEP CANT
+Patient means:",My stomach hurts so much I can't sleep.
+"Patient signs: HEAD HEAD PAIN
+Patient means:",My head hurts.
+"Doctor: Are you sleeping okay?
+Patient signs: YES
+Patient means:","Yes, I'm sleeping okay."
+"Patient signs: ? HEAD PAIN
+Patient means:",I have a headache.
+"Patient signs: HEAD PAIN MEDICINE NO
+Patient means:",I have a headache and I haven't taken any medicine.
+"Patient signs: CANT SLEEP
+Patient means:",I can't sleep.
+"Patient signs: THANK-YOU
+Patient means:",Thank you.
+"Doctor: Do you have a headache?
+Patient signs: YES HEAD PAIN
+Patient means:","Yes, I have a headache."
+"Patient signs: MEDICINE NO
+Patient means:",I haven't taken any medicine.
+"Doctor: When did you last take your medicine?
+Patient signs: THREE DAY
+Patient means:",Three days ago.
+"Patient signs: MEDICINE YESTERDAY
+Patient means:",I took some medicine yesterday.
+"Patient signs: STOMACH PAIN
+Patient means:",I have stomach pain.
+"Doctor: When did it start?
+Patient signs: THREE DAY
+Patient means:",It started three days ago.
+"Doctor: Are you sleeping okay?
+Patient signs: NO SLEEP CANT
+Patient means:","No, I can't sleep."
+"Doctor: Shall I prescribe something for you?
+Patient signs: YES THANK-YOU
+Patient means:","Yes, please. Thank you."
+"Patient signs: CHEST PAIN
+Patient means:",I have chest pain.
+"Patient signs: HELLO THANK-YOU
+Patient means:","Hello, thank you for seeing me."
+"Doctor: Where does it hurt?
+Patient signs: HEAD STOMACH
+Patient means:",My head and my stomach.
+"Doctor: What do you need today?
+Patient signs: MEDICINE
+Patient means:",I need some medicine.
+"Doctor: Do you have any allergies?
+Patient signs: NO
+Patient means:","No, I don't have any allergies."
+"Patient signs: SLEEP CANT
+Patient means:",I can't sleep.
+"Doctor: Do you understand?
+Patient signs: NO
+Patient means:","No, I don't understand."
+"Doctor: Where does it hurt?
+Patient signs: HEAD
+Patient means:",My head.
+"Patient signs: CHEST PAIN SLEEP CANT
+Patient means:",My chest hurts and I can't sleep.
+"Doctor: Is the pain in your stomach?
+Patient signs: NO STOMACH
+Patient means:","No, not my stomach."
+"Doctor: Does it hurt here?
+Patient signs: NO
+Patient means:","No, it doesn't hurt there."
+"Doctor: When did you last take your medicine?
+Patient signs: YESTERDAY
+Patient means:",Yesterday.
+"Doctor: How are you feeling today?
+Patient signs: PAIN
+Patient means:",I'm in pain.
+"Patient signs: PAIN NO
+Patient means:",I'm not in pain.
+"Doctor: Where does it hurt?
+Patient signs: CHEST
+Patient means:",In my chest.
+"Patient signs: THREE DAY STOMACH PAIN
+Patient means:",I've had stomach pain for three days.
+"Doctor: Would you like me to explain the treatment?
+Patient signs: YES HELP
+Patient means:","Yes, please."
+"Doctor: Do you have a headache?
+Patient signs: NO HEAD
+Patient means:","No, I don't have a headache."
+"Doctor: How long has this been going on?
+Patient signs: THREE DAY
+Patient means:",For three days.
+"Patient signs: HEAD PAIN YESTERDAY
+Patient means:",My head has been hurting since yesterday.
+"Doctor: On a scale of one to ten, how bad is the pain?
+Patient signs: PAIN THREE
+Patient means:",About a three.
+"Patient signs: HEAD PAIN STOMACH PAIN
+Patient means:",I have a headache and stomach pain.
+"Doctor: Hello, I'm Dr Veer. What's brought you in today?
+Patient signs: PAIN HEAD
+Patient means:",I have a headache.
+"Doctor: What's brought you in today?
+Patient signs: HEAD PAIN
+Patient means:",I've got a headache.
+"Doctor: How can I help you today?
+Patient signs: PAIN HEAD
+Patient means:",I have a headache.
+"Doctor: What's brought you in today?
+Patient signs: PAIN HEAD THREE DAY
+Patient means:",I've had a headache for three days.
+"Doctor: I'm sorry to hear that. How long has it been going on?
+Patient signs: THREE DAY
+Patient means:",For three days.
+"Doctor: How long has it been going on?
+Patient signs: DAY THREE
+Patient means:",For three days.
+"Doctor: How long have you had the headache?
+Patient signs: THREE DAY
+Patient means:",About three days.
+"Doctor: Any changes to your vision, or feeling sick?
+Patient signs: NONE
+Patient means:","No, nothing like that."
+"Doctor: Any changes to your vision, or feeling sick?
+Patient signs: NO NONE
+Patient means:","No, nothing like that."
+"Doctor: Any other symptoms?
+Patient signs: NONE
+Patient means:","No, nothing else."
+"Doctor: Have you had a fever or a stiff neck?
+Patient signs: NONE
+Patient means:","No, nothing like that."
+"Doctor: Any numbness or weakness?
+Patient signs: NONE
+Patient means:","No, none of that."
+"Doctor: Are you taking any other medication?
+Patient signs: NONE
+Patient means:","No, none."
+"Patient signs: NONE
+Patient means:","No, nothing."
+"Doctor: Have you taken any analgesia for it?
+Patient signs: DONT-UNDERSTAND
+Patient means:","Sorry, I don't understand."
+"Doctor: Is the pain unilateral or bilateral?
+Patient signs: DONT-UNDERSTAND
+Patient means:","Sorry, I don't understand."
+"Doctor: Any photophobia?
+Patient signs: DONT-UNDERSTAND
+Patient means:","Sorry, I don't understand."
+"Patient signs: DONT-UNDERSTAND
+Patient means:","Sorry, I don't understand."
+"Patient signs: DONT-UNDERSTAND HELP
+Patient means:","Sorry, I don't understand. Can you help?"
+"Doctor: Have you taken any painkillers, like paracetamol?
+Patient signs: NO
+Patient means:","No, I haven't taken any painkillers."
+"Doctor: Have you taken any analgesia for it?
+Patient signs: NO
+Patient means:","No, I haven't."
+"Doctor: Have you taken any painkillers, like paracetamol?
+Patient signs: NO MEDICINE
+Patient means:","No, I haven't taken any."
+"Doctor: Have you taken any painkillers, like paracetamol?
+Patient signs: YES
+Patient means:","Yes, I have."
+"Doctor: This sounds like a tension headache. Take paracetamol, and come back if it isn't better in a week.
+Patient signs: THANK-YOU
+Patient means:",Thank you.
+"Doctor: Come back if it isn't better in a week.
+Patient signs: THANK-YOU
+Patient means:","Thank you, I will."
+"Doctor: Take paracetamol and rest.
+Patient signs: THANK-YOU HELP
+Patient means:",Thank you for your help.
+"Doctor: How have you been sleeping?
+Patient signs: CANT SLEEP
+Patient means:",I can't sleep.
+"Doctor: How have you been sleeping?
+Patient signs: SLEEP CANT
+Patient means:",I haven't been able to sleep.

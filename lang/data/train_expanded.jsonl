@@ -1,0 +1,474 @@
+{"prompt": "Patient signs: HEAD PAIN THREE DAY ?\nPatient means:", "completion": "I've had a headache for three days."}
+{"prompt": "Patient signs: CHEST PAIN ?\nPatient means:", "completion": "I have chest pain."}
+{"prompt": "Doctor: Do you still have the headache from yesterday?\nPatient signs: NO HEAD\nPatient means:", "completion": "No, my head feels better now."}
+{"prompt": "Patient signs: THANK-YOU HELLO\nPatient means:", "completion": "Hello, thank you."}
+{"prompt": "Doctor: Have you noticed any nausea?\nPatient signs: DONT-UNDERSTAND\nPatient means:", "completion": "I don't understand what nausea means."}
+{"prompt": "Patient signs: NONE HELP\nPatient means:", "completion": "No, nothing else. Thank you for your help."}
+{"prompt": "Patient signs: HELP SLEEP CANT\nPatient means:", "completion": "I need help, I can't sleep."}
+{"prompt": "Doctor: Did you take your medicine yesterday?\nPatient signs: MEDICINE YESTERDAY NO\nPatient means:", "completion": "No, I didn't take it yesterday."}
+{"prompt": "Doctor: Have you taken anything for it?\nPatient signs: HEAD PAIN MEDICINE\nPatient means:", "completion": "I've taken medicine for my headache."}
+{"prompt": "Patient signs: HELLO THANK-YOU\nPatient means:", "completion": "Hello, thank you for seeing me."}
+{"prompt": "Doctor: When did you last take your medicine?\nPatient signs: YESTERDAY\nPatient means:", "completion": "Yesterday."}
+{"prompt": "Doctor: Have you taken anything for the stomach pain?\nPatient signs: STOMACH PAIN MEDICINE YES\nPatient means:", "completion": "Yes, I took medicine for my stomach."}
+{"prompt": "Doctor: Good morning, what brings you in today?\nPatient signs: HELLO\nPatient means:", "completion": "Hello. I have a problem with my chest."}
+{"prompt": "Doctor: How long since you last took the medicine?\nPatient signs: THREE DAY MEDICINE NO\nPatient means:", "completion": "I haven't taken any for three days."}
+{"prompt": "Doctor: Has this been happening every day?\nPatient signs: NO DAY\nPatient means:", "completion": "No, not every day."}
+{"prompt": "Doctor: Which medicine are you taking now?\nPatient signs: MEDICINE ?\nPatient means:", "completion": "I'm taking the one from before."}
+{"prompt": "Patient signs: YES MEDICINE\nPatient means:", "completion": "Yes, I've taken some medicine today."}
+{"prompt": "Doctor: Would you like me to get an interpreter?\nPatient signs: HELP NO\nPatient means:", "completion": "No, I don't need help."}
+{"prompt": "Doctor: Did you sleep last night?\nPatient signs: NO SLEEP\nPatient means:", "completion": "No, I didn't sleep last night."}
+{"prompt": "Doctor: I'm going to examine your chest now.\nPatient signs: THANK-YOU HELP\nPatient means:", "completion": "Thank you for helping me."}
+{"prompt": "Doctor: Where does it hurt?\nPatient signs: HEAD\nPatient means:", "completion": "My head."}
+{"prompt": "Patient signs: CANT SLEEP THREE DAY\nPatient means:", "completion": "I've had trouble sleeping for three days."}
+{"prompt": "Doctor: Is the pain in your stomach?\nPatient signs: HEAD PAIN NO STOMACH\nPatient means:", "completion": "No, it's my head, not my stomach."}
+{"prompt": "Patient signs: CHEST PAIN DAY THREE\nPatient means:", "completion": "I've had chest pain for three days."}
+{"prompt": "Doctor: Did you take your medicine today?\nPatient signs: DAY MEDICINE NO\nPatient means:", "completion": "No, not today."}
+{"prompt": "Patient signs: CHEST PAIN NONE\nPatient means:", "completion": "I have chest pain, and no other symptoms."}
+{"prompt": "Doctor: How long have you been taking the medicine?\nPatient signs: DAY THREE\nPatient means:", "completion": "For three days."}
+{"prompt": "Doctor: Do you have any other pain besides your chest?\nPatient signs: HEAD CHEST PAIN\nPatient means:", "completion": "I also have a headache with the chest pain."}
+{"prompt": "Patient signs: YES MEDICINE THREE DAY\nPatient means:", "completion": "Yes, I've been taking medicine for three days."}
+{"prompt": "Doctor: Did you take the tablets I gave you?\nPatient signs: NO MEDICINE\nPatient means:", "completion": "No, I didn't take them."}
+{"prompt": "Doctor: Has the chest pain gone away?\nPatient signs: NO\nPatient means:", "completion": "No, it hasn't gone away."}
+{"prompt": "Doctor: Have you been sleeping at all?\nPatient signs: SLEEP CANT THREE DAY\nPatient means:", "completion": "I haven't been able to sleep for three days."}
+{"prompt": "Patient signs: SLEEP YESTERDAY YES\nPatient means:", "completion": "Yes, I slept yesterday."}
+{"prompt": "Doctor: Any dysuria or haematuria?\nPatient signs: DONT-UNDERSTAND\nPatient means:", "completion": "I don't understand. Please say it simply."}
+{"prompt": "Patient signs: DAY THREE MEDICINE NO\nPatient means:", "completion": "I haven't taken any medicine for three days."}
+{"prompt": "Doctor: Have you had the pain for a few days?\nPatient signs: YES DAY THREE\nPatient means:", "completion": "Yes, for three days."}
+{"prompt": "Doctor: How long has this been going on?\nPatient signs: THREE DAY\nPatient means:", "completion": "For three days."}
+{"prompt": "Patient signs: HEAD PAIN THREE\nPatient means:", "completion": "My headache is about a three."}
+{"prompt": "Doctor: Have you been taking any medicine?\nPatient signs: THREE DAY MEDICINE NO\nPatient means:", "completion": "No medicine for three days."}
+{"prompt": "Doctor: Did you have chest pain yesterday?\nPatient signs: CHEST YESTERDAY NO\nPatient means:", "completion": "No, not yesterday."}
+{"prompt": "Doctor: Where does it hurt?\nPatient signs: CHEST\nPatient means:", "completion": "In my chest."}
+{"prompt": "Doctor: Have you taken any analgesia for it?\nPatient signs: NO\nPatient means:", "completion": "No, I haven't."}
+{"prompt": "Patient signs: YESTERDAY MEDICINE THANK-YOU\nPatient means:", "completion": "Thank you, I took my medicine yesterday."}
+{"prompt": "Patient signs: HEAD PAIN MEDICINE NO THREE DAY\nPatient means:", "completion": "I've had a headache for three days and no medicine."}
+{"prompt": "Patient signs: CANT SLEEP THREE DAY HELP\nPatient means:", "completion": "I can't sleep for three days. I need help."}
+{"prompt": "Patient signs: NO STOMACH\nPatient means:", "completion": "No, it's not my stomach."}
+{"prompt": "Doctor: Is the chest pain still there now?\nPatient signs: YES\nPatient means:", "completion": "Yes, it's still there."}
+{"prompt": "Doctor: Are you taking any medicine right now?\nPatient signs: NO MEDICINE\nPatient means:", "completion": "No, I'm not taking any medicine."}
+{"prompt": "Doctor: Are you taking anything for it?\nPatient signs: MEDICINE NO\nPatient means:", "completion": "No, I'm not taking any medicine."}
+{"prompt": "Doctor: Is the pain in your stomach?\nPatient signs: NO STOMACH\nPatient means:", "completion": "No, not my stomach."}
+{"prompt": "Doctor: Did the chest pain keep you awake last night?\nPatient signs: SLEEP NO CHEST PAIN\nPatient means:", "completion": "Yes, I didn't sleep because of the chest pain."}
+{"prompt": "Doctor: Would you like me to explain the treatment?\nPatient signs: YES HELP\nPatient means:", "completion": "Yes, please."}
+{"prompt": "Doctor: How many days have you taken the medicine?\nPatient signs: MEDICINE THREE DAY NO\nPatient means:", "completion": "I haven't taken it for three days."}
+{"prompt": "Patient signs: HEAD HEAD PAIN\nPatient means:", "completion": "My head hurts."}
+{"prompt": "Doctor: Any changes to your vision, or feeling sick?\nPatient signs: NONE\nPatient means:", "completion": "No, nothing like that."}
+{"prompt": "Doctor: Any photophobia?\nPatient signs: DONT-UNDERSTAND\nPatient means:", "completion": "Sorry, I don't understand."}
+{"prompt": "Patient signs: SLEEP CANT\nPatient means:", "completion": "I can't sleep."}
+{"prompt": "Doctor: Where does it hurt?\nPatient signs: HEAD PAIN\nPatient means:", "completion": "It hurts in my head."}
+{"prompt": "Patient signs: HEAD MEDICINE YES YESTERDAY\nPatient means:", "completion": "Yes, I took medicine for my head yesterday."}
+{"prompt": "Patient signs: PAIN ?\nPatient means:", "completion": "I have some pain."}
+{"prompt": "Doctor: Is the pain in your chest or your stomach?\nPatient signs: NO CHEST\nPatient means:", "completion": "No, not my chest."}
+{"prompt": "Patient signs: CHEST PAIN DAY ?\nPatient means:", "completion": "I've had chest pain every day."}
+{"prompt": "Doctor: Is that everything you wanted to tell me?\nPatient signs: YES THANK-YOU\nPatient means:", "completion": "Yes, thank you."}
+{"prompt": "Doctor: Is your insomnia affecting your daily function?\nPatient signs: SLEEP CANT DONT-UNDERSTAND\nPatient means:", "completion": "I can't sleep. I don't understand insomnia."}
+{"prompt": "Doctor: When did the chest pain start?\nPatient signs: CHEST PAIN YESTERDAY\nPatient means:", "completion": "It started yesterday."}
+{"prompt": "Doctor: Try to sleep on your side and avoid screens late at night.\nPatient signs: SLEEP CANT THANK-YOU\nPatient means:", "completion": "I can't sleep. Thank you for the advice."}
+{"prompt": "Doctor: Where does it hurt?\nPatient signs: STOMACH ?\nPatient means:", "completion": "My stomach hurts."}
+{"prompt": "Patient signs: PAIN NO\nPatient means:", "completion": "I'm not in pain."}
+{"prompt": "Doctor: Did the pain get better after the medicine?\nPatient signs: PAIN YESTERDAY MEDICINE YES\nPatient means:", "completion": "Yes, the medicine helped a little."}
+{"prompt": "Doctor: Did the pain start yesterday?\nPatient signs: YES YESTERDAY\nPatient means:", "completion": "Yes, it started yesterday."}
+{"prompt": "Doctor: Do you have pain in your chest?\nPatient signs: YES CHEST PAIN\nPatient means:", "completion": "Yes, I have chest pain."}
+{"prompt": "Doctor: Any chest tightness or pressure?\nPatient signs: NO CHEST\nPatient means:", "completion": "No, no chest tightness."}
+{"prompt": "Doctor: Have you taken anything for the chest pain?\nPatient signs: CHEST PAIN MEDICINE NO\nPatient means:", "completion": "No, I haven't taken anything for it."}
+{"prompt": "Patient signs: CHEST YESTERDAY\nPatient means:", "completion": "My chest started hurting yesterday."}
+{"prompt": "Doctor: Do you have a headache too?\nPatient signs: NO HEAD CHEST PAIN\nPatient means:", "completion": "No headache, just chest pain."}
+{"prompt": "Doctor: Are you able to do your normal activities?\nPatient signs: CHEST PAIN CANT\nPatient means:", "completion": "No, I can't do my usual things with this chest pain."}
+{"prompt": "Doctor: Have you taken anything for the headache?\nPatient signs: HEAD PAIN MEDICINE NO\nPatient means:", "completion": "No, I haven't taken anything for my head."}
+{"prompt": "Doctor: Have you tried any medicine for your stomach?\nPatient signs: STOMACH MEDICINE NO\nPatient means:", "completion": "No, I haven't tried any medicine for my stomach."}
+{"prompt": "Patient signs: HEAD PAIN STOMACH PAIN\nPatient means:", "completion": "I have a headache and stomach pain."}
+{"prompt": "Patient signs: HELP HELP\nPatient means:", "completion": "Please, I need help."}
+{"prompt": "Doctor: When did your stomach start hurting?\nPatient signs: STOMACH PAIN YESTERDAY\nPatient means:", "completion": "My stomach started hurting yesterday."}
+{"prompt": "Patient signs: PAIN MEDICINE NO HELP\nPatient means:", "completion": "The pain medicine isn't helping me."}
+{"prompt": "Doctor: Is the pain also in your arm?\nPatient signs: NO CHEST PAIN\nPatient means:", "completion": "No, it's only in my chest."}
+{"prompt": "Doctor: Is your head hurting?\nPatient signs: YES HEAD\nPatient means:", "completion": "Yes, my head hurts."}
+{"prompt": "Patient signs: HELP HEAD\nPatient means:", "completion": "Please help me with my headache."}
+{"prompt": "Patient signs: YES THREE DAY\nPatient means:", "completion": "Yes, for three days."}
+{"prompt": "Doctor: Any other symptoms?\nPatient signs: NONE\nPatient means:", "completion": "No, nothing else."}
+{"prompt": "Doctor: Do you have a headache?\nPatient signs: YES HEAD PAIN\nPatient means:", "completion": "Yes, I have a headache."}
+{"prompt": "Doctor: Do you need help?\nPatient signs: YES HELP\nPatient means:", "completion": "Yes, I need help."}
+{"prompt": "Doctor: Have you taken anything for the headache?\nPatient signs: MEDICINE NO\nPatient means:", "completion": "No, I haven't taken any medicine."}
+{"prompt": "Doctor: Shall I prescribe something for you?\nPatient signs: YES THANK-YOU\nPatient means:", "completion": "Yes, please. Thank you."}
+{"prompt": "Doctor: When did you first notice the symptoms?\nPatient signs: YESTERDAY THREE DAY\nPatient means:", "completion": "Three days ago, yesterday was the worst."}
+{"prompt": "Doctor: Is the pain in your chest?\nPatient signs: NO CHEST\nPatient means:", "completion": "No, not my chest."}
+{"prompt": "Doctor: Any changes to your vision, or feeling sick?\nPatient signs: NO NONE\nPatient means:", "completion": "No, nothing like that."}
+{"prompt": "Doctor: When did you last take your medicine?\nPatient signs: THREE DAY\nPatient means:", "completion": "Three days ago."}
+{"prompt": "Patient signs: YES\nPatient means:", "completion": "Yes."}
+{"prompt": "Doctor: When did your headache begin?\nPatient signs: HEAD PAIN YESTERDAY\nPatient means:", "completion": "It began yesterday."}
+{"prompt": "Doctor: What brings you in today?\nPatient signs: HELLO HEAD PAIN\nPatient means:", "completion": "Hello. I have a headache."}
+{"prompt": "Doctor: Did the medicine help?\nPatient signs: YES\nPatient means:", "completion": "Yes, it helped."}
+{"prompt": "Doctor: Where exactly are you feeling the pain?\nPatient signs: CHEST PAIN\nPatient means:", "completion": "It's in my chest."}
+{"prompt": "Doctor: Have you tried any analgesia at home?\nPatient signs: DONT-UNDERSTAND MEDICINE\nPatient means:", "completion": "I don't understand. Do you mean medicine?"}
+{"prompt": "Patient signs: HEAD PAIN DAY THREE\nPatient means:", "completion": "I've had a headache for three days."}
+{"prompt": "Doctor: Any changes to your appetite or weight?\nPatient signs: NONE\nPatient means:", "completion": "No, no changes to my appetite."}
+{"prompt": "Doctor: What would you like help with today?\nPatient signs: CHEST ? HELP\nPatient means:", "completion": "I need help with my chest."}
+{"prompt": "Doctor: Where does it hurt?\nPatient signs: STOMACH\nPatient means:", "completion": "In my stomach."}
+{"prompt": "Patient signs: PAIN PAIN CHEST\nPatient means:", "completion": "I have pain in my chest."}
+{"prompt": "Doctor: How strong is the pain on a scale of one to ten?\nPatient signs: PAIN THREE\nPatient means:", "completion": "About a three."}
+{"prompt": "Patient signs: DONT-UNDERSTAND\nPatient means:", "completion": "Sorry, I don't understand."}
+{"prompt": "Patient signs: PAIN\nPatient means:", "completion": "I'm in pain."}
+{"prompt": "Doctor: Do you still have the headache?\nPatient signs: YES HEAD PAIN THREE DAY\nPatient means:", "completion": "Yes, my head has hurt for three days."}
+{"prompt": "Doctor: Is the pain in your stomach?\nPatient signs: YES STOMACH\nPatient means:", "completion": "Yes, it's in my stomach."}
+{"prompt": "Doctor: We'll book a scan for next week and call you with the result.\nPatient signs: THANK-YOU\nPatient means:", "completion": "Thank you, that sounds good."}
+{"prompt": "Doctor: Do you need any more help today?\nPatient signs: NO HELP\nPatient means:", "completion": "No, I don't need more help."}
+{"prompt": "Doctor: Have you had a fever or a stiff neck?\nPatient signs: NONE\nPatient means:", "completion": "No, nothing like that."}
+{"prompt": "Doctor: How long have you had the chest pain?\nPatient signs: CHEST PAIN DAY THREE ?\nPatient means:", "completion": "For about three days."}
+{"prompt": "Patient signs: HEAD PAIN YESTERDAY MEDICINE\nPatient means:", "completion": "My head hurt yesterday, so I took medicine."}
+{"prompt": "Patient signs: THREE DAY HEAD ?\nPatient means:", "completion": "I've had this head problem for three days."}
+{"prompt": "Doctor: How long have you had the chest pain?\nPatient signs: CHEST PAIN THREE DAY\nPatient means:", "completion": "I've had chest pain for three days."}
+{"prompt": "Doctor: Did you take the medicine this morning?\nPatient signs: MEDICINE YES\nPatient means:", "completion": "Yes, I took it this morning."}
+{"prompt": "Doctor: Is it your stomach that hurts?\nPatient signs: NO HEAD\nPatient means:", "completion": "No, it's my head."}
+{"prompt": "Doctor: Have you had a fever or chills?\nPatient signs: NO NONE\nPatient means:", "completion": "No, no fever or chills."}
+{"prompt": "Patient signs: YESTERDAY CHEST PAIN\nPatient means:", "completion": "My chest pain started yesterday."}
+{"prompt": "Doctor: Did the pain start yesterday?\nPatient signs: NO YESTERDAY\nPatient means:", "completion": "No, it didn't start yesterday."}
+{"prompt": "Doctor: Have you taken any painkillers, like paracetamol?\nPatient signs: NO\nPatient means:", "completion": "No, I haven't taken any painkillers."}
+{"prompt": "Patient signs: CHEST PAIN CANT SLEEP THREE DAY\nPatient means:", "completion": "I haven't been able to sleep for three days because of my chest."}
+{"prompt": "Doctor: Are you having chest pain right now?\nPatient signs: YES CHEST PAIN\nPatient means:", "completion": "Yes, I have chest pain right now."}
+{"prompt": "Doctor: Are you able to take the medicine?\nPatient signs: MEDICINE CANT\nPatient means:", "completion": "I can't take the medicine."}
+{"prompt": "Doctor: Hello, what brings you in today?\nPatient signs: HELLO HEAD PAIN\nPatient means:", "completion": "Hello, I have a headache."}
+{"prompt": "Doctor: Is it your head or your stomach?\nPatient signs: HEAD\nPatient means:", "completion": "My head."}
+{"prompt": "Doctor: Has the pain been going on for a few days?\nPatient signs: YES THREE DAY\nPatient means:", "completion": "Yes, for three days."}
+{"prompt": "Doctor: Is the pain in your chest?\nPatient signs: NO CHEST HEAD PAIN\nPatient means:", "completion": "No, it's my head."}
+{"prompt": "Doctor: How long has it been bothering you?\nPatient signs: DAY THREE PAIN\nPatient means:", "completion": "It's been painful for three days."}
+{"prompt": "Doctor: Rest for now, and the pain should ease. Come back if it gets worse.\nPatient signs: THANK-YOU\nPatient means:", "completion": "Thank you."}
+{"prompt": "Doctor: Did you forget your medicine today?\nPatient signs: NO MEDICINE DAY\nPatient means:", "completion": "No, I haven't had any medicine today."}
+{"prompt": "Doctor: Did you take your medicine?\nPatient signs: NO MEDICINE\nPatient means:", "completion": "No, I didn't take my medicine."}
+{"prompt": "Doctor: Has the chest pain stopped you sleeping?\nPatient signs: YES SLEEP CANT CHEST\nPatient means:", "completion": "Yes, the chest pain stops me sleeping."}
+{"prompt": "Doctor: Here is some medicine for your headache.\nPatient signs: THANK-YOU\nPatient means:", "completion": "Thank you."}
+{"prompt": "Doctor: Have you taken any medicine?\nPatient signs: ?\nPatient means:", "completion": "Sorry, let me sign that again."}
+{"prompt": "Doctor: Are you taking any other medication?\nPatient signs: NONE\nPatient means:", "completion": "No, none."}
+{"prompt": "Doctor: How have you been sleeping?\nPatient signs: SLEEP CANT\nPatient means:", "completion": "I haven't been able to sleep."}
+{"prompt": "Doctor: Have you taken any medicine?\nPatient signs: NO\nPatient means:", "completion": "No, I haven't."}
+{"prompt": "Patient signs: THREE DAY NO MEDICINE\nPatient means:", "completion": "For three days, and I haven't taken any medicine."}
+{"prompt": "Doctor: Is the medicine helping?\nPatient signs: DAY THREE MEDICINE HELP\nPatient means:", "completion": "It's helped for three days, but I need more help."}
+{"prompt": "Doctor: Are you taking your medicine?\nPatient signs: MEDICINE CANT\nPatient means:", "completion": "I can't take my medicine."}
+{"prompt": "Doctor: Do you have any allergies?\nPatient signs: NO\nPatient means:", "completion": "No, I don't have any allergies."}
+{"prompt": "Doctor: Are you sleeping at night?\nPatient signs: NO SLEEP CANT\nPatient means:", "completion": "No, I can't sleep at night."}
+{"prompt": "Patient signs: CHEST PAIN CANT SLEEP\nPatient means:", "completion": "The chest pain stops me from sleeping."}
+{"prompt": "Patient signs: HELLO CHEST PAIN HELP\nPatient means:", "completion": "Hello, I need help with chest pain."}
+{"prompt": "Doctor: Are you getting enough sleep?\nPatient signs: THREE DAY SLEEP NO\nPatient means:", "completion": "No, I haven't slept for three days."}
+{"prompt": "Patient signs: STOMACH PAIN MEDICINE YESTERDAY\nPatient means:", "completion": "I took medicine for my stomach yesterday."}
+{"prompt": "Doctor: Did you take any medicine this morning?\nPatient signs: NO\nPatient means:", "completion": "No, I didn't."}
+{"prompt": "Doctor: Where does it hurt?\nPatient signs: HEAD STOMACH\nPatient means:", "completion": "My head and my stomach."}
+{"prompt": "Patient signs: CHEST PAIN\nPatient means:", "completion": "I have chest pain."}
+{"prompt": "Doctor: Is the pain in your head?\nPatient signs: NO PAIN HEAD\nPatient means:", "completion": "No, the pain isn't in my head."}
+{"prompt": "Doctor: Have you been taking your medicine?\nPatient signs: MEDICINE YES\nPatient means:", "completion": "Yes, I've been taking it."}
+{"prompt": "Patient signs: MEDICINE NO\nPatient means:", "completion": "I haven't taken any medicine."}
+{"prompt": "Doctor: Are you sleeping okay?\nPatient signs: YES\nPatient means:", "completion": "Yes, I'm sleeping okay."}
+{"prompt": "Doctor: How many days ago did it start?\nPatient signs: THREE\nPatient means:", "completion": "Three days ago."}
+{"prompt": "Doctor: Symptoms have been present for seventy-two hours?\nPatient signs: DONT-UNDERSTAND THREE DAY\nPatient means:", "completion": "I don't understand. Three days."}
+{"prompt": "Patient signs: PAIN THREE DAY HELP\nPatient means:", "completion": "I've had pain for three days and need help."}
+{"prompt": "Doctor: Do you have any allergies to medicine?\nPatient signs: NO THANK-YOU\nPatient means:", "completion": "No, I don't have any allergies to medicine. Thank you."}
+{"prompt": "Patient signs: DONT-UNDERSTAND HELP\nPatient means:", "completion": "Sorry, I don't understand. Can you help?"}
+{"prompt": "Doctor: Your blood pressure is slightly high, so we'll monitor it.\nPatient signs: THANK-YOU DONT-UNDERSTAND\nPatient means:", "completion": "Thank you, but I don't understand the blood pressure part."}
+{"prompt": "Patient signs: CHEST PAIN CANT SLEEP DAY THREE\nPatient means:", "completion": "I've had chest pain and couldn't sleep for three days."}
+{"prompt": "Patient signs: HEAD PAIN MEDICINE NO\nPatient means:", "completion": "I have a headache and I haven't taken any medicine."}
+{"prompt": "Doctor: Are you taking any other medicines?\nPatient signs: NONE\nPatient means:", "completion": "No, I'm not taking any other medicines."}
+{"prompt": "Patient signs: YESTERDAY MEDICINE NO\nPatient means:", "completion": "I didn't take any medicine yesterday."}
+{"prompt": "Patient signs: HEAD PAIN SLEEP CANT YESTERDAY\nPatient means:", "completion": "I couldn't sleep because of my headache yesterday."}
+{"prompt": "Doctor: I've written you a prescription for that.\nPatient signs: THANK-YOU\nPatient means:", "completion": "Thank you."}
+{"prompt": "Patient signs: CANT SLEEP YESTERDAY\nPatient means:", "completion": "I couldn't sleep last night."}
+{"prompt": "Doctor: Eat smaller meals, and we'll check your blood tests next week.\nPatient signs: STOMACH PAIN THANK-YOU\nPatient means:", "completion": "My stomach hurts. Thank you for explaining the plan."}
+{"prompt": "Doctor: Good. Keep taking it as prescribed.\nPatient signs: MEDICINE YES THANK-YOU\nPatient means:", "completion": "Yes, thank you."}
+{"prompt": "Doctor: Are you getting headaches?\nPatient signs: YES HEAD PAIN\nPatient means:", "completion": "Yes, I've been getting headaches."}
+{"prompt": "Doctor: How can I help you today?\nPatient signs: HELP\nPatient means:", "completion": "I need help with my health."}
+{"prompt": "Doctor: Would you like help with your medicine?\nPatient signs: YES MEDICINE HELP\nPatient means:", "completion": "Yes, I would like help with my medicine."}
+{"prompt": "Patient signs: MEDICINE NONE\nPatient means:", "completion": "I'm not taking any medicine."}
+{"prompt": "Patient signs: CHEST ? THREE DAY\nPatient means:", "completion": "Something about my chest, for three days."}
+{"prompt": "Patient signs: HELP YESTERDAY STOMACH\nPatient means:", "completion": "I needed help yesterday with my stomach."}
+{"prompt": "Patient signs: NO STOMACH NONE\nPatient means:", "completion": "Not my stomach, and nothing else either."}
+{"prompt": "Patient signs: MEDICINE THREE DAY NO SLEEP\nPatient means:", "completion": "I've taken no medicine, and I haven't slept for three days."}
+{"prompt": "Doctor: How can I help you today?\nPatient signs: PAIN HEAD\nPatient means:", "completion": "I have a headache."}
+{"prompt": "Doctor: How long has the headache been going on?\nPatient signs: THREE DAY\nPatient means:", "completion": "For three days now."}
+{"prompt": "Doctor: Do you have chest pain?\nPatient signs: YES CHEST PAIN\nPatient means:", "completion": "Yes, I have chest pain."}
+{"prompt": "Doctor: Would you rate the cephalalgia as moderate?\nPatient signs: HEAD PAIN DONT-UNDERSTAND\nPatient means:", "completion": "My head hurts. I don't understand cephalalgia."}
+{"prompt": "Doctor: Is there anything else I can do for you?\nPatient signs: THANK-YOU HELP\nPatient means:", "completion": "Thank you, that's all the help I need."}
+{"prompt": "Patient signs: CANT SLEEP\nPatient means:", "completion": "I can't sleep."}
+{"prompt": "Patient signs: DAY THREE NONE\nPatient means:", "completion": "For three days, and no other problems."}
+{"prompt": "Doctor: Have you been sleeping well lately?\nPatient signs: SLEEP CANT THREE DAY\nPatient means:", "completion": "No, I can't sleep. It's been three days."}
+{"prompt": "Patient signs: PAIN THREE DAY CHEST\nPatient means:", "completion": "The pain in my chest has lasted three days."}
+{"prompt": "Patient signs: THREE DAY SLEEP CANT\nPatient means:", "completion": "I haven't been able to sleep for three days."}
+{"prompt": "Doctor: What do you need today?\nPatient signs: MEDICINE\nPatient means:", "completion": "I need some medicine."}
+{"prompt": "Doctor: Have you taken any paracetamol today?\nPatient signs: NO MEDICINE\nPatient means:", "completion": "No, I haven't taken any paracetamol today."}
+{"prompt": "Patient signs: STOMACH PAIN THREE DAY ?\nPatient means:", "completion": "I've had stomach pain for three days."}
+{"prompt": "Doctor: Is this your first visit?\nPatient signs: YES\nPatient means:", "completion": "Yes, it is."}
+{"prompt": "Doctor: Would you like a prescription for it?\nPatient signs: YES MEDICINE THANK-YOU\nPatient means:", "completion": "Yes, please. Thank you."}
+{"prompt": "Doctor: Have you been sleeping well?\nPatient signs: NO SLEEP CHEST PAIN\nPatient means:", "completion": "No, I haven't slept well because of the chest pain."}
+{"prompt": "Patient signs: NONE\nPatient means:", "completion": "No, nothing."}
+{"prompt": "Patient signs: NONE DONT-UNDERSTAND\nPatient means:", "completion": "No, but I don't understand the last part."}
+{"prompt": "Doctor: Are you taking medicine for your chest?\nPatient signs: NO CHEST MEDICINE\nPatient means:", "completion": "No, I'm not taking medicine for my chest."}
+{"prompt": "Doctor: Did you take anything for the chest pain?\nPatient signs: CHEST PAIN MEDICINE NO\nPatient means:", "completion": "No, I didn't take anything for my chest."}
+{"prompt": "Doctor: Have you been taking any medicine for this?\nPatient signs: NO MEDICINE\nPatient means:", "completion": "No, I haven't been taking any medicine."}
+{"prompt": "Doctor: Are you taking anything for your chest?\nPatient signs: MEDICINE CHEST ?\nPatient means:", "completion": "I'm taking some medicine for my chest."}
+{"prompt": "Doctor: Rest and drink plenty of water for a few days.\nPatient signs: THANK-YOU\nPatient means:", "completion": "Thank you for the advice."}
+{"prompt": "Doctor: How long has the headache lasted?\nPatient signs: THREE DAY\nPatient means:", "completion": "Three days."}
+{"prompt": "Doctor: How long have you had this?\nPatient signs: THREE DAY\nPatient means:", "completion": "Three days."}
+{"prompt": "Doctor: Did you finish the whole course of medicine?\nPatient signs: YES\nPatient means:", "completion": "Yes, I finished it."}
+{"prompt": "Doctor: Any other symptoms I should know about?\nPatient signs: THANK-YOU NONE\nPatient means:", "completion": "Thank you, none."}
+{"prompt": "Doctor: Did you take the medicine last night?\nPatient signs: MEDICINE NO\nPatient means:", "completion": "No, I didn't take it last night."}
+{"prompt": "Doctor: Did anything new happen yesterday?\nPatient signs: NONE YESTERDAY\nPatient means:", "completion": "No, nothing new happened yesterday."}
+{"prompt": "Doctor: Any other pain anywhere else?\nPatient signs: NONE\nPatient means:", "completion": "No, no other pain."}
+{"prompt": "Doctor: Do you have any other symptoms?\nPatient signs: CHEST PAIN HEAD\nPatient means:", "completion": "I also have a headache with the chest pain."}
+{"prompt": "Doctor: Is your head hurting?\nPatient signs: NO HEAD PAIN\nPatient means:", "completion": "No, my head isn't hurting."}
+{"prompt": "Doctor: Did the chest pain start yesterday?\nPatient signs: YESTERDAY CHEST PAIN YES\nPatient means:", "completion": "Yes, it started yesterday."}
+{"prompt": "Doctor: Have you been able to sleep?\nPatient signs: MEDICINE NO CANT SLEEP\nPatient means:", "completion": "No, I haven't taken medicine and I can't sleep."}
+{"prompt": "Patient signs: YESTERDAY MEDICINE NO HEAD\nPatient means:", "completion": "I didn't take any medicine for my head yesterday."}
+{"prompt": "Patient signs: CHEST PAIN HELP THANK-YOU\nPatient means:", "completion": "Thank you for helping with my chest pain."}
+{"prompt": "Patient signs: HEAD PAIN THANK-YOU\nPatient means:", "completion": "I have a headache, thank you."}
+{"prompt": "Patient signs: YESTERDAY MEDICINE YES\nPatient means:", "completion": "I took my medicine yesterday."}
+{"prompt": "Doctor: Let's keep an eye on it and see how you feel next week.\nPatient signs: HEAD PAIN YESTERDAY THANK-YOU\nPatient means:", "completion": "I've had a headache since yesterday. Thank you."}
+{"prompt": "Patient signs: THANK-YOU HELP ?\nPatient means:", "completion": "Thank you for your help."}
+{"prompt": "Patient signs: MEDICINE YES HEAD PAIN\nPatient means:", "completion": "I took medicine, but my head still hurts."}
+{"prompt": "Patient signs: YESTERDAY PAIN HEAD HEAD\nPatient means:", "completion": "My head hurt really badly yesterday."}
+{"prompt": "Patient signs: HEAD ? PAIN\nPatient means:", "completion": "My head hurts."}
+{"prompt": "Doctor: Is the pain still there?\nPatient signs: PAIN MEDICINE ?\nPatient means:", "completion": "Yes, the pain is still there."}
+{"prompt": "Patient signs: YESTERDAY SLEEP CANT\nPatient means:", "completion": "I couldn't sleep yesterday."}
+{"prompt": "Doctor: How long have you had the headache?\nPatient signs: THREE DAY\nPatient means:", "completion": "About three days."}
+{"prompt": "Patient signs: MEDICINE YESTERDAY\nPatient means:", "completion": "I took some medicine yesterday."}
+{"prompt": "Doctor: How long has it been since the pain started?\nPatient signs: DONT-UNDERSTAND\nPatient means:", "completion": "I don't understand the question."}
+{"prompt": "Doctor: Did you take your medicine yesterday?\nPatient signs: MEDICINE NO YESTERDAY\nPatient means:", "completion": "No, I didn't take it yesterday."}
+{"prompt": "Doctor: Does the pain come and go?\nPatient signs: CHEST NO\nPatient means:", "completion": "No, it doesn't come and go."}
+{"prompt": "Patient signs: ? HEAD PAIN\nPatient means:", "completion": "I have a headache."}
+{"prompt": "Doctor: How long has the chest pain been going on?\nPatient signs: CHEST PAIN ? DAY\nPatient means:", "completion": "It's been going on for a day."}
+{"prompt": "Patient signs: MEDICINE CANT THREE DAY\nPatient means:", "completion": "I haven't been able to take my medicine for three days."}
+{"prompt": "Doctor: Are you taking medicine for the chest pain?\nPatient signs: YES MEDICINE CHEST\nPatient means:", "completion": "Yes, I'm taking medicine for it."}
+{"prompt": "Patient signs: NONE STOMACH\nPatient means:", "completion": "Nothing wrong with my stomach."}
+{"prompt": "Doctor: How long have you had these symptoms?\nPatient signs: THREE DAY\nPatient means:", "completion": "For three days."}
+{"prompt": "Doctor: Did you take anything for the pain?\nPatient signs: MEDICINE YESTERDAY\nPatient means:", "completion": "I took medicine yesterday."}
+{"prompt": "Doctor: Are you taking any medicine for your chest?\nPatient signs: CHEST PAIN THREE NO MEDICINE\nPatient means:", "completion": "No, I haven't taken any medicine for it."}
+{"prompt": "Doctor: Would you like me to change your medicine?\nPatient signs: YES HELP MEDICINE\nPatient means:", "completion": "Yes, please help me with the medicine."}
+{"prompt": "Doctor: Have you taken anything for the pain?\nPatient signs: MEDICINE NO\nPatient means:", "completion": "No, I haven't taken any medicine."}
+{"prompt": "Doctor: Are you having any stomach pain as well?\nPatient signs: NO PAIN CHEST\nPatient means:", "completion": "No, just chest pain."}
+{"prompt": "Doctor: What brings you in today?\nPatient signs: CHEST PAIN\nPatient means:", "completion": "I have chest pain."}
+{"prompt": "Doctor: Take care, we'll see you next week.\nPatient signs: THANK-YOU\nPatient means:", "completion": "Thank you."}
+{"prompt": "Doctor: Is this a new chest pain?\nPatient signs: CHEST PAIN DAY\nPatient means:", "completion": "Yes, it's been a day."}
+{"prompt": "Doctor: Do you need help?\nPatient signs: NO HELP\nPatient means:", "completion": "No, I don't need help."}
+{"prompt": "Doctor: Did the chest pain start suddenly?\nPatient signs: CHEST PAIN YESTERDAY ?\nPatient means:", "completion": "Yes, it started yesterday."}
+{"prompt": "Doctor: Are you sleeping okay?\nPatient signs: NO SLEEP CANT\nPatient means:", "completion": "No, I can't sleep."}
+{"prompt": "Doctor: Is the pain on your left side?\nPatient signs: CHEST PAIN YES NO\nPatient means:", "completion": "No, it isn't on my left side."}
+{"prompt": "Patient signs: HELLO CHEST PAIN YESTERDAY\nPatient means:", "completion": "Hello, my chest pain started yesterday."}
+{"prompt": "Patient signs: HEAD NONE\nPatient means:", "completion": "Only my head, nothing else."}
+{"prompt": "Patient signs: DAY MEDICINE NO\nPatient means:", "completion": "I haven't taken any medicine today."}
+{"prompt": "Patient signs: MEDICINE HELP NO\nPatient means:", "completion": "The medicine hasn't helped."}
+{"prompt": "Doctor: Is your head hurting?\nPatient signs: HEAD ? NO\nPatient means:", "completion": "No, my head isn't hurting."}
+{"prompt": "Doctor: What's brought you in today?\nPatient signs: HEAD PAIN\nPatient means:", "completion": "I've got a headache."}
+{"prompt": "Patient signs: HEAD PAIN THREE DAY\nPatient means:", "completion": "I've had a headache for three days."}
+{"prompt": "Doctor: Keep taking your medicine even if you feel better.\nPatient signs: THANK-YOU\nPatient means:", "completion": "Thank you, that's helpful."}
+{"prompt": "Doctor: Are you having chest pain right now?\nPatient signs: NO CHEST PAIN\nPatient means:", "completion": "No, I'm not having it right now."}
+{"prompt": "Patient signs: NO SLEEP\nPatient means:", "completion": "No, I didn't sleep."}
+{"prompt": "Patient signs: CHEST PAIN MEDICINE THREE DAY\nPatient means:", "completion": "I've been taking medicine for my chest for three days."}
+{"prompt": "Patient signs: STOMACH PAIN\nPatient means:", "completion": "I have stomach pain."}
+{"prompt": "Patient signs: MEDICINE YESTERDAY NO THANK-YOU\nPatient means:", "completion": "No medicine yesterday, thank you for asking."}
+{"prompt": "Doctor: Is the pain in your head?\nPatient signs: YES\nPatient means:", "completion": "Yes, the pain is in my head."}
+{"prompt": "Doctor: Are you taking anything for the headache?\nPatient signs: MEDICINE NO HEAD PAIN\nPatient means:", "completion": "No, I haven't taken any medicine for it."}
+{"prompt": "Patient signs: HELP CHEST ?\nPatient means:", "completion": "I need help with something about my chest."}
+{"prompt": "Patient signs: THREE DAY ?\nPatient means:", "completion": "Something about it, for three days."}
+{"prompt": "Doctor: Is the pain about a three out of ten?\nPatient signs: YES PAIN CHEST THREE\nPatient means:", "completion": "Yes, about a three."}
+{"prompt": "Patient signs: STOMACH PAIN ?\nPatient means:", "completion": "I have stomach pain."}
+{"prompt": "Doctor: Are you short of breath at all?\nPatient signs: NO\nPatient means:", "completion": "No."}
+{"prompt": "Doctor: Did the chest pain start before yesterday?\nPatient signs: NO YESTERDAY CHEST PAIN\nPatient means:", "completion": "No, it started yesterday."}
+{"prompt": "Doctor: Are you allergic to any medicine?\nPatient signs: YES\nPatient means:", "completion": "Yes, I'm allergic to some medicine."}
+{"prompt": "Doctor: Have you been taking anything for the pain?\nPatient signs: NO MEDICINE\nPatient means:", "completion": "No, I haven't taken any medicine."}
+{"prompt": "Patient signs: CHEST PAIN YESTERDAY\nPatient means:", "completion": "I've had chest pain since yesterday."}
+{"prompt": "Patient signs: DAY THREE CHEST PAIN\nPatient means:", "completion": "For three days now, I've had chest pain."}
+{"prompt": "Doctor: Did you take your medicine yesterday?\nPatient signs: YESTERDAY YES MEDICINE\nPatient means:", "completion": "Yes, I took it yesterday."}
+{"prompt": "Doctor: Do you need help getting your medicine?\nPatient signs: NO MEDICINE HELP\nPatient means:", "completion": "No, I don't need help with medicine."}
+{"prompt": "Doctor: Do you have pain right now?\nPatient signs: NO PAIN\nPatient means:", "completion": "No, I don't have pain right now."}
+{"prompt": "Doctor: When did the headache start?\nPatient signs: YESTERDAY\nPatient means:", "completion": "It started yesterday."}
+{"prompt": "Doctor: Here's your prescription.\nPatient signs: THANK-YOU MEDICINE\nPatient means:", "completion": "Thank you for the medicine."}
+{"prompt": "Doctor: How are you feeling today?\nPatient signs: PAIN\nPatient means:", "completion": "I'm in pain."}
+{"prompt": "Patient signs: YESTERDAY ? STOMACH\nPatient means:", "completion": "My stomach hurt yesterday."}
+{"prompt": "Doctor: Does it hurt here?\nPatient signs: NO\nPatient means:", "completion": "No, it doesn't hurt there."}
+{"prompt": "Doctor: Are you taking anything for it?\nPatient signs: MEDICINE CHEST\nPatient means:", "completion": "I'm taking medicine for my chest."}
+{"prompt": "Doctor: Where does it hurt?\nPatient signs: ? PAIN HEAD\nPatient means:", "completion": "My head hurts."}
+{"prompt": "Doctor: Are you on any prophylactic aspirin?\nPatient signs: DONT-UNDERSTAND MEDICINE\nPatient means:", "completion": "I don't understand. Are you asking about my medicine?"}
+{"prompt": "Doctor: Have you taken any painkillers, like paracetamol?\nPatient signs: NO MEDICINE\nPatient means:", "completion": "No, I haven't taken any."}
+{"prompt": "Doctor: Is the pain worse than three out of ten?\nPatient signs: PAIN CHEST NO THREE\nPatient means:", "completion": "No, it's not worse than three."}
+{"prompt": "Patient signs: HEAD PAIN MEDICINE YESTERDAY\nPatient means:", "completion": "I took medicine for my headache yesterday."}
+{"prompt": "Doctor: Have you taken the medicine I prescribed?\nPatient signs: MEDICINE NO\nPatient means:", "completion": "No, I haven't taken it."}
+{"prompt": "Patient signs: NO NONE\nPatient means:", "completion": "No, nothing else."}
+{"prompt": "Doctor: Have you noticed any changes in your vision?\nPatient signs: NO NONE\nPatient means:", "completion": "No, I haven't noticed any changes in my vision."}
+{"prompt": "Doctor: Have you taken the medicine I prescribed?\nPatient signs: MEDICINE YES\nPatient means:", "completion": "Yes, I've taken it."}
+{"prompt": "Doctor: Thanks for coming in. What brings you here today?\nPatient signs: CHEST PAIN HELP THANK-YOU\nPatient means:", "completion": "Thank you. I need help with my chest pain."}
+{"prompt": "Doctor: Any hypoglycaemic episodes lately?\nPatient signs: DONT-UNDERSTAND NONE\nPatient means:", "completion": "I don't understand that word, but no, none."}
+{"prompt": "Doctor: Is the pain there all day?\nPatient signs: CHEST PAIN DAY\nPatient means:", "completion": "Yes, the chest pain is there all day."}
+{"prompt": "Doctor: Is it hard for you to sleep?\nPatient signs: CANT SLEEP YES\nPatient means:", "completion": "Yes, I can't sleep."}
+{"prompt": "Patient signs: STOMACH ?\nPatient means:", "completion": "I've got something wrong with my stomach."}
+{"prompt": "Doctor: Is the pain in your chest?\nPatient signs: YES CHEST\nPatient means:", "completion": "Yes, in my chest."}
+{"prompt": "Doctor: Can you point to where it hurts?\nPatient signs: CHEST ?\nPatient means:", "completion": "Here, in my chest."}
+{"prompt": "Patient signs: PAIN HEAD YESTERDAY\nPatient means:", "completion": "I had a headache yesterday."}
+{"prompt": "Doctor: Are you in pain?\nPatient signs: YES\nPatient means:", "completion": "Yes, I'm in pain."}
+{"prompt": "Doctor: When did the headache start?\nPatient signs: YESTERDAY HEAD PAIN\nPatient means:", "completion": "It started yesterday."}
+{"prompt": "Patient signs: HELLO YESTERDAY CHEST PAIN\nPatient means:", "completion": "Hello, my chest started hurting yesterday."}
+{"prompt": "Doctor: Is it your chest that hurts?\nPatient signs: YES CHEST\nPatient means:", "completion": "Yes, my chest."}
+{"prompt": "Patient signs: MEDICINE NO YESTERDAY\nPatient means:", "completion": "I didn't take my medicine yesterday."}
+{"prompt": "Patient signs: HELP MEDICINE\nPatient means:", "completion": "I need help with my medicine."}
+{"prompt": "Doctor: Are you still on the medicine?\nPatient signs: MEDICINE THREE DAY YES\nPatient means:", "completion": "Yes, I've been on it for three days."}
+{"prompt": "Patient signs: MEDICINE THREE DAY\nPatient means:", "completion": "I've been taking medicine for three days."}
+{"prompt": "Doctor: Have you taken anything for the chest pain?\nPatient signs: CHEST PAIN MEDICINE YES\nPatient means:", "completion": "Yes, I've taken some medicine for it."}
+{"prompt": "Patient signs: THREE DAY PAIN\nPatient means:", "completion": "I've had pain for three days."}
+{"prompt": "Doctor: How many days has this been happening?\nPatient signs: DAY THREE\nPatient means:", "completion": "Three days."}
+{"prompt": "Doctor: Have you been taking anything to help you sleep?\nPatient signs: SLEEP NO MEDICINE\nPatient means:", "completion": "No, I haven't taken anything to sleep."}
+{"prompt": "Doctor: Would you like me to change your medicine?\nPatient signs: NO HELP MEDICINE\nPatient means:", "completion": "No, I don't need help with the medicine."}
+{"prompt": "Doctor: When did it start?\nPatient signs: THREE DAY\nPatient means:", "completion": "It started three days ago."}
+{"prompt": "Patient signs: HELP\nPatient means:", "completion": "I need help."}
+{"prompt": "Doctor: Is the chest pain affecting your sleep?\nPatient signs: CHEST PAIN SLEEP YES\nPatient means:", "completion": "Yes, it's affecting my sleep."}
+{"prompt": "Patient signs: THREE DAY STOMACH PAIN\nPatient means:", "completion": "I've had stomach pain for three days."}
+{"prompt": "Patient signs: MEDICINE THREE\nPatient means:", "completion": "I've had my medicine three times."}
+{"prompt": "Doctor: Is the pain unilateral or bilateral?\nPatient signs: DONT-UNDERSTAND\nPatient means:", "completion": "Sorry, I don't understand."}
+{"prompt": "Patient signs: DAY THREE PAIN STOMACH\nPatient means:", "completion": "My stomach has hurt for three days."}
+{"prompt": "Doctor: How long have you been taking medicine for your chest?\nPatient signs: MEDICINE THREE DAY CHEST\nPatient means:", "completion": "I've been taking medicine for three days."}
+{"prompt": "Patient signs: MEDICINE DAY THREE NO\nPatient means:", "completion": "I haven't taken medicine for three days."}
+{"prompt": "Doctor: Is the pain bilateral or unilateral?\nPatient signs: DONT-UNDERSTAND HEAD\nPatient means:", "completion": "I don't understand the question. It's my head."}
+{"prompt": "Doctor: Are you taking your medicine every day?\nPatient signs: YES MEDICINE DAY\nPatient means:", "completion": "Yes, every day."}
+{"prompt": "Doctor: Is there any epigastric tenderness?\nPatient signs: STOMACH PAIN DONT-UNDERSTAND\nPatient means:", "completion": "My stomach hurts. I don't understand epigastric."}
+{"prompt": "Doctor: When did you last take your painkillers?\nPatient signs: YESTERDAY MEDICINE\nPatient means:", "completion": "I took some yesterday."}
+{"prompt": "Doctor: How many days has the chest pain lasted?\nPatient signs: CHEST PAIN THREE DAY\nPatient means:", "completion": "Three days."}
+{"prompt": "Doctor: When did the stomach pain start?\nPatient signs: YESTERDAY\nPatient means:", "completion": "It started yesterday."}
+{"prompt": "Patient signs: HELLO\nPatient means:", "completion": "Hello."}
+{"prompt": "Patient signs: CHEST PAIN THREE DAY MEDICINE\nPatient means:", "completion": "I've been taking medicine for my chest pain for three days."}
+{"prompt": "Doctor: How long have you had the headache?\nPatient signs: HEAD PAIN THREE DAY\nPatient means:", "completion": "I've had it for three days."}
+{"prompt": "Doctor: Have you taken any medicine for your chest?\nPatient signs: MEDICINE NO\nPatient means:", "completion": "No, I haven't taken any medicine."}
+{"prompt": "Doctor: What brings you in today?\nPatient signs: HELLO CHEST PAIN\nPatient means:", "completion": "Hello. I have chest pain."}
+{"prompt": "Doctor: Are you allergic to any medicine?\nPatient signs: NO\nPatient means:", "completion": "No, I'm not allergic to any medicine."}
+{"prompt": "Patient signs: HEAD PAIN ?\nPatient means:", "completion": "I have a headache."}
+{"prompt": "Doctor: Is the pain in your stomach?\nPatient signs: NO STOMACH PAIN\nPatient means:", "completion": "No, I don't have stomach pain."}
+{"prompt": "Doctor: Did you sleep last night?\nPatient signs: SLEEP NO\nPatient means:", "completion": "No, I didn't sleep."}
+{"prompt": "Doctor: Do you understand what to do if the pain gets worse?\nPatient signs: YES THANK-YOU\nPatient means:", "completion": "Yes, thank you."}
+{"prompt": "Doctor: Are you having any pain?\nPatient signs: YES HEAD PAIN\nPatient means:", "completion": "Yes, I have a headache."}
+{"prompt": "Doctor: Do you also have stomach trouble?\nPatient signs: STOMACH CHEST PAIN\nPatient means:", "completion": "My stomach and my chest both hurt."}
+{"prompt": "Doctor: What's the main problem today?\nPatient signs: PAIN CHEST ?\nPatient means:", "completion": "My chest pain is the main problem."}
+{"prompt": "Doctor: Are you experiencing any photophobia?\nPatient signs: DONT-UNDERSTAND\nPatient means:", "completion": "I don't understand that word."}
+{"prompt": "Doctor: On a scale of one to ten, how bad is the pain?\nPatient signs: PAIN THREE\nPatient means:", "completion": "About a three."}
+{"prompt": "Doctor: Are you in pain?\nPatient signs: NO\nPatient means:", "completion": "No, I'm not in pain."}
+{"prompt": "Doctor: Your bloods show mild anaemia.\nPatient signs: DONT-UNDERSTAND THANK-YOU\nPatient means:", "completion": "Thank you, but I don't understand that."}
+{"prompt": "Doctor: When did the pain start?\nPatient signs: PAIN CHEST YESTERDAY\nPatient means:", "completion": "It started yesterday."}
+{"prompt": "Patient signs: MEDICINE YES DAY THREE\nPatient means:", "completion": "I've been taking my medicine for three days."}
+{"prompt": "Doctor: Your ECG shows a sinus tachycardia.\nPatient signs: DONT-UNDERSTAND\nPatient means:", "completion": "I don't understand what you said."}
+{"prompt": "Doctor: Any numbness or weakness?\nPatient signs: NONE\nPatient means:", "completion": "No, none of that."}
+{"prompt": "Patient signs: THREE DAY CHEST PAIN\nPatient means:", "completion": "My chest has hurt for three days."}
+{"prompt": "Doctor: Are you taking anything to help you sleep?\nPatient signs: SLEEP MEDICINE NO\nPatient means:", "completion": "No, I'm not taking anything to sleep."}
+{"prompt": "Patient signs: HEAD ?\nPatient means:", "completion": "It's my head."}
+{"prompt": "Doctor: Do you understand what I'm saying?\nPatient signs: YES\nPatient means:", "completion": "Yes, I understand."}
+{"prompt": "Doctor: Have you had the pain for a few days?\nPatient signs: NO DAY THREE\nPatient means:", "completion": "No, not for three days."}
+{"prompt": "Patient signs: HELP PAIN\nPatient means:", "completion": "Please help, I'm in pain."}
+{"prompt": "Doctor: Are you sleeping at night?\nPatient signs: YES SLEEP\nPatient means:", "completion": "Yes, I'm sleeping at night."}
+{"prompt": "Doctor: Do you have pain anywhere else?\nPatient signs: CHEST PAIN NO\nPatient means:", "completion": "No, just my chest."}
+{"prompt": "Doctor: Hello, I'm Dr Veer. What's brought you in today?\nPatient signs: PAIN HEAD\nPatient means:", "completion": "I have a headache."}
+{"prompt": "Doctor: On a scale of one to ten, how bad is the chest pain?\nPatient signs: CHEST PAIN THREE\nPatient means:", "completion": "About a three."}
+{"prompt": "Doctor: Has this been happening every day?\nPatient signs: YES DAY\nPatient means:", "completion": "Yes, every day."}
+{"prompt": "Doctor: Do you have a headache?\nPatient signs: NO HEAD\nPatient means:", "completion": "No, I don't have a headache."}
+{"prompt": "Patient signs: HELLO HEAD PAIN\nPatient means:", "completion": "Hello, I have a headache."}
+{"prompt": "Patient signs: SLEEP CANT MEDICINE\nPatient means:", "completion": "I can't sleep, even with medicine."}
+{"prompt": "Patient signs: HEAD PAIN\nPatient means:", "completion": "I have a headache."}
+{"prompt": "Doctor: Avoid heavy lifting until your chest feels better.\nPatient signs: CHEST THANK-YOU\nPatient means:", "completion": "Thank you for the advice about my chest."}
+{"prompt": "Patient signs: MEDICINE ?\nPatient means:", "completion": "I have a question about my medicine."}
+{"prompt": "Patient signs: STOMACH PAIN SLEEP CANT\nPatient means:", "completion": "My stomach hurts so much I can't sleep."}
+{"prompt": "Doctor: Have you taken any painkillers, like paracetamol?\nPatient signs: YES\nPatient means:", "completion": "Yes, I have."}
+{"prompt": "Doctor: Are you having trouble with the medicine?\nPatient signs: MEDICINE CANT\nPatient means:", "completion": "Yes, I can't take the medicine."}
+{"prompt": "Patient signs: HEAD PAIN CANT SLEEP\nPatient means:", "completion": "My head hurts and I can't sleep."}
+{"prompt": "Patient signs: HEAD HEAD PAIN THREE DAY\nPatient means:", "completion": "My head has been hurting for three days."}
+{"prompt": "Doctor: Do you have chest pain?\nPatient signs: NO\nPatient means:", "completion": "No, I don't have chest pain."}
+{"prompt": "Patient signs: SLEEP CANT THREE DAY\nPatient means:", "completion": "I haven't been able to sleep for three days."}
+{"prompt": "Doctor: Is the chest discomfort pleuritic?\nPatient signs: CHEST ? DONT-UNDERSTAND\nPatient means:", "completion": "Something about my chest. I don't understand pleuritic."}
+{"prompt": "Doctor: Do you have pain right now?\nPatient signs: YES PAIN\nPatient means:", "completion": "Yes, I have pain right now."}
+{"prompt": "Patient signs: MEDICINE NO HEAD PAIN\nPatient means:", "completion": "I haven't taken medicine, and my head hurts."}
+{"prompt": "Doctor: Is the chest pain affecting your sleep?\nPatient signs: CHEST PAIN SLEEP NO\nPatient means:", "completion": "No, it isn't affecting my sleep."}
+{"prompt": "Patient signs: DAY THREE STOMACH PAIN\nPatient means:", "completion": "I've had stomach pain for three days."}
+{"prompt": "Doctor: How long has the pain been going on?\nPatient signs: PAIN THREE DAY\nPatient means:", "completion": "The pain has been going on for three days."}
+{"prompt": "Patient signs: HELP HEAD PAIN\nPatient means:", "completion": "I need help with my headache."}
+{"prompt": "Doctor: Would you like someone to help you?\nPatient signs: NO HELP\nPatient means:", "completion": "No, I don't need help."}
+{"prompt": "Doctor: Do you understand?\nPatient signs: NO HELP\nPatient means:", "completion": "No, can you help me understand?"}
+{"prompt": "Patient signs: HELP STOMACH\nPatient means:", "completion": "I need help with my stomach."}
+{"prompt": "Doctor: On a scale of one to ten, how bad is your headache?\nPatient signs: PAIN THREE\nPatient means:", "completion": "About a three."}
+{"prompt": "Patient signs: HEAD PAIN NONE\nPatient means:", "completion": "I have a headache, but nothing else."}
+{"prompt": "Patient signs: HEAD MEDICINE ?\nPatient means:", "completion": "I have a question about medicine for my head."}
+{"prompt": "Doctor: How bad was it yesterday?\nPatient signs: YESTERDAY CHEST PAIN THREE\nPatient means:", "completion": "Yesterday it was about three out of ten."}
+{"prompt": "Patient signs: DAY THREE MEDICINE CANT\nPatient means:", "completion": "For three days I haven't been able to take medicine."}
+{"prompt": "Patient signs: HEAD PAIN SLEEP CANT\nPatient means:", "completion": "I have a headache and I can't sleep."}
+{"prompt": "Doctor: I've written you a new prescription.\nPatient signs: THANK-YOU MEDICINE\nPatient means:", "completion": "Thank you for the medicine."}
+{"prompt": "Doctor: Is the pain in your head or your neck?\nPatient signs: HEAD YES\nPatient means:", "completion": "Yes, it's in my head."}
+{"prompt": "Patient signs: HELLO ?\nPatient means:", "completion": "Hello."}
+{"prompt": "Doctor: When did your headache start?\nPatient signs: HEAD PAIN YESTERDAY\nPatient means:", "completion": "It started yesterday."}
+{"prompt": "Doctor: Did you take your medicine every day?\nPatient signs: MEDICINE NO THREE DAY\nPatient means:", "completion": "No, not for three days."}
+{"prompt": "Doctor: Do you have chest pain?\nPatient signs: NO CHEST PAIN\nPatient means:", "completion": "No, I don't have chest pain."}
+{"prompt": "Doctor: Did you take your tablets?\nPatient signs: YES MEDICINE\nPatient means:", "completion": "Yes, I took my medicine."}
+{"prompt": "Patient signs: CHEST PAIN SLEEP CANT\nPatient means:", "completion": "My chest hurts and I can't sleep."}
+{"prompt": "Patient signs: PAIN HEAD\nPatient means:", "completion": "My head hurts."}
+{"prompt": "Doctor: Is the cephalalgia intermittent or constant?\nPatient signs: HEAD PAIN THREE DAY DONT-UNDERSTAND\nPatient means:", "completion": "Head pain for three days. I don't understand intermittent."}
+{"prompt": "Doctor: Is the pain worse when you breathe?\nPatient signs: CHEST PAIN YES\nPatient means:", "completion": "Yes, it hurts when I breathe."}
+{"prompt": "Doctor: Are you sleeping at night?\nPatient signs: CHEST PAIN NO SLEEP\nPatient means:", "completion": "No, I'm not sleeping at night."}
+{"prompt": "Doctor: Is the pain in your chest?\nPatient signs: NO STOMACH\nPatient means:", "completion": "No, it's not my chest. It's my stomach."}
+{"prompt": "Doctor: Come back if it gets worse, okay?\nPatient signs: THANK-YOU YES\nPatient means:", "completion": "Yes, thank you."}
+{"prompt": "Doctor: Have you taken any analgesia for it?\nPatient signs: DONT-UNDERSTAND\nPatient means:", "completion": "Sorry, I don't understand."}
+{"prompt": "Patient signs: SLEEP CANT HEAD PAIN\nPatient means:", "completion": "I can't sleep with this headache."}
+{"prompt": "Doctor: Do you need help with anything today?\nPatient signs: YES HELP\nPatient means:", "completion": "Yes, I need help."}
+{"prompt": "Doctor: I'm sorry to hear that. How long has it been going on?\nPatient signs: THREE DAY\nPatient means:", "completion": "For three days."}
+{"prompt": "Doctor: Have you been taking anything for it?\nPatient signs: NO MEDICINE\nPatient means:", "completion": "No, I haven't been taking medicine."}
+{"prompt": "Doctor: Is your head hurting today?\nPatient signs: NO HEAD\nPatient means:", "completion": "No, my head isn't hurting today."}
+{"prompt": "Doctor: Do you understand what I'm saying?\nPatient signs: NO\nPatient means:", "completion": "No, I don't understand."}
+{"prompt": "Doctor: How long has your head been hurting?\nPatient signs: PAIN THREE DAY HEAD\nPatient means:", "completion": "My head has hurt for three days."}
+{"prompt": "Doctor: How bad is the headache, from one to ten?\nPatient signs: PAIN HEAD THREE\nPatient means:", "completion": "About a three."}
+{"prompt": "Patient signs: HEAD PAIN YESTERDAY\nPatient means:", "completion": "My head has been hurting since yesterday."}
+{"prompt": "Doctor: Try paracetamol, and come back if it isn't better in three days.\nPatient signs: HEAD PAIN THANK-YOU\nPatient means:", "completion": "I have a headache. Thank you for the plan."}
+{"prompt": "Doctor: Have you taken any pain medicine?\nPatient signs: YES MEDICINE\nPatient means:", "completion": "Yes, I've taken some medicine."}
+{"prompt": "Doctor: Have you taken anything for the stomach pain?\nPatient signs: STOMACH PAIN MEDICINE NO\nPatient means:", "completion": "No, I haven't taken any medicine for my stomach."}
+{"prompt": "Patient signs: NONE THREE DAY\nPatient means:", "completion": "For three days, no other problems."}
+{"prompt": "Doctor: Have you been taking the medicine every day?\nPatient signs: NO\nPatient means:", "completion": "No, not every day."}
+{"prompt": "Doctor: What can I do for you today?\nPatient signs: HELP MEDICINE\nPatient means:", "completion": "I need help with my medicine."}
+{"prompt": "Patient signs: HELLO CHEST PAIN\nPatient means:", "completion": "Hello, I have chest pain."}
+{"prompt": "Patient signs: THREE DAY STOMACH ?\nPatient means:", "completion": "I've had stomach trouble for three days."}
+{"prompt": "Doctor: Did you take your medicine?\nPatient signs: YES\nPatient means:", "completion": "Yes, I took my medicine."}
+{"prompt": "Patient signs: PAIN CHEST THREE DAY NO SLEEP\nPatient means:", "completion": "My chest has hurt for three days and I can't sleep."}
+{"prompt": "Doctor: Any other symptoms?\nPatient signs: THREE DAY NONE\nPatient means:", "completion": "For three days, no other problems."}
+{"prompt": "Patient signs: YESTERDAY HEAD PAIN\nPatient means:", "completion": "I've had a headache since yesterday."}
+{"prompt": "Patient signs: THREE DAY ? MEDICINE\nPatient means:", "completion": "Three days, and I've taken medicine."}
+{"prompt": "Patient signs: YESTERDAY SLEEP CANT CHEST\nPatient means:", "completion": "I couldn't sleep yesterday because of my chest."}
+{"prompt": "Doctor: How many days has your chest been bothering you?\nPatient signs: CHEST DAY THREE\nPatient means:", "completion": "Three days."}
+{"prompt": "Doctor: How long have you had chest pain?\nPatient signs: CHEST PAIN THREE DAY\nPatient means:", "completion": "Three days now."}
+{"prompt": "Doctor: How long has it been going on?\nPatient signs: DAY THREE\nPatient means:", "completion": "For three days."}
+{"prompt": "Doctor: Are you taking any medicine at the moment?\nPatient signs: YES MEDICINE\nPatient means:", "completion": "Yes, I'm taking medicine."}
+{"prompt": "Doctor: Where does it hurt?\nPatient signs: STOMACH PAIN\nPatient means:", "completion": "My stomach."}
+{"prompt": "Doctor: Would you like me to get an interpreter?\nPatient signs: HELP YES\nPatient means:", "completion": "Yes, please help me."}
+{"prompt": "Doctor: Are you sleeping okay?\nPatient signs: SLEEP CANT HEAD PAIN\nPatient means:", "completion": "No, my head hurts and I can't sleep."}
+{"prompt": "Doctor: Are you taking something to help you sleep?\nPatient signs: SLEEP MEDICINE YES\nPatient means:", "completion": "Yes, I take medicine to help me sleep."}
+{"prompt": "Doctor: Where is the pain you're feeling?\nPatient signs: CHEST PAIN ?\nPatient means:", "completion": "It's in my chest."}
+{"prompt": "Doctor: How many days has your stomach been bothering you?\nPatient signs: DAY THREE STOMACH\nPatient means:", "completion": "Three days."}
+{"prompt": "Doctor: Have you been taking anything to help you sleep?\nPatient signs: SLEEP YES MEDICINE\nPatient means:", "completion": "Yes, I've been taking medicine to sleep."}
+{"prompt": "Patient signs: SLEEP CANT YESTERDAY\nPatient means:", "completion": "I couldn't sleep yesterday."}
+{"prompt": "Doctor: Did the medicine upset your stomach?\nPatient signs: NO\nPatient means:", "completion": "No, it didn't upset my stomach."}
+{"prompt": "Doctor: Did you take the medicine before bed?\nPatient signs: YES\nPatient means:", "completion": "Yes, before bed."}
+{"prompt": "Doctor: Are you having trouble sleeping?\nPatient signs: YES SLEEP CANT\nPatient means:", "completion": "Yes, I can't sleep."}
+{"prompt": "Doctor: Are you taking anything for the headache?\nPatient signs: HEAD PAIN MEDICINE YES\nPatient means:", "completion": "Yes, I took medicine for my head."}
+{"prompt": "Patient signs: HEAD PAIN DAY\nPatient means:", "completion": "I've had a headache all day."}
+{"prompt": "Doctor: How long has it been going on?\nPatient signs: THANK-YOU THREE DAY\nPatient means:", "completion": "Thank you. Three days."}
+{"prompt": "Doctor: What's brought you in today?\nPatient signs: PAIN HEAD THREE DAY\nPatient means:", "completion": "I've had a headache for three days."}
+{"prompt": "Patient signs: PAIN YESTERDAY\nPatient means:", "completion": "The pain started yesterday."}
+{"prompt": "Doctor: Did the chest pain start yesterday?\nPatient signs: NO YESTERDAY CHEST\nPatient means:", "completion": "No, it started before yesterday."}
+{"prompt": "Doctor: Are you taking any medicine at the moment?\nPatient signs: NO MEDICINE\nPatient means:", "completion": "No, I'm not taking any medicine."}
+{"prompt": "Doctor: How long have you been taking the medicine?\nPatient signs: DAY THREE MEDICINE\nPatient means:", "completion": "I've been taking it for three days."}
+{"prompt": "Doctor: How have you been sleeping?\nPatient signs: CANT SLEEP\nPatient means:", "completion": "I can't sleep."}
+{"prompt": "Doctor: Come back if it isn't better in a week.\nPatient signs: THANK-YOU\nPatient means:", "completion": "Thank you, I will."}
+{"prompt": "Doctor: Let's check your blood pressure now.\nPatient signs: THANK-YOU HELP\nPatient means:", "completion": "Thank you for helping me."}
+{"prompt": "Patient signs: NO MEDICINE\nPatient means:", "completion": "I haven't taken any medicine."}
+{"prompt": "Patient signs: NO\nPatient means:", "completion": "No."}
+{"prompt": "Doctor: We may need to perform a lumbar puncture.\nPatient signs: HELP DONT-UNDERSTAND\nPatient means:", "completion": "Please help me. I don't understand that."}
+{"prompt": "Doctor: Do you have stomach pain too?\nPatient signs: HEAD PAIN NO STOMACH\nPatient means:", "completion": "No, just my head."}
+{"prompt": "Doctor: Are you sleeping okay?\nPatient signs: NO\nPatient means:", "completion": "No, I'm not sleeping well."}
+{"prompt": "Patient signs: THANK-YOU\nPatient means:", "completion": "Thank you."}
+{"prompt": "Doctor: Did you take your medicine yesterday?\nPatient signs: YES MEDICINE YESTERDAY\nPatient means:", "completion": "Yes, I took my medicine yesterday."}
+{"prompt": "Patient signs: NONE SLEEP CANT\nPatient means:", "completion": "No, nothing else, just that I can't sleep."}
+{"prompt": "Patient signs: PAIN CHEST THREE DAY\nPatient means:", "completion": "I've had pain in my chest for three days."}
+{"prompt": "Patient signs: SLEEP ? THREE DAY\nPatient means:", "completion": "I haven't slept for three days."}
+{"prompt": "Doctor: How long has the chest pain been going on?\nPatient signs: THREE DAY NO MEDICINE CHEST\nPatient means:", "completion": "For three days, and I haven't taken medicine."}
+{"prompt": "Doctor: Have you been eating okay?\nPatient signs: NO\nPatient means:", "completion": "No, I haven't been eating okay."}
+{"prompt": "Doctor: This sounds like a tension headache. Take paracetamol, and come back if it isn't better in a week.\nPatient signs: THANK-YOU\nPatient means:", "completion": "Thank you."}
+{"prompt": "Doctor: What can I do for you today?\nPatient signs: HELP\nPatient means:", "completion": "I need help."}
+{"prompt": "Doctor: Do you understand?\nPatient signs: NO\nPatient means:", "completion": "No, I don't understand."}
+{"prompt": "Patient signs: HELP CHEST PAIN\nPatient means:", "completion": "Please help me, I have chest pain."}
+{"prompt": "Doctor: Did the medicine help your chest pain?\nPatient signs: YES MEDICINE\nPatient means:", "completion": "Yes, the medicine helped."}
+{"prompt": "Doctor: Take paracetamol and rest.\nPatient signs: THANK-YOU HELP\nPatient means:", "completion": "Thank you for your help."}
+{"prompt": "Doctor: Have you had any other symptoms this week?\nPatient signs: NONE THREE DAY\nPatient means:", "completion": "No, none for the past three days."}
+{"prompt": "Doctor: Take one tablet twice a day with food for the next week.\nPatient signs: THANK-YOU\nPatient means:", "completion": "Thank you, I understand."}
+{"prompt": "Doctor: Are you still taking the tablets?\nPatient signs: MEDICINE ? YES\nPatient means:", "completion": "Yes, I'm still taking them."}
+{"prompt": "Doctor: Did you sleep last night?\nPatient signs: YES SLEEP\nPatient means:", "completion": "Yes, I slept last night."}

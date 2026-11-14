@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SignVoice test page</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; background: #f6f6f4; color: #1c1c1c; }
+  header { padding: 12px 20px; background: #1c1c1c; color: #fff; display: flex; gap: 16px; align-items: center; }
+  header small { opacity: .7; }
+  main { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 16px; }
+  section { background: #fff; border-radius: 10px; padding: 16px; min-height: 70vh; display: flex; flex-direction: column; }
+  h2 { margin: 0 0 8px; font-size: 16px; }
+  #log, #plog { flex: 1; overflow-y: auto; }
+  .msg { padding: 10px 12px; border-radius: 8px; margin: 8px 0; }
+  .patient { background: #e8f0ff; }
+  .doctor { background: #eef7ee; }
+  .big { font-size: 26px; line-height: 1.3; }
+  .meta { font-size: 12px; color: #666; margin-top: 4px; }
+  .clip { display: inline-block; background: #1c1c1c; color: #fff; border-radius: 6px; padding: 4px 8px; margin: 4px 4px 0 0; font-size: 14px; }
+  .live { font-size: 18px; color: #555; min-height: 24px; }
+  input, button { font: inherit; padding: 8px 10px; border-radius: 6px; border: 1px solid #ccc; }
+  button { background: #1c1c1c; color: #fff; border: none; cursor: pointer; }
+  button.rec { background: #c62828; }
+  .row { display: flex; gap: 8px; margin-top: 8px; }
+  .row input { flex: 1; }
+</style>
+</head>
+<body>
+<header><strong>SignVoice</strong><small id="status">connecting...</small></header>
+<main>
+  <section>
+    <h2>Patient screen (what the Deaf patient sees)</h2>
+    <div class="live" id="live"></div>
+    <div id="plog"></div>
+    <div class="row">
+      <input id="tokens" placeholder="Fake signs, e.g. HEAD PAIN THREE DAY">
+      <button onclick="sendTokens()">Sign</button>
+    </div>
+  </section>
+  <section>
+    <h2>Doctor screen (what the hearing doctor sees and hears)</h2>
+    <div id="log"></div>
+    <div class="row">
+      <input id="reply" placeholder="Type the doctor's reply...">
+      <button onclick="sendReply()">Reply</button>
+      <button id="recBtn" onclick="toggleRec()">Talk (doctor)</button>
+    </div>
+    <div class="row"><button onclick="fetch('/reset',{method:'POST'})">Reset conversation</button></div>
+  </section>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+let liveTokens = [];
+
+function add(target, cls, html) {
+  const d = document.createElement('div');
+  d.className = 'msg ' + cls;
+  d.innerHTML = html;
+  $(target).appendChild(d);
+  $(target).scrollTop = 1e9;
+}
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function connect() {
+  const ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws');
+  ws.onopen = () => $('status').textContent = 'connected';
+  ws.onclose = () => { $('status').textContent = 'disconnected, retrying...'; setTimeout(connect, 1500); };
+  ws.onmessage = e => {
+    const ev = JSON.parse(e.data);
+    if (ev.type === 'sign') {
+      liveTokens.push(ev.token);
+      $('live').textContent = 'Signing: ' + liveTokens.join(' ');
+    } else if (ev.type === 'patient') {
+      liveTokens = []; $('live').textContent = '';
+      add('log', 'patient', `<div class="big">${esc(ev.text)}</div><div class="meta">signed: ${esc(ev.tokens.join(' '))}</div>`);
+      add('plog', 'patient', `<div>You said: ${esc(ev.text)}</div>`);
+      if (ev.audio_url) new Audio(ev.audio_url).play().catch(() => {});
+    } else if (ev.type === 'doctor') {
+      add('log', 'doctor', `<div>${esc(ev.text)}</div>`);
+      const clips = (ev.gloss || []).map(g => `<span class="clip">${esc(g)}</span>`).join('');
+      add('plog', 'doctor', `<div class="big">${esc(ev.text)}</div><div class="meta">ASL clips:</div>${clips || '<span class="meta">none</span>'}`);
+    } else if (ev.type === 'doctor_simplified') {
+      add('plog', 'doctor', `<div class="meta">More simply:</div><div class="big">${esc(ev.text)}</div>`);
+      add('log', 'doctor', `<div class="meta">Shown to patient as: ${esc(ev.text)}</div>`);
+    } else if (ev.type === 'reset') {
+      $('log').innerHTML = ''; $('plog').innerHTML = ''; liveTokens = []; $('live').textContent = '';
+    }
+  };
+}
+connect();
+
+async function post(url, body) {
+  const r = await fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+  if (!r.ok) alert(url + ' failed: ' + await r.text());
+}
+function sendTokens() {
+  const t = $('tokens').value.trim().toUpperCase().split(/\s+/).filter(Boolean);
+  if (t.length) post('/tokens', {tokens: t});
+  $('tokens').value = '';
+}
+function sendReply() {
+  const t = $('reply').value.trim();
+  if (t) post('/reply', {text: t});
+  $('reply').value = '';
+}
+$('tokens').addEventListener('keydown', e => e.key === 'Enter' && sendTokens());
+$('reply').addEventListener('keydown', e => e.key === 'Enter' && sendReply());
+
+let rec = null, chunks = [];
+async function toggleRec() {
+  if (rec && rec.state === 'recording') { rec.stop(); return; }
+  const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+  rec = new MediaRecorder(stream);
+  chunks = [];
+  rec.ondataavailable = e => chunks.push(e.data);
+  rec.onstop = async () => {
+    stream.getTracks().forEach(t => t.stop());
+    $('recBtn').textContent = 'Talk (doctor)'; $('recBtn').classList.remove('rec');
+    const fd = new FormData();
+    fd.append('file', new Blob(chunks, {type: rec.mimeType}), 'speech.webm');
+    const r = await fetch('/stt', {method: 'POST', body: fd});
+    if (!r.ok) alert('Speech-to-text failed: ' + await r.text());
+  };
+  rec.start();
+  $('recBtn').textContent = 'Stop'; $('recBtn').classList.add('rec');
+}
+</script>
+</body>
+</html>

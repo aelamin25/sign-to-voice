@@ -1,4 +1,23 @@
+# frontend
 node_modules
 dist
 .env
 .DS_Store
+
+# python
+__pycache__/
+.venv/
+wandb/
+
+# vision: keep the trained model, skip raw recordings and MediaPipe downloads
+vision/data/
+vision/models/*.task
+
+# language model: keep train/test data, skip Adaption working files
+lang/data/adapted*
+lang/data/adaption_*.json
+lang/data/eval_results.json
+lang/data/model_artifact*
+
+# backend
+backend/audio_cache/

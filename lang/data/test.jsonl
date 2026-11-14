@@ -1,0 +1,20 @@
+{"prompt": "Patient signs: STOMACH PAIN MEDICINE\nPatient means:", "completion": "My stomach has hurt since I took the medicine."}
+{"prompt": "Patient signs: MEDICINE CANT\nPatient means:", "completion": "I can't take medicine."}
+{"prompt": "Patient signs: THANK-YOU HELP\nPatient means:", "completion": "Thank you for your help."}
+{"prompt": "Patient signs: CHEST PAIN THREE DAY\nPatient means:", "completion": "I've had chest pain for three days."}
+{"prompt": "Patient signs: CHEST PAIN HELP\nPatient means:", "completion": "My chest hurts, please help."}
+{"prompt": "Doctor: Have you taken any medicine?\nPatient signs: YES\nPatient means:", "completion": "Yes, I have."}
+{"prompt": "Doctor: Does it hurt here?\nPatient signs: YES\nPatient means:", "completion": "Yes, it hurts there."}
+{"prompt": "Doctor: Have you taken any medicine?\nPatient signs: MEDICINE YES\nPatient means:", "completion": "Yes, I've taken some medicine."}
+{"prompt": "Patient signs: HELLO HELP\nPatient means:", "completion": "Hello, I need some help."}
+{"prompt": "Patient signs: STOMACH PAIN YESTERDAY\nPatient means:", "completion": "My stomach has been hurting since yesterday."}
+{"prompt": "Doctor: Hello, what brings you in today?\nPatient signs: HELLO STOMACH PAIN\nPatient means:", "completion": "Hello, I've got stomach pain."}
+{"prompt": "Doctor: How many tablets do you take a day?\nPatient signs: THREE\nPatient means:", "completion": "Three."}
+{"prompt": "Patient signs: STOMACH PAIN THREE DAY\nPatient means:", "completion": "I've had stomach pain for three days."}
+{"prompt": "Patient signs: MEDICINE HELP\nPatient means:", "completion": "Can you help me with my medicine?"}
+{"prompt": "Doctor: When did it start?\nPatient signs: YESTERDAY\nPatient means:", "completion": "It started yesterday."}
+{"prompt": "Doctor: Does it still hurt?\nPatient signs: NO PAIN\nPatient means:", "completion": "No, it doesn't hurt anymore."}
+{"prompt": "Patient signs: THREE DAY HEAD PAIN\nPatient means:", "completion": "My head has been hurting for three days."}
+{"prompt": "Doctor: Do you understand?\nPatient signs: YES\nPatient means:", "completion": "Yes, I understand."}
+{"prompt": "Doctor: Does it still hurt?\nPatient signs: PAIN YES\nPatient means:", "completion": "Yes, it still hurts."}
+{"prompt": "Patient signs: CHEST PAIN THREE DAY SLEEP CANT\nPatient means:", "completion": "I've had chest pain for three days and I can't sleep."}
