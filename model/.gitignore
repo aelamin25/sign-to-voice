@@ -1,0 +1,12 @@
+__pycache__/
+.venv/
+vision/data/
+vision/models/*.task
+vision/models/*_before_*
+lang/data/adapted*
+lang/data/adaption_*.json
+lang/data/eval_results.json
+lang/data/model_artifact*
+wandb/
+.env
+vision/data_old*/
