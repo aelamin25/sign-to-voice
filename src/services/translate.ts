@@ -92,6 +92,7 @@ export function createModelTranslate(base: string, inner: TranslateService): Tra
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ tokens, doctor_said: lastDoctor }),
+          signal: AbortSignal.timeout(6000), // a slow model must not leave the patient waiting: fall back
         });
         if (!r.ok) throw new Error(`model backend ${r.status}`);
         const { text } = (await r.json()) as { text: string };

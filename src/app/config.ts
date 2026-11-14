@@ -29,3 +29,6 @@ export const API_BASE = env.VITE_API_BASE ?? "";
 export const PY_BACKEND = (env.VITE_PY_BACKEND ?? "").replace(/\/$/, "");
 /** "python" = signs come from model/vision/live.py through the Python backend instead of the browser recogniser. */
 export const RECOGNITION_SOURCE = env.VITE_RECOGNITION ?? "browser";
+/** With VITE_RECOGNITION=python: a finished turn from live.py starts the patient's turn by itself,
+ *  so nobody has to press "Start signing" / "Reply in sign" with their hands full. Off unless set to true. */
+export const AUTO_SIGN = truthy(env.VITE_AUTO_SIGN);

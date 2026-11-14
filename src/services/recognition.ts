@@ -246,13 +246,25 @@ export function createMockRecognition(): RecognitionService {
      live.py --send http://<backend>:8000/phrase   → {"type":"phrase","tokens":[...],"confs":[...]}
    A phrase ends the patient's turn (live.py sends it on THUMBS-UP or after ~1.5 s of rest).
    ════════════════════════════════════════════════════════════════════ */
+type BridgeEvent = { type?: string; token?: string; conf?: number; tokens?: string[]; confs?: number[] };
+/** The running bridge session's event handler, so a turn that arrived just before the session
+ *  started (see services/autoSign.ts) can still be handed to it. Null when nobody is signing. */
+let activeBridge: ((ev: BridgeEvent) => void) | null = null;
+export const injectBridgeEvent = (ev: BridgeEvent): boolean => {
+  if (!activeBridge) return false;
+  activeBridge(ev);
+  return true;
+};
+/** Signs in a phrase that the web app would show (approval and non-signs are dropped). */
+export const shownSigns = (tokens: string[]): string[] => tokens.filter((t) => toGloss(t) !== null);
+
 const MODEL_TO_GLOSS: Record<string, Gloss> = {};
-const toGloss = (t: string): Gloss | null => {
+function toGloss(t: string): Gloss | null {
   if (t === "THUMBS-UP" || t === "FIDGET" || t === "NOTHING") return null; // approval / non-signs: never shown
   if (t === "?") return "?";
   if (MODEL_TO_GLOSS[t]) return MODEL_TO_GLOSS[t];
   return isKnownGloss(t) ? t : "?";
-};
+}
 
 export function createBridgeRecognition(base: string): RecognitionService {
   return {
@@ -279,8 +291,13 @@ export function createBridgeRecognition(base: string): RecognitionService {
           setTimeout(connect, 1500);
         };
         ws.onmessage = (m) => {
-          let ev: { type?: string; token?: string; conf?: number; tokens?: string[]; confs?: number[] };
+          let ev: BridgeEvent;
           try { ev = JSON.parse(String(m.data)); } catch { return; }
+          handle(ev);
+        };
+      };
+      const handle = (ev: BridgeEvent) => {
+          if (stopped) return;
           if (ev.type === "sign" && ev.token) {
             h.onHands?.(true);
             emit(ev.token, ev.conf ?? 0.9);
@@ -291,12 +308,13 @@ export function createBridgeRecognition(base: string): RecognitionService {
             h.onHands?.(false);
             if (emitted > 0) h.onAutoEnd();
           }
-        };
       };
+      activeBridge = handle;
       connect();
       return {
         stop() {
           stopped = true;
+          if (activeBridge === handle) activeBridge = null;
           try { ws?.close(); } catch { /* already closed */ }
         },
       };
