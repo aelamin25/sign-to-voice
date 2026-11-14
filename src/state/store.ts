@@ -378,6 +378,10 @@ export const useStore = create<State & Actions>()((set, get) => {
         await doctor();
         await patient();
         await doctor();
+        // the agreed demo script has five patient turns: finish the conversation, don't stop mid-question
+        await patient();
+        await doctor();
+        await patient();
         await pause(400);
         await get().endVisit();
       } catch { /* stopped */ }

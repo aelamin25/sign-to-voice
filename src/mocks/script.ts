@@ -19,12 +19,14 @@ export interface DoctorTurn {
   next?: string;
 }
 
+// The agreed demo consultation (a headache visit). The doctor greets the patient out loud first;
+// the app's flow starts with the patient's answer.
 export const PATIENT_SCRIPT: PatientTurn[] = [
-  { glosses: ["HELLO", "DOCTOR", "HURT", "HEAD", "7"], confidence: 0.94 },
-  { glosses: ["HOW-LONG", "3", "DAY", "FEVER", "NO"], confidence: 0.91 },
-  { glosses: ["THANK-YOU", "DOCTOR"], confidence: 0.95 },
-  { glosses: ["YES"], confidence: 0.97 },
-  { glosses: ["NO", "THANK-YOU"], confidence: 0.95 },
+  { glosses: ["PAIN", "HEAD"], confidence: 0.96 },
+  { glosses: ["THREE", "DAY"], confidence: 0.94 },
+  { glosses: ["DONT-UNDERSTAND"], confidence: 0.96 },
+  { glosses: ["NO"], confidence: 0.97 },
+  { glosses: ["THANK-YOU"], confidence: 0.96 },
 ];
 
 /** "Try an unclear sign" — the classifier only half-recognises the second sign. */
@@ -32,30 +34,26 @@ export const UNCLEAR_TURN: PatientTurn = { glosses: ["HURT", "?"], confidence: 0
 
 export const DOCTOR_SCRIPT: DoctorTurn[] = [
   {
-    text: "I'm sorry to hear that. How long have you had it? Any fever?",
-    plain: "Sorry you are in pain. How long has it hurt? Do you have a fever?",
+    text: "I'm sorry to hear that. How long has it been going on?",
+    plain: "Sorry you are in pain. How long has it hurt?",
     terms: [],
   },
   {
-    text: "It sounds like a migraine. I'll prescribe ibuprofen, twice a day after food.",
-    plain: "It may be a migraine. Take ibuprofen 2 times a day, after food.",
-    terms: [
-      { term: "migraine", meaning: "a strong headache" },
-      { term: "prescribe", meaning: "give you a medicine" },
-      { term: "ibuprofen", meaning: "a pain medicine" },
-    ],
-    medicine: { name: "Ibuprofen", dose: "2 times a day", when: "After food" },
+    text: "Have you taken any analgesia for it?",
+    plain: "Have you taken any painkillers for it?",
+    terms: [{ term: "analgesia", meaning: "painkillers, medicine for pain" }],
   },
   {
-    text: "Rest, drink plenty of water, and come back in one week if it's not better.",
-    plain: "Rest. Drink water. Not better in 1 week? Come back.",
-    terms: [],
+    text: "Have you taken any painkillers, like paracetamol?",
+    plain: "Have you taken any pain medicine, like paracetamol?",
+    terms: [{ term: "paracetamol", meaning: "a common pain medicine" }],
+  },
+  {
+    text: "This sounds like a tension headache. Take paracetamol, and come back if it isn't better in a week.",
+    plain: "It may be a tension headache. Take paracetamol. Not better in 1 week? Come back.",
+    terms: [{ term: "tension headache", meaning: "a common headache, often from stress or tiredness" }],
+    medicine: { name: "Paracetamol" },
     next: "In 1 week, if not better",
-  },
-  {
-    text: "Is there anything else you'd like to ask me?",
-    plain: "Do you have another question?",
-    terms: [],
   },
   {
     text: "Take care, and feel better soon.",
