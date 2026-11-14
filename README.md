@@ -62,6 +62,42 @@ link it prints.
 Notes for phones: audio and speech start after the first tap (iOS rule), the camera stops whenever you leave the
 signing step, and if the camera is blocked the signing step shows "Allow camera to sign" with Try again.
 
+## Running with the trained models (Python mode)
+
+Signs come from `model/vision/live.py` (it owns the laptop camera), sentences from `model/lang`, both through
+the Python backend in `model/backend`. Nothing changes in the app unless `VITE_PY_BACKEND` is set.
+
+1. Once: `npm install`, then `pip install -r requirements.txt` from the repo root.
+2. Add to `.env` (next to your keys):
+   ```
+   VITE_MOCK=false
+   VITE_PY_BACKEND=http://localhost:8000
+   VITE_RECOGNITION=python
+   VITE_CAMERA_STREAM=http://localhost:8001/video
+   # optional, keep these in demo mode:
+   # VITE_MOCK_AVATAR=true
+   # VITE_MOCK_SIGNVIDEO=true
+   ```
+3. Run three terminals:
+   ```
+   npm run dev
+   cd model/backend  &&  uvicorn server:app --port 8000      # needs ANTHROPIC_API_KEY and LLM_PROVIDER=anthropic in that terminal
+   cd model/vision   &&  python live.py --send http://localhost:8000/phrase --stream 8001 --no-window
+   ```
+   On Windows PowerShell, set the backend's variables first: `$env:ANTHROPIC_API_KEY="..."; $env:LLM_PROVIDER="anthropic"`.
+
+The web and mobile views both show `live.py`'s camera view in the patient's camera box. If something isn't
+running, the app says so instead of failing silently:
+
+| What you see | What it means | Fix |
+|---|---|---|
+| "Can't reach the sign recogniser at http://localhost:8000 … Retrying…" (phone: "Sign recogniser not connected") | the Python backend isn't running | start `uvicorn server:app --port 8000`; the app reconnects by itself |
+| "No signs arriving yet. Is model/vision/live.py running …?" (after 8 s) | backend is up, but `live.py` isn't sending | start `live.py --send http://localhost:8000/phrase` |
+| "Camera view not available at …/video … Signs still work." | `live.py` runs without `--stream`, or on another port | add `--stream 8001` (and match `VITE_CAMERA_STREAM`) |
+
+If the backend's `/translate` fails, sentences fall back to Claude (`/api/translate`) or the built-in composer,
+so the patient is never stuck. A turn ends on THUMBS-UP or after ~1.5 s of rest in `live.py`.
+
 ## Web app: quick start (demo mode, no keys)
 
 ```bash
