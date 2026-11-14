@@ -1,9 +1,9 @@
-import { isMock, type ServiceName } from "../app/config";
+import { isMock, PY_BACKEND, RECOGNITION_SOURCE, type ServiceName } from "../app/config";
 import { createMockAvatar, createRealAvatar } from "./avatar";
-import { createMockRecognition, createRealRecognition } from "./recognition";
+import { createBridgeRecognition, createMockRecognition, createRealRecognition } from "./recognition";
 import { createMockSignVideo, createRealSignVideo } from "./signVideo";
 import { createMockStt, createRealStt } from "./stt";
-import { createMockTranslate, createRealTranslate } from "./translate";
+import { createMockTranslate, createModelTranslate, createRealTranslate } from "./translate";
 import { createMockTts, createRealTts } from "./tts";
 import type { Services } from "./types";
 
@@ -22,9 +22,16 @@ const mocks: Services = {
 const pick = <K extends ServiceName>(name: K, real: () => Services[K]): Services[K] =>
   isMock(name) ? mocks[name] : real();
 
+// With VITE_PY_BACKEND set, the trained models are used (see model/backend):
+//   VITE_RECOGNITION=python  → signs from model/vision/live.py instead of the browser recogniser
+//   translate                → sentences from model/lang (plain words + summary stay as they were)
 const live: Services = {
-  recognition: pick("recognition", () => createRealRecognition()),
-  translate: pick("translate", createRealTranslate),
+  recognition: PY_BACKEND && RECOGNITION_SOURCE === "python"
+    ? createBridgeRecognition(PY_BACKEND)
+    : pick("recognition", () => createRealRecognition()),
+  translate: PY_BACKEND
+    ? createModelTranslate(PY_BACKEND, pick("translate", createRealTranslate))
+    : pick("translate", createRealTranslate),
   tts: pick("tts", createRealTts),
   stt: pick("stt", createRealStt),
   avatar: pick("avatar", createRealAvatar),

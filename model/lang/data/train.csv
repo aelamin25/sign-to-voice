@@ -67,7 +67,7 @@ Patient means:",Hello.
 "Patient signs: CHEST ? THREE DAY
 Patient means:","Something about my chest, for three days."
 "Patient signs: PAIN HEAD
-Patient means:",My head hurts.
+Patient means:",I have a headache.
 "Patient signs: STOMACH PAIN SLEEP CANT
 Patient means:",My stomach hurts so much I can't sleep.
 "Patient signs: HEAD HEAD PAIN
@@ -176,7 +176,7 @@ Patient signs: PAIN HEAD THREE DAY
 Patient means:",I've had a headache for three days.
 "Doctor: I'm sorry to hear that. How long has it been going on?
 Patient signs: THREE DAY
-Patient means:",For three days.
+Patient means:",About three days.
 "Doctor: How long has it been going on?
 Patient signs: DAY THREE
 Patient means:",For three days.
@@ -218,7 +218,7 @@ Patient means:","Sorry, I don't understand."
 Patient means:","Sorry, I don't understand. Can you help?"
 "Doctor: Have you taken any painkillers, like paracetamol?
 Patient signs: NO
-Patient means:","No, I haven't taken any painkillers."
+Patient means:",No.
 "Doctor: Have you taken any analgesia for it?
 Patient signs: NO
 Patient means:","No, I haven't."

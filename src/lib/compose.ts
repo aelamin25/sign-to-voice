@@ -17,6 +17,8 @@ const PHRASE: Record<string, string> = {
   DIZZY: "I feel dizzy.", MEDICINE: "About my medicine.", ALLERGY: "I have an allergy.", DAY: "Day.",
   YES: "Yes.", NO: "No.", PLEASE: "Please.", "THANK-YOU": "Thank you.",
   AGAIN: "Could you say that again?", HELP: "I need help.", "HOW-LONG": "How long?",
+  PAIN: "It hurts.", THREE: "Three.", NONE: "None.", "DONT-UNDERSTAND": "Sorry, I don't understand.",
+  CANT: "I can't.", SLEEP: "Sleep.", YESTERDAY: "Yesterday.",
 };
 
 export function compose(input: readonly Gloss[]): string {
@@ -27,6 +29,10 @@ export function compose(input: readonly Gloss[]): string {
     const a = ch[i], b = ch[i + 1], c = ch[i + 2];
     const days = (n: string) => `${n} ${n === "1" ? "day" : "days"}`;
     if (a === "HELLO" && b === "DOCTOR") { out.push("Hello doctor."); i += 2; continue; }
+    if (a === "PAIN" && b && LOC[b]) { out.push(LOC[b] + "."); i += 2; continue; }
+    if (LOC[a] && b === "PAIN") { out.push(LOC[a] + "."); i += 2; continue; }
+    if (a === "THREE" && b === "DAY") { out.push("About three days."); i += 2; continue; }
+    if (a === "CANT" && b === "SLEEP") { out.push("I can't sleep."); i += 2; continue; }
     if (a === "HURT" && b && LOC[b]) {
       if (c && isNumber(c)) { out.push(`${LOC[b]} — about ${c} out of 10.`); i += 3; } else { out.push(LOC[b] + "."); i += 2; }
       continue;

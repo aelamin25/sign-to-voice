@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { isMock } from "../app/config";
+import { CAMERA_STREAM, isMock, PY_BACKEND, RECOGNITION_SOURCE } from "../app/config";
 import { Icon } from "./Icon";
 import { Silhouette } from "./Illustrations";
 import { media } from "../state/media";
@@ -7,6 +7,8 @@ import { useStore } from "../state/store";
 import { KEY_MAP } from "../services/recognition";
 
 const REAL = !isMock("recognition");
+/** Signs come from model/vision/live.py, which owns the camera and streams its view to us. */
+const BRIDGE = !!PY_BACKEND && RECOGNITION_SOURCE === "python";
 
 /** Webcam with landmark overlay (real), or the animated signer (mock / demo). */
 export function CameraPanel({ compact = false }: { compact?: boolean }) {
@@ -17,7 +19,8 @@ export function CameraPanel({ compact = false }: { compact?: boolean }) {
   const signing = phase === "signing";
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const useReal = REAL && !demo;
+  const useReal = REAL && !demo && !BRIDGE;
+  const useStream = BRIDGE && !!CAMERA_STREAM && !demo && !compact;
 
   useEffect(() => {
     if (!useReal || compact) return;
@@ -40,7 +43,13 @@ export function CameraPanel({ compact = false }: { compact?: boolean }) {
       role="img"
       aria-label={signing ? "Your camera, reading your signs" : "Your camera is off"}
     >
-      {useReal && !compact ? (
+      {useStream ? (
+        <>
+          {/* kept mounted so the stream doesn't reconnect between turns */}
+          <img className="cam" src={CAMERA_STREAM} alt="" style={{ opacity: signing ? 1 : 0, transform: "none" }} />
+          {!signing && <div className="off"><div><Icon name="camoff" />{phase === "start" ? "The camera starts when you sign." : "Camera is off."}</div></div>}
+        </>
+      ) : useReal && !compact ? (
         <>
           <video ref={videoRef} className="cam" muted playsInline style={{ opacity: signing && camera.state !== "starting" ? 1 : 0 }} />
           <canvas ref={canvasRef} className="lmk" style={{ opacity: signing ? 1 : 0 }} />
@@ -54,6 +63,11 @@ export function CameraPanel({ compact = false }: { compact?: boolean }) {
       {signing && <div className="ring-live" />}
       <span className={`vtag${signing ? " rec" : ""}`}><i />{label}</span>
       {signing && <span className="hands" aria-hidden="true">{hands ? <><b>Hands</b> in view</> : "Lower hands to finish"}</span>}
+      {signing && BRIDGE && camera.state === "unavailable" && (
+        <div className="camerr" role="status">
+          <div><Icon name="camoff" /><br />{camera.message ?? "Sign recogniser not connected."}</div>
+        </div>
+      )}
       {signing && useReal && camera.state === "unavailable" && (
         <div className="camerr" role="status">
           <div>

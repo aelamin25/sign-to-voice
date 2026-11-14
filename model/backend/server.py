@@ -13,7 +13,8 @@ Env vars:
     ELEVENLABS_STT_MODEL      default scribe_v1
 
 Endpoints:
-    POST /tokens     from vision/live.py --send   {"tokens": [...], "confs": [...]}  -> speaks the sentence
+    POST /phrase     from vision/live.py --send   {"tokens": [...], "confs": [...]}  -> passed to the web app as-is
+    POST /tokens     same input, but also translates (and speaks, with ElevenLabs) here: for the test page
     POST /translate  {"tokens": [...], "doctor_said": "..."} -> {"text": "..."}       (no side effects)
     POST /reply      {"text": "doctor's words"}   -> {"gloss": [...]}, shown to the patient
     POST /simplify   {"text": "doctor's words"}   -> {"text": "plain-words version"}
@@ -150,6 +151,27 @@ async def simplify_only(d: DoctorText):
     return {"text": await run_in_threadpool(translate.simplify, d.text)}
 
 
+@app.post("/phrase")
+async def phrase_only(body: dict):
+    """From vision/live.py --send .../phrase. Passed straight to the web app (no model call here).
+    {"type": "sign", "token": ..., "conf": ...}  one sign as it is recognised (shown live)
+    {"type": "phrase", "tokens": [...], ...}      the finished turn
+    THUMBS-UP and non-signs are dropped."""
+    skip = ("THUMBS-UP", "FIDGET", "NOTHING")
+    if "tokens" not in body:
+        token = body.get("token")
+        if not token or token in skip:
+            return {"type": "noop"}
+        event = {"type": "sign", "token": token, "conf": body.get("conf")}
+        await broadcast(event)
+        return event
+    tokens, confs = body.get("tokens") or [], body.get("confs") or []
+    pairs = [(t, confs[i] if i < len(confs) else None) for i, t in enumerate(tokens) if t not in skip]
+    event = {"type": "phrase", "tokens": [t for t, _ in pairs], "confs": [c for _, c in pairs]}
+    await broadcast(event)
+    return event
+
+
 @app.post("/sign")
 async def live_sign(s: Sign):
     event = {"type": "sign", "token": s.token, "conf": s.conf}
@@ -208,8 +230,9 @@ async def health():
 async def ws(websocket: WebSocket):
     await websocket.accept()
     clients.add(websocket)
-    for event in state["history"]:
-        await websocket.send_json(event)
+    if websocket.query_params.get("replay") != "0":  # the web app connects with ?replay=0
+        for event in state["history"]:
+            await websocket.send_json(event)
     try:
         while True:
             await websocket.receive_text()  # keep-alive; clients only listen

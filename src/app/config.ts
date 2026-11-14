@@ -24,3 +24,10 @@ export function isMock(s: ServiceName): boolean {
 }
 
 export const API_BASE = env.VITE_API_BASE ?? "";
+
+/** Python backend (model/backend) for the trained models, e.g. http://localhost:8000. Empty = not used. */
+export const PY_BACKEND = (env.VITE_PY_BACKEND ?? "").replace(/\/$/, "");
+/** "python" = signs come from model/vision/live.py through the Python backend instead of the browser recogniser. */
+export const RECOGNITION_SOURCE = env.VITE_RECOGNITION ?? "browser";
+/** Camera view served by model/vision/live.py --stream PORT, shown in the patient panel, e.g. http://localhost:8001/video */
+export const CAMERA_STREAM = env.VITE_CAMERA_STREAM ?? "";
