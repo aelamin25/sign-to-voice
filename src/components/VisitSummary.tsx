@@ -2,6 +2,17 @@ import { Icon } from "./Icon";
 import { useDialog } from "./useDialog";
 import { useStore } from "../state/store";
 
+const todayLabel = () => new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long" });
+
+function Row({ icon, title, children }: { icon: string; title: string; children: React.ReactNode }) {
+  return (
+    <div className="srow">
+      <span className="si"><Icon name={icon} /></span>
+      <div><h3>{title}</h3>{children}</div>
+    </div>
+  );
+}
+
 export function VisitSummary() {
   const open = useStore((s) => s.summaryOpen);
   const summary = useStore((s) => s.summary);
@@ -11,13 +22,7 @@ export function VisitSummary() {
   const ref = useDialog<HTMLDivElement>(open, close, !!summary);
   if (!open) return null;
 
-  const date = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long" });
-  const Row = ({ icon, title, children }: { icon: string; title: string; children: React.ReactNode }) => (
-    <div className="srow">
-      <span className="si"><Icon name={icon} /></span>
-      <div><h3>{title}</h3>{children}</div>
-    </div>
-  );
+  const date = todayLabel();
 
   return (
     <div className="scrim" onMouseDown={(e) => { if (e.target === e.currentTarget) close(); }}>

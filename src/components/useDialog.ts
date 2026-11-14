@@ -1,10 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 
 /** Focus the first control on open, trap Tab inside, close on Escape, restore focus on close. */
 export function useDialog<T extends HTMLElement>(open: boolean, onClose: () => void, key?: unknown) {
   const ref = useRef<T>(null);
   const closeRef = useRef(onClose);
-  closeRef.current = onClose;
+  useLayoutEffect(() => { closeRef.current = onClose; });
 
   useEffect(() => {
     if (!open) return;
