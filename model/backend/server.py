@@ -41,6 +41,7 @@ from pydantic import BaseModel
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "lang"))
 import translate  # noqa: E402
+import usage_log  # noqa: E402  (saves examples only when USAGE_LOG=1; off by default)
 
 AUDIO_DIR = os.path.join(HERE, "audio_cache")
 os.makedirs(AUDIO_DIR, exist_ok=True)
@@ -126,6 +127,7 @@ class DoctorText(BaseModel):
 @app.post("/translate")
 async def translate_only(p: Phrase):
     text = await run_in_threadpool(translate.gloss_to_sentence, p.tokens, p.doctor_said)
+    usage_log.record([t for t in p.tokens if t != "THUMBS-UP"], p.doctor_said, text)
     return {"text": text}
 
 

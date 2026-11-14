@@ -7,7 +7,10 @@
 Everything runs on Adaption-hosted models by default, so you only need ADAPTION_API_KEY.
     ADAPTION_CHAT_MODEL   general model for the few-shot fallback, reply glossing and judging
                           (see `python translate.py --models`; if unset, the first listed model is used)
-    TRANSLATE_BACKEND     fewshot (default) | finetuned | together
+    TRANSLATE_BACKEND     fewshot (default) | finetuned | together | stack
+    ADAPTION_STACK        slug of a self-improving Adaption stack (Inference stacks in the Adaption app),
+                          used when TRANSLATE_BACKEND=stack, e.g. deepseek-v4-flash-1. The stack must be
+                          live and owned by the account whose ADAPTION_API_KEY is set.
     ADAPTION_MODEL        your AutoScientist fine-tune id, used when TRANSLATE_BACKEND=finetuned
     LLM_PROVIDER=anthropic + ANTHROPIC_API_KEY  -> use Claude for the general model instead
 
@@ -103,6 +106,20 @@ def _ask_together(prompt):
     return r.json()["choices"][0]["message"]["content"].strip()
 
 
+def _ask_stack(prompt):
+    """A self-improving Adaption stack: a hosted model that searches our example sentences
+    (file_search over the stack's dataset) and that Adaption keeps tuning from its own usage."""
+    r = _adaption().responses.create(
+        model="stack:" + os.environ["ADAPTION_STACK"],
+        instructions=SYSTEM + " Search the dataset for similar examples and follow their style.",
+        input=prompt,
+        tools=[{"type": "file_search"}],
+        max_output_tokens=60,
+        temperature=0,
+    )
+    return r.output_text
+
+
 # A single short answer sign is said as just that word: fast, predictable, no model call.
 SHORT_ANSWERS = {"NO": "No.", "NONE": "None.", "YES": "Yes."}
 
@@ -117,6 +134,8 @@ def gloss_to_sentence(tokens, doctor_said=None, backend=None, model=None):
     backend = backend or os.environ.get("TRANSLATE_BACKEND", "fewshot")
     if backend == "together":
         out = _ask_together(prompt)
+    elif backend == "stack":
+        out = _ask_stack(prompt)
     elif backend == "finetuned":
         # the fine-tune learned the format itself: no instructions or examples needed
         out = _chat(None, [{"role": "user", "content": prompt}], max_tokens=60,
