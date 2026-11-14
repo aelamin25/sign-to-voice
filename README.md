@@ -33,6 +33,35 @@ Not a replacement for a certified medical interpreter.
 
 ---
 
+## Mobile view
+
+The same URL serves both views. Phones (≤ 767px wide) and portrait tablets (touch screen, ≤ 1024px) get the
+one-step mobile view from `flow.html`; laptops get the two-column web view. Force either with `?view=mobile` or
+`?view=web`.
+
+It shares everything with the web view (state machine, services, mock mode, scripted demo); only the
+presentation in `src/mobile/` is separate, with styles scoped under `.m-root` in `src/mobile/mobile.css`.
+
+### Open it on your phone
+
+Phones only allow the camera and microphone on **https**, so use the phone script:
+
+```bash
+npm run dev:phone          # demo data, https, reachable on your Wi-Fi
+npm run dev:phone:real     # real services + API server, https
+```
+
+Vite prints a `Network: https://192.168.x.x:5173/` address. Open that on a phone on the same Wi-Fi. The
+certificate is self-signed, so the browser warns once: choose "Advanced" then "Proceed" (Chrome) or
+"Show details" then "visit this website" (Safari). Then allow the camera when asked.
+
+If the laptop and phone can't see each other (guest Wi-Fi, university network), use a tunnel instead, e.g.
+`npx cloudflared tunnel --url http://localhost:5173` with `npm run dev:mock`, and open the `https://…trycloudflare.com`
+link it prints.
+
+Notes for phones: audio and speech start after the first tap (iOS rule), the camera stops whenever you leave the
+signing step, and if the camera is blocked the signing step shows "Allow camera to sign" with Try again.
+
 ## Web app: quick start (demo mode, no keys)
 
 ```bash
@@ -124,6 +153,8 @@ server/        index.ts (Express: /api/translate, simplify, summary, tts, scribe
 |---|---|
 | `npm run dev:mock` | web only, all mocks |
 | `npm run dev` | web + API server (real mode, reads `.env`) |
+| `npm run dev:phone` / `dev:phone:real` | same over https on your Wi-Fi, for testing on a phone |
+| `npm run lint` | oxlint (TypeScript + React hooks rules) |
 | `npm run server` | API server only |
 | `npm run build` / `build:mock` | typecheck + production build to `dist/` |
 | `npm run typecheck` | web + server |

@@ -15,7 +15,9 @@
     "start": "tsx server/index.ts",
     "agent-server": "node server/index.js",
     "legacy:web": "vite legacy/web",
-    "lint": "oxlint -c .oxlintrc.json src server"
+    "lint": "oxlint -c .oxlintrc.json src server",
+    "dev:phone": "cross-env VITE_MOCK=true HTTPS=1 vite --host",
+    "dev:phone:real": "cross-env HTTPS=1 concurrently -k -n web,api -c teal,red \"vite --host\" \"tsx watch server/index.ts\""
   },
   "dependencies": {
     "@anam-ai/js-sdk": "^4.29.2",
