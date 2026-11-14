@@ -31,3 +31,5 @@ export const PY_BACKEND = (env.VITE_PY_BACKEND ?? "").replace(/\/$/, "");
 export const RECOGNITION_SOURCE = env.VITE_RECOGNITION ?? "browser";
 /** Camera view served by model/vision/live.py --stream PORT, shown in the patient panel, e.g. http://localhost:8001/video */
 export const CAMERA_STREAM = env.VITE_CAMERA_STREAM ?? "";
+/** True when signs come from live.py through the Python backend (it owns the camera). */
+export const PYTHON_RECOGNITION = !!PY_BACKEND && RECOGNITION_SOURCE === "python";

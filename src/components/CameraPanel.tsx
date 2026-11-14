@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CAMERA_STREAM, isMock, PY_BACKEND, RECOGNITION_SOURCE } from "../app/config";
 import { Icon } from "./Icon";
+import { LiveStream, STREAM_DOWN_MESSAGE } from "./LiveStream";
 import { Silhouette } from "./Illustrations";
 import { media } from "../state/media";
 import { useStore } from "../state/store";
@@ -21,6 +22,11 @@ export function CameraPanel({ compact = false }: { compact?: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const useReal = REAL && !demo && !BRIDGE;
   const useStream = BRIDGE && !!CAMERA_STREAM && !demo && !compact;
+  const [streamDown, setStreamDown] = useState(false);
+  // Python mode: a non-blocking note when live.py sends nothing, or its camera view is missing.
+  const bridgeNote = !BRIDGE || demo || compact || !signing || camera.state !== "live" ? null
+    : camera.message?.startsWith("No signs") ? camera.message
+      : useStream && streamDown ? STREAM_DOWN_MESSAGE : null;
 
   useEffect(() => {
     if (!useReal || compact) return;
@@ -46,7 +52,7 @@ export function CameraPanel({ compact = false }: { compact?: boolean }) {
       {useStream ? (
         <>
           {/* kept mounted so the stream doesn't reconnect between turns */}
-          <img className="cam" src={CAMERA_STREAM} alt="" style={{ opacity: signing ? 1 : 0, transform: "none" }} />
+          <LiveStream className="cam" visible={signing} onDown={setStreamDown} />
           {!signing && <div className="off"><div><Icon name="camoff" />{phase === "start" ? "The camera starts when you sign." : "Camera is off."}</div></div>}
         </>
       ) : useReal && !compact ? (
@@ -63,6 +69,7 @@ export function CameraPanel({ compact = false }: { compact?: boolean }) {
       {signing && <div className="ring-live" />}
       <span className={`vtag${signing ? " rec" : ""}`}><i />{label}</span>
       {signing && <span className="hands" aria-hidden="true">{hands ? <><b>Hands</b> in view</> : "Lower hands to finish"}</span>}
+      {bridgeNote && <p className="bridgenote" role="status">{bridgeNote}</p>}
       {signing && BRIDGE && camera.state === "unavailable" && (
         <div className="camerr" role="status">
           <div><Icon name="camoff" /><br />{camera.message ?? "Sign recogniser not connected."}</div>
