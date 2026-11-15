@@ -175,7 +175,7 @@ export const useStore = create<State & Actions>()((set, get) => {
     // almost at once, so the first sentence used to be spoken by the stand-in voice while the avatar
     // was still connecting. Give the connection a few seconds before falling back.
     if (S.avatar.kind === "real" && !S.avatar.isLive()) {
-      await Promise.race([S.avatar.connect(AVATAR_VIDEO_ID).catch(() => false), wait(12000)]);
+      await Promise.race([S.avatar.connect(AVATAR_VIDEO_ID).catch(() => false), wait(20000)]);
       if (!alive(r)) return;
     }
 

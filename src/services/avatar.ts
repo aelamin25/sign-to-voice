@@ -41,8 +41,8 @@ export function createRealAvatar(): AvatarService {
             bus.emit({ name: e.toolName, args: e.arguments ?? {}, at: Date.now(), source: "anam" });
           });
           await c.streamToVideoElement(videoElementId);
-          // wait for the session to be ready (or 8 s at most) before saying we are live
-          await Promise.race([ready, new Promise<void>((resolve) => setTimeout(resolve, 8000))]);
+          // wait for the session to be ready (or 15 s at most) before saying we are live
+          await Promise.race([ready, new Promise<void>((resolve) => setTimeout(resolve, 15000))]);
           // The doctor's voice goes to Scribe, not to Maya.
           try { c.muteInputAudio(); } catch { /* older SDKs */ }
           client = c;
