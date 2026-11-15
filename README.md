@@ -4,7 +4,7 @@ A prototype built at Imperial AI Hack 2026. A Deaf patient signs to the camera, 
 system understood, and approves it with a thumbs up. Only then does a voice speak it to the doctor.
 The doctor's spoken reply comes back as a short caption.
 
-It recognises a small, fixed set of British Sign Language signs for a doctor's visit. It is a helper
+It recognises a small, fixed set of American Sign Language signs for a doctor's visit. It is a helper
 for when an interpreter doesn't arrive, not a translator and not a replacement for interpreters.
 
 ## Run it
