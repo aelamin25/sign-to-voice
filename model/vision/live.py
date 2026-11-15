@@ -98,6 +98,9 @@ class _Stream:
 
     def __init__(self):
         self.jpeg, self.cond = b"", threading.Condition()
+        # a small, slower copy for viewers far away (a phone, or a shared link over a hotspot):
+        # the full picture is about 600 KB a second per viewer, this one about a twentieth of that
+        self.small, self.small_cond, self.small_at = b"", threading.Condition(), 0.0
 
     def publish(self, frame):
         ok, buf = cv2.imencode(".jpg", frame, [int(cv2.IMWRITE_JPEG_QUALITY), 70])
@@ -105,6 +108,16 @@ class _Stream:
             with self.cond:
                 self.jpeg = buf.tobytes()
                 self.cond.notify_all()
+        now = time.time()
+        if now - self.small_at >= 0.15:
+            self.small_at = now
+            h, w = frame.shape[:2]
+            little = cv2.resize(frame, (480, max(1, int(h * 480 / w)))) if w > 480 else frame
+            ok, buf = cv2.imencode(".jpg", little, [int(cv2.IMWRITE_JPEG_QUALITY), 50])
+            if ok:
+                with self.small_cond:
+                    self.small = buf.tobytes()
+                    self.small_cond.notify_all()
 
 
 def start_stream(port):
@@ -116,10 +129,12 @@ def start_stream(port):
             pass
 
         def do_GET(self):
-            if not self.path.startswith("/video"):
+            if not (self.path.startswith("/video") or self.path.startswith("/small")):
                 self.send_response(404)
                 self.end_headers()
                 return
+            little = self.path.startswith("/small")
+            cond = stream.small_cond if little else stream.cond
             self.send_response(200)
             self.send_header("Content-Type", "multipart/x-mixed-replace; boundary=frame")
             self.send_header("Cache-Control", "no-store")
@@ -127,9 +142,9 @@ def start_stream(port):
             self.end_headers()
             try:
                 while True:
-                    with stream.cond:
-                        stream.cond.wait(timeout=1.0)
-                        jpeg = stream.jpeg
+                    with cond:
+                        cond.wait(timeout=1.0)
+                        jpeg = stream.small if little else stream.jpeg
                     if not jpeg:
                         continue
                     self.wfile.write(b"--frame\r\nContent-Type: image/jpeg\r\nContent-Length: "

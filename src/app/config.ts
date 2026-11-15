@@ -47,6 +47,10 @@ export const AUTO_SIGN = truthy(env.VITE_AUTO_SIGN);
  *  real avatar). The tone label on the reply is shown either way. */
 export const AVATAR_REPLY = truthy(env.VITE_AVATAR_REPLY);
 /** Camera view served by model/vision/live.py --stream PORT, shown in the patient panel, e.g. http://localhost:8001/video */
-export const CAMERA_STREAM = reachable(env.VITE_CAMERA_STREAM ?? "", "/camera");
+// Away from the laptop, ask for live.py's small camera picture (/small): the full one is too heavy for a
+// phone link or a hotspot, and several viewers of it starve everything else.
+const cameraUrl = env.VITE_CAMERA_STREAM ?? "";
+const cameraVia = reachable(cameraUrl, "/camera");
+export const CAMERA_STREAM = cameraVia === cameraUrl ? cameraUrl : cameraVia.replace(/\/video(\?.*)?$/, "/small$1");
 /** True when signs come from live.py through the Python backend (it owns the camera). */
 export const PYTHON_RECOGNITION = !!PY_BACKEND && RECOGNITION_SOURCE === "python";
