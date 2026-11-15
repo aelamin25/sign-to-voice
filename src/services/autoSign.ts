@@ -14,8 +14,9 @@ const canStart = (): boolean => {
   const s = useStore.getState();
   if (s.demo) return false;
   const p = s.phase;
-  // The same moments the on-screen buttons allow: never while the doctor's reply is still playing.
-  return p === "start" || p === "uncertain" || (p === "watching" && !!s.reply?.done)
+  // The same moments the on-screen buttons allow. A patient who has read the doctor's reply can
+  // answer straight away, without waiting for the caption to finish.
+  return p === "start" || p === "uncertain" || p === "watching"
     || (p === "speaking" && s.speech.status === "done");
 };
 

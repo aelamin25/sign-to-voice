@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { CAMERA_STREAM, PYTHON_RECOGNITION } from "../app/config";
 import { Icon } from "./Icon";
+import { LiveStream } from "./LiveStream";
 import { Silhouette } from "./Illustrations";
 import { Highlighted, Words } from "./Words";
 import { DOCTOR_TONE_LABEL } from "../lib/expression";
@@ -64,8 +66,16 @@ export function SignVideoPlayer() {
   const watchAgain = useStore((s) => s.watchAgain);
   const { reply, videoRef, onEnded } = useSignVideoPlayback();
 
+  const demo = useStore((s) => s.demo);
+  const [streamDown, setStreamDown] = useState(false);
+
   if (!reply) return null;
   const playing = reply.playing;
+  // live.py owns the camera and watches the whole time, so the patient can answer as soon as they have
+  // read the reply. Keep their camera on screen (with the reply written over it) instead of swapping
+  // it for the drawn signer, which looked like the app had dropped back to a demo.
+  const camera = PYTHON_RECOGNITION && !!CAMERA_STREAM && !demo && !reply.clips.length;
+  const showCamera = camera && !streamDown;
 
   return (
     <>
@@ -73,11 +83,14 @@ export function SignVideoPlayer() {
         {reply.clips.length ? (
           <video ref={videoRef} className="clip" playsInline muted onEnded={onEnded} onError={onEnded} />
         ) : (
-          <Silhouette signing={playing} />
+          <>
+            {camera && <LiveStream className="cam" visible onDown={setStreamDown} />}
+            {!showCamera && <Silhouette signing={playing} />}
+          </>
         )}
-        <span className={`vtag${playing ? " rec" : ""}`}><i />{playing ? "Playing sign video" : "Sign video"}</span>
+        <span className={`vtag${playing ? " rec" : ""}`}><i />{showCamera ? (playing ? "The doctor's reply" : "Camera on. Sign your answer") : playing ? "Playing sign video" : "Sign video"}</span>
         {DOCTOR_TONE_LABEL[reply.tone] && <span className={`tonetag ${reply.tone}`}>{DOCTOR_TONE_LABEL[reply.tone]}</span>}
-        {!playing && (
+        {!playing && !showCamera && (
           <button className="playv" onClick={watchAgain} aria-label="Play the sign video again"><Icon name="play" /></button>
         )}
         <div className="vcap" aria-live="off">
@@ -104,7 +117,7 @@ export function SignVideoPlayer() {
           </div>
         </section>
       ) : (
-        <p className="pending">The doctor's exact words appear after the video.</p>
+        <p className="pending">{showCamera ? "The doctor's exact words appear in a moment." : "The doctor's exact words appear after the video."}</p>
       )}
     </>
   );
