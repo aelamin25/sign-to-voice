@@ -39,6 +39,32 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+
+
+def load_env_file(path):
+    """Read KEY=value lines from the project's .env, so the keys are typed in one place and the
+    backend can be started the same way on Windows and Mac. Anything already set in the terminal
+    wins; blank values and comments are skipped. Returns the names it set (never the values)."""
+    names = []
+    if not os.path.exists(path):
+        return names
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            key, value = key.strip(), value.strip().strip('"').strip("'")
+            if key and value and key not in os.environ:
+                os.environ[key] = value
+                names.append(key)
+    return names
+
+
+_from_env_file = load_env_file(os.path.join(HERE, "..", "..", ".env"))
+if _from_env_file:
+    print("Settings read from .env:", ", ".join(sorted(_from_env_file)))
+
 sys.path.insert(0, os.path.join(HERE, "..", "lang"))
 import translate  # noqa: E402
 import usage_log  # noqa: E402  (saves examples only when USAGE_LOG=1; off by default)
