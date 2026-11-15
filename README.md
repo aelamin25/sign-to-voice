@@ -6,7 +6,7 @@ It is a helper for when an interpreter isn't available, not a replacement for a 
 
 ## Get the latest version (copy and paste)
 
-The latest version of everyone's work is on the branch called `integration-all`.
+The latest version of everyone's work is on the branch called `integration-all`. The `main` branch holds the same thing.
 
 **If you already have the project on your computer**, open Terminal, go into the project folder, and paste:
 
