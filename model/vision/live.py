@@ -200,6 +200,9 @@ def main():
     if not replaying:
         tracker = Tracker()
         cap = cv2.VideoCapture(args.camera)
+        if not cap.isOpened() and args.camera != 0:
+            # the numbered camera has gone (for example the iPhone moved away): use the first one
+            cap = cv2.VideoCapture(0)
         if not cap.isOpened():
             # printed as well as raised: the start scripts hide the error stream
             print("Can't open the camera. On Mac: System Settings > Privacy & Security > Camera, allow Terminal.",

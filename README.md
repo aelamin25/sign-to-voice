@@ -83,13 +83,18 @@ Anyone can open the link on a phone or laptop, anywhere, and sees the app runnin
 this laptop's camera, the signs, the sentences. No installing. The link stops when that window is closed.
 Only one screen at a time gets the live avatar. Share the link with the team only: it uses this laptop's keys.
 
+The link is for showing the app to someone who is somewhere else. For the demo itself use
+`http://localhost:5180` on the laptop: the link sends the camera picture out over the internet, so on a
+phone hotspot or busy Wi-Fi it lags. Close the link with Ctrl+C in its window (the app keeps running).
+
 ### If something goes wrong
 
 | What you see | What to do |
 |---|---|
 | "Port ... is already in use" | Paste `sh scripts/stop.sh`, then start again |
 | A different app opens | The address is wrong. It must be `http://localhost:5180` |
-| The camera shows the wrong view (a nearby iPhone took over) | Start with `CAMERA=1 sh scripts/start.sh` |
+| The camera light stays on after you have finished | Paste `sh scripts/stop.sh`. It stops every part, also ones left running with no window |
+| The camera shows the wrong view | The app picks the Mac's own camera, not a nearby iPhone's. To choose by hand: `CAMERA=0 sh scripts/start.sh` (then try `CAMERA=1`) |
 | The avatar is a drawing, not a person | Only one tab or device can have the live avatar. Close the others and reload |
 | The doctor's words are a pre-set line | In `.env`, set `VITE_MOCK_STT=false` |
 | Anything else | Look at the files `/tmp/signbridge-*.log` |
