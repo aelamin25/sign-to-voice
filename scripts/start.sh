@@ -97,10 +97,11 @@ if [ "$MODE" = "phone" ]; then
   echo " Open it in ONE place only: the avatar works on one screen at a time."
 else
   echo " SignBridge is running. Open this in Chrome (not Safari):"
-  echo "     http://localhost:5180"
+  echo "     http://localhost:5180/?view=phone     the phone view, as a phone on the page (for the demo)"
+  echo "     http://localhost:5180                 the wide two-column view"
   echo " Keep ONE tab only, in one browser: close any other copy of the page."
   # On a Mac, open it in Chrome straight away (the avatar's sound is unreliable in Safari).
-  [ -d "/Applications/Google Chrome.app" ] && open -a "Google Chrome" http://localhost:5180 2>/dev/null
+  [ -d "/Applications/Google Chrome.app" ] && open -a "Google Chrome" "http://localhost:5180/?view=phone" 2>/dev/null
 fi
 echo " Keys found: $KEYS"
 if [ "$AVATAR" = "off" ]; then

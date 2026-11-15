@@ -9,7 +9,9 @@ It is a helper for when an interpreter isn't available, not a replacement for a 
 **On the laptop only**
 
 1. In Terminal, inside the project folder, paste: `sh scripts/start.sh`
-2. Wait for the box that says "SignBridge is running". The page opens in Chrome by itself (`http://localhost:5180`).
+2. Wait for the box that says "SignBridge is running". The page opens in Chrome by itself:
+   `http://localhost:5180/?view=phone` shows the app as a phone in the middle of the page (best for
+   presenting). `http://localhost:5180` is the wide two-column view. Both do the same thing.
 3. The doctor taps **Doctor, tap to speak**, says hello, then taps **Done speaking**.
 4. The patient reads the doctor's words, then signs to the camera and finishes with a **thumbs up**.
 5. The avatar speaks the sentence. Then the doctor taps **Doctor, tap to speak** again. Repeat.
