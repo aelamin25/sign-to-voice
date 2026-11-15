@@ -10,6 +10,38 @@ import { services } from "../services";
 
 const REAL = !isMock("avatar");
 
+/** Browsers refuse to start a video that has sound until the page has been clicked or a key pressed.
+ *  Hands-free, nobody ever clicks: the avatar connected but her panel stayed blank, with only the words.
+ *  So she starts silently (always allowed), the panel asks for one click, and that click switches her
+ *  sound on. Returns true while the sound is still waiting for that click. */
+function useSoundLock(live: boolean): boolean {
+  const [locked, setLocked] = useState(() => !(navigator.userActivation?.hasBeenActive ?? true));
+  useEffect(() => {
+    const v = document.getElementById(AVATAR_VIDEO_ID) as HTMLVideoElement | null;
+    if (!live || !v) return;
+    let gone = false;
+    v.play().catch(() => {
+      if (gone) return;
+      v.muted = true;
+      setLocked(true);
+      void v.play().catch(() => undefined);
+    });
+    return () => { gone = true; };
+  }, [live]);
+  useEffect(() => {
+    if (!locked) return;
+    const unlock = () => {
+      const v = document.getElementById(AVATAR_VIDEO_ID) as HTMLVideoElement | null;
+      if (v) { v.muted = false; void v.play().catch(() => undefined); }
+      setLocked(false);
+    };
+    window.addEventListener("pointerdown", unlock);
+    window.addEventListener("keydown", unlock);
+    return () => { window.removeEventListener("pointerdown", unlock); window.removeEventListener("keydown", unlock); };
+  }, [locked]);
+  return locked;
+}
+
 /** Maya, the speaking assistant, in her soft teal/peach halo. Captions light up word by word. */
 export function AvatarStage({ withCaption = true }: { withCaption?: boolean }) {
   const phase = useStore((s) => s.phase);
@@ -45,6 +77,7 @@ export function AvatarStage({ withCaption = true }: { withCaption?: boolean }) {
     return () => { stopped = true; clearInterval(id); };
   }, []);
   const live = REAL && !demo && services(false).avatar.isLive();
+  const soundLocked = useSoundLock(live) && voice;
   // The face carries what the words alone lose, in both directions:
   //   speaking for the patient  -> how the patient's face looked while signing
   //   during the doctor's reply -> how the doctor's words came across, for the patient to see
@@ -100,6 +133,7 @@ export function AvatarStage({ withCaption = true }: { withCaption?: boolean }) {
       {REAL && <video id={AVATAR_VIDEO_ID} className={`anam${live ? " live" : ""}`} autoPlay playsInline />}
       <span className="avtag"><i><Icon name="steth" /></i><b>Maya</b>by Anam</span>
       <span className="demo">{live ? "Live avatar" : voice ? "Demo voice" : "Voice off"}</span>
+      {soundLocked && <span className="soundlock" role="status"><Icon name="speaker" />Click anywhere once to switch the sound on</span>}
       {withCaption && cap}
     </div>
   );

@@ -101,6 +101,7 @@ else
 fi
 echo " Keys found: $KEYS"
 echo " You should see YOURSELF in the left box."
+echo " CLICK ONCE anywhere on the page: that switches the sound on."
 echo " To stop (this also turns the camera off): press Ctrl+C in this window,"
 echo "   or from any window:   sh scripts/stop.sh"
 echo " For a link other people can open: in a second window   sh scripts/share.sh"

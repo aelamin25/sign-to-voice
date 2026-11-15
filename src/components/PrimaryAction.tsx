@@ -6,14 +6,19 @@ interface Action { side: "patient" | "doctor"; label: string; icon: string | "wa
 interface Secondary { side: "patient" | "doctor"; label: string; icon: string; run: () => void }
 
 /** The one primary action for the current step. Every layout asks this, so there is only ever one. */
-export function usePrimary(): { primary: Action | null; secondary: Secondary | null } {
+export function usePrimary(): { primary: Action | null; secondary: Secondary | null; also?: Action } {
   const s = useStore();
   return derive(s);
 }
 
-function derive(s: ReturnType<typeof useStore.getState>): { primary: Action | null; secondary: Secondary | null } {
+function derive(s: ReturnType<typeof useStore.getState>): { primary: Action | null; secondary: Secondary | null; also?: Action } {
   const p = s.phase;
-  if (p === "start") return { primary: { side: "patient", label: "Start signing", icon: "hand", tone: "teal", run: s.startSigning }, secondary: null };
+  // Either person can open the visit: the patient by signing, or the doctor with a greeting.
+  if (p === "start") return {
+    primary: { side: "patient", label: "Start signing", icon: "hand", tone: "teal", run: s.startSigning },
+    secondary: null,
+    also: { side: "doctor", label: "Doctor, tap to speak", icon: "mic", tone: "coral", run: s.doctorSpeak },
+  };
   if (p === "signing") return { primary: { side: "patient", label: s.checking ? "Checking your signs…" : "Done signing", icon: "stop", tone: "teal", run: s.doneSigning, disabled: s.checking }, secondary: null };
   if (p === "uncertain") return { primary: { side: "patient", label: "Sign again", icon: "again", tone: "dark", run: s.startSigning }, secondary: null };
   if (p === "speaking") {
@@ -40,11 +45,12 @@ function derive(s: ReturnType<typeof useStore.getState>): { primary: Action | nu
 }
 
 export function PrimaryAction({ side, extra }: { side: "patient" | "doctor"; extra?: React.ReactNode }) {
-  const { primary, secondary } = usePrimary();
+  const { primary, secondary, also } = usePrimary();
   const demo = useStore((s: State) => s.demo);
   const showP = primary?.side === side;
   const showS = secondary?.side === side;
-  if (!showP && !showS && !extra) return null;
+  const showA = also?.side === side;
+  if (!showP && !showS && !showA && !extra) return null;
   return (
     <div className="acts">
       {showP && primary && (
@@ -56,6 +62,12 @@ export function PrimaryAction({ side, extra }: { side: "patient" | "doctor"; ext
         >
           <span className="bd">{primary.icon === "wave" ? <Wave n={4} /> : <Icon name={primary.icon} />}</span>
           {primary.label}
+        </button>
+      )}
+      {showA && also && (
+        <button className={`btn pri ${also.tone}`} onClick={also.run} disabled={demo}>
+          <span className="bd"><Icon name={also.icon} /></span>
+          {also.label}
         </button>
       )}
       {showS && secondary && (

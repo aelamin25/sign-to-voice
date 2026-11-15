@@ -1,5 +1,6 @@
 // The single conversation state machine.
 // start → signing → speaking → listening → generating → watching → (reply) signing …
+// The doctor can also open the visit: start → listening → generating → watching → signing …
 // plus: signing → uncertain (confidence < 0.6, nothing spoken), and any → ended.
 
 export type Phase = "start" | "signing" | "uncertain" | "speaking" | "listening" | "generating" | "watching" | "ended";
@@ -10,7 +11,7 @@ export type MachineEvent =
   | "SIGN_AGAIN" | "END_VISIT" | "NEW_VISIT";
 
 const T: Record<Phase, Partial<Record<MachineEvent, Phase>>> = {
-  start: { START_SIGNING: "signing", END_VISIT: "ended" },
+  start: { START_SIGNING: "signing", DOCTOR_SPEAK: "listening", END_VISIT: "ended" },
   signing: { DONE_SIGNING: "signing", LOW_CONFIDENCE: "uncertain", CONFIDENT: "speaking", END_VISIT: "ended" },
   uncertain: { SIGN_AGAIN: "signing", END_VISIT: "ended" },
   speaking: { DOCTOR_SPEAK: "listening", START_SIGNING: "signing", END_VISIT: "ended" },

@@ -19,8 +19,8 @@ export interface DoctorTurn {
   next?: string;
 }
 
-// The agreed demo consultation (a headache visit). The doctor greets the patient out loud first;
-// the app's flow starts with the patient's answer.
+// The agreed demo consultation (a headache visit). The doctor opens it with a greeting (DOCTOR_OPENING,
+// "Doctor, tap to speak" on the first screen); the patient can also simply start signing.
 export const PATIENT_SCRIPT: PatientTurn[] = [
   { glosses: ["PAIN", "HEAD"], confidence: 0.96 },
   { glosses: ["THREE", "DAY"], confidence: 0.94 },
@@ -31,6 +31,13 @@ export const PATIENT_SCRIPT: PatientTurn[] = [
 
 /** "Try an unclear sign" — the classifier only half-recognises the second sign. */
 export const UNCLEAR_TURN: PatientTurn = { glosses: ["HURT", "?"], confidence: 0.44 };
+
+/** The doctor's greeting when the doctor speaks first. Not one of the numbered turns below. */
+export const DOCTOR_OPENING: DoctorTurn = {
+  text: "Hello, I'm the doctor. What brings you in today?",
+  plain: "Hello. I am the doctor. Why are you here today?",
+  terms: [],
+};
 
 export const DOCTOR_SCRIPT: DoctorTurn[] = [
   {
@@ -66,4 +73,4 @@ export const pickPatient = (i: number) => PATIENT_SCRIPT[Math.min(i, PATIENT_SCR
 export const pickDoctor = (i: number) => DOCTOR_SCRIPT[Math.min(i, DOCTOR_SCRIPT.length - 1)];
 /** Find the scripted doctor line for a transcript (mock simplify). */
 export const findDoctorTurn = (text: string) =>
-  DOCTOR_SCRIPT.find((d) => d.text.trim().toLowerCase() === text.trim().toLowerCase());
+  [DOCTOR_OPENING, ...DOCTOR_SCRIPT].find((d) => d.text.trim().toLowerCase() === text.trim().toLowerCase());

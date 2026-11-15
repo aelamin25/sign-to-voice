@@ -62,7 +62,11 @@ That's it. Without keys it runs in **demo mode**: a scripted visit, no camera ne
 1. Ask Ahmed for his `.env` file, in a private message. It holds the keys. Never post it in a group chat or on GitHub.
 2. Put that file inside the `sign-to-voice` folder.
 3. Stop the app (`Ctrl` + `C`) and start it again: `sh scripts/start.sh`
-4. Sign to the camera and finish each turn with a thumbs up. The doctor taps "Doctor, tap to speak" and talks.
+4. **Click once anywhere on the page.** Browsers keep sound switched off until the page has been clicked;
+   the avatar shows a note until you do.
+5. Either person can begin. The doctor taps "Doctor, tap to speak" and greets the patient, or the patient
+   simply signs. After that they take turns: sign to the camera and finish each turn with a thumbs up; the
+   doctor taps "Doctor, tap to speak" and talks.
 
 ### To use it on a phone
 

@@ -4,7 +4,7 @@ import { SPEAK_THRESHOLD, type Gloss } from "../lib/signs";
 import { toneOfDoctorLine, withCue, withDoctorCue, type DoctorTone, type Expression } from "../lib/expression";
 import { AVATAR_REPLY } from "../app/config";
 import { estimateTimings, wait, type WordTiming } from "../lib/timing";
-import { pickDoctor, pickPatient, UNCLEAR_TURN } from "../mocks/script";
+import { DOCTOR_OPENING, pickDoctor, pickPatient, UNCLEAR_TURN } from "../mocks/script";
 import { services } from "../services";
 import { timerPlayback } from "../services/tts";
 import { glossConfidence } from "../services/translate";
@@ -218,10 +218,12 @@ export const useStore = create<State & Actions>()((set, get) => {
     const S = svc();
     const simp = await S.translate.simplify(text);
     if (!alive(r)) return;
+    // The doctor's greeting (nothing said yet) is not one of the numbered turns of the script.
+    const opening = get().log.length === 0;
     set((s) => ({
       gen: { progress: 0.3, stage: 2 },
       log: [...s.log, { id: ++uid, who: "doctor", text, plain: simp.plain, terms: simp.terms, at: Date.now(), medicine: simp.medicine, next: simp.next }],
-      doctorTurn: s.doctorTurn + 1,
+      doctorTurn: s.doctorTurn + (opening ? 0 : 1),
     }));
     tool("generate_sign_video", { text: simp.plain });
     const vid = await S.signVideo.generate(simp.plain, (p) => { if (alive(r)) set({ gen: { progress: 0.3 + 0.7 * p, stage: 2 } }); });
@@ -344,7 +346,7 @@ export const useStore = create<State & Actions>()((set, get) => {
           onPartial: (t) => { if (alive(r)) set({ transcript: t }); },
           onFinal: (t) => { void onTranscriptFinal(r, t); },
           onError: (m) => { if (alive(r)) set({ sttError: m }); },
-        }, { script: pickDoctor(get().doctorTurn) });
+        }, { script: get().log.length === 0 ? DOCTOR_OPENING : pickDoctor(get().doctorTurn) });
         if (!alive(r)) { session.stop(); return; }
         active.stt = session;
       } catch (e) {

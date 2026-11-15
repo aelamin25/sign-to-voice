@@ -14,6 +14,7 @@ import { ConversationList, MiniAvatar, MWave } from "./shared";
 /* 1. Start */
 export function StartScreen() {
   const start = useStore((s) => s.startSigning);
+  const doctorFirst = useStore((s) => s.doctorSpeak);
   const demo = useStore((s) => s.demo);
   return (
     <>
@@ -24,6 +25,7 @@ export function StartScreen() {
       </div>
       <div className="m-foot">
         <button className="m-cta teal" onClick={() => void start()} disabled={demo} data-primary><Icon name="hand" />Start signing</button>
+        <button className="m-link" onClick={() => void doctorFirst()} disabled={demo}>Doctor speaks first</button>
       </div>
     </>
   );
