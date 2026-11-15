@@ -86,6 +86,7 @@ main { max-width: 1360px; margin: 0 auto; padding: 0 max(16px, 3vw) 40px; }
 .keyhint kbd { font-family: var(--mono); background: rgba(255,255,255,.16); border-radius: 6px; padding: 1px 6px; color: #fff; }
 .camerr { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: #e7ecef; padding: 24px 24px 64px; font-size: 1rem; z-index: 3; background: rgba(20,28,34,.72); }
 .camerr .ic { width: 32px; height: 32px; }
+.bridgenote { position: absolute; left: 16px; right: 16px; bottom: 14px; z-index: 4; margin: 0; padding: 10px 14px; border-radius: 16px; background: rgba(255,243,220,.95); color: var(--amber); font-size: 0.88rem; line-height: 1.35; }
 
 .view.sign .armR { animation: signR 1.3s ease-in-out infinite; transform-origin: 262px 196px; transform-box: view-box; }
 .view.sign .armL { animation: signL 1.6s ease-in-out infinite; transform-origin: 138px 196px; transform-box: view-box; }

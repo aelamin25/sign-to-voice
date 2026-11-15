@@ -38,3 +38,5 @@ export const AUTO_SIGN = truthy(env.VITE_AUTO_SIGN);
 export const AVATAR_REPLY = truthy(env.VITE_AVATAR_REPLY);
 /** Camera view served by model/vision/live.py --stream PORT, shown in the patient panel, e.g. http://localhost:8001/video */
 export const CAMERA_STREAM = env.VITE_CAMERA_STREAM ?? "";
+/** True when signs come from live.py through the Python backend (it owns the camera). */
+export const PYTHON_RECOGNITION = !!PY_BACKEND && RECOGNITION_SOURCE === "python";

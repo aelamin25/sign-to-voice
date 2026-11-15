@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CAMERA_STREAM, isMock, PY_BACKEND, RECOGNITION_SOURCE } from "../app/config";
 import { Icon } from "./Icon";
+import { LiveStream, STREAM_DOWN_MESSAGE } from "./LiveStream";
 import { Silhouette } from "./Illustrations";
 import { media } from "../state/media";
 import { useStore } from "../state/store";
@@ -23,10 +24,11 @@ export function CameraPanel({ compact = false }: { compact?: boolean }) {
   const useReal = REAL && !demo && !BRIDGE;
   const bridge = BRIDGE && !demo;
   const useStream = bridge && !!CAMERA_STREAM && !compact;
-  // live.py's picture. If it isn't running yet the image fails; try again every few seconds.
-  const [streamUp, setStreamUp] = useState(false);
-  const [streamTry, setStreamTry] = useState(0);
-  const [streamFailed, setStreamFailed] = useState(false);
+  const [streamDown, setStreamDown] = useState(false);
+  // Python mode: a non-blocking note when live.py sends nothing, or its camera view is missing.
+  const bridgeNote = !bridge || compact || camera.state === "unavailable" ? null
+    : signing && camera.state === "live" && camera.message?.startsWith("No signs") ? camera.message
+      : useStream && streamDown ? STREAM_DOWN_MESSAGE : null;
 
   useEffect(() => {
     if (!useReal || compact) return;
@@ -36,12 +38,6 @@ export function CameraPanel({ compact = false }: { compact?: boolean }) {
       if (media.video === videoRef.current) { media.video = null; media.canvas = null; }
     };
   }, [useReal, compact]);
-
-  useEffect(() => {
-    if (!useStream || !streamFailed) return;
-    const t = setTimeout(() => { setStreamFailed(false); setStreamTry((n) => n + 1); }, 3000);
-    return () => clearTimeout(t);
-  }, [useStream, streamFailed]);
 
   const label =
     signing ? (camera.state === "starting" && !bridge ? "Starting camera…" : "Reading your signs")
@@ -55,7 +51,7 @@ export function CameraPanel({ compact = false }: { compact?: boolean }) {
     : phase === "start" || phase === "uncertain" ? "Sign to the camera. Finish with a thumbs up."
       : talking ? "Your words are being spoken to the doctor."
         : "Wait for the doctor, then sign your reply.";
-  const showStream = useStream && streamUp;
+  const showStream = useStream && !streamDown;
 
   return (
     <div
@@ -65,19 +61,9 @@ export function CameraPanel({ compact = false }: { compact?: boolean }) {
     >
       {bridge ? (
         <>
-          {useStream && (
-            /* kept mounted so the stream doesn't reconnect between turns; shown the whole time,
-               because live.py watches the whole time (a turn can start without a button press) */
-            <img
-              key={streamTry}
-              className="cam"
-              src={CAMERA_STREAM}
-              alt=""
-              style={{ opacity: showStream ? 1 : 0, transform: "none" }}
-              onLoad={() => { setStreamUp(true); setStreamFailed(false); }}
-              onError={() => { setStreamUp(false); setStreamFailed(true); }}
-            />
-          )}
+          {/* kept mounted so the stream doesn't reconnect between turns; shown the whole time,
+              because live.py watches the whole time (a turn can start without a button press) */}
+          {useStream && <LiveStream className="cam" visible onDown={setStreamDown} />}
           {!showStream && <div className="off"><div><Icon name="hand" />{bridgeHint}</div></div>}
         </>
       ) : useReal && !compact ? (
@@ -95,6 +81,7 @@ export function CameraPanel({ compact = false }: { compact?: boolean }) {
       <span className={`vtag${signing ? " rec" : ""}`}><i />{label}</span>
       {signing && !bridge && <span className="hands" aria-hidden="true">{hands ? <><b>Hands</b> in view</> : "Lower hands to finish"}</span>}
       {bridge && showStream && <span className="hands" aria-hidden="true">{bridgeHint}</span>}
+      {bridgeNote && <p className="bridgenote" role="status">{bridgeNote}</p>}
       {signing && bridge && camera.state === "unavailable" && (
         <div className="camerr" role="status">
           <div><Icon name="camoff" /><br />{camera.message ?? "Sign recogniser not connected."}</div>

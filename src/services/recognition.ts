@@ -267,6 +267,9 @@ function toGloss(t: string): Gloss | null {
   return isKnownGloss(t) ? t : "?";
 }
 
+/** How long to wait for the first sign from live.py before hinting that it may not be running. */
+export const BRIDGE_IDLE_HINT_MS = 8000;
+
 export function createBridgeRecognition(base: string): RecognitionService {
   return {
     kind: "real",
@@ -282,13 +285,28 @@ export function createBridgeRecognition(base: string): RecognitionService {
         emitted++;
         h.onGloss({ gloss: g, confidence: conf });
       };
+      // If the backend is up but nothing ever arrives, live.py is probably not running: say so.
+      let idleTimer = 0;
+      const armIdleHint = () => {
+        clearTimeout(idleTimer);
+        if (emitted > 0) return;
+        idleTimer = window.setTimeout(() => {
+          if (!stopped && emitted === 0) {
+            h.onStatus?.({ camera: "live", message: `No signs arriving yet. Is model/vision/live.py running with --send ${base}/phrase?` });
+          }
+        }, BRIDGE_IDLE_HINT_MS);
+      };
       const connect = () => {
         if (stopped) return;
-        ws = new WebSocket(url);
-        ws.onopen = () => h.onStatus?.({ camera: "live", message: "Signing camera: sign recognition app" });
+        try { ws = new WebSocket(url); } catch {
+          h.onStatus?.({ camera: "unavailable", message: `Invalid backend address: ${base}` });
+          return;
+        }
+        ws.onopen = () => { h.onStatus?.({ camera: "live", message: "Signing camera: sign recognition app" }); armIdleHint(); };
         ws.onclose = () => {
           if (stopped) return;
-          h.onStatus?.({ camera: "unavailable", message: "Sign recogniser not connected. Is model/backend running?" });
+          clearTimeout(idleTimer);
+          h.onStatus?.({ camera: "unavailable", message: `Can't reach the sign recogniser at ${base}. Start model/backend (uvicorn server:app --port 8000). Retrying…` });
           setTimeout(connect, 1500);
         };
         ws.onmessage = (m) => {
@@ -300,6 +318,7 @@ export function createBridgeRecognition(base: string): RecognitionService {
       const handle = (ev: BridgeEvent) => {
           if (stopped) return;
           if (ev.type === "sign" && ev.token) {
+            if (emitted === 0) h.onStatus?.({ camera: "live", message: "Signing camera: sign recognition app" });
             h.onHands?.(true);
             emit(ev.token, ev.conf ?? 0.9);
           } else if (ev.type === "phrase" && ev.tokens) {
@@ -317,6 +336,7 @@ export function createBridgeRecognition(base: string): RecognitionService {
         stop() {
           stopped = true;
           if (activeBridge === handle) activeBridge = null;
+          clearTimeout(idleTimer);
           try { ws?.close(); } catch { /* already closed */ }
         },
       };
