@@ -33,10 +33,10 @@ function derive(s: ReturnType<typeof useStore.getState>): { primary: Action | nu
       : { primary: { side: "doctor", label: "Done speaking", icon: "wave", tone: "coral", run: s.doneSpeaking, on: true }, secondary: null };
   }
   if (p === "watching") {
-    if (!s.reply?.done) return { primary: null, secondary: null };
+    // The patient presses this when the screen is facing them: signs are read only from then on.
     return {
-      primary: { side: "patient", label: "Reply in sign", icon: "hand", tone: "teal", run: s.startSigning },
-      secondary: { side: "patient", label: "Watch again", icon: "play", run: s.watchAgain },
+      primary: { side: "patient", label: "Start signing", icon: "hand", tone: "teal", run: s.startSigning },
+      secondary: s.reply?.done ? { side: "patient", label: "Watch again", icon: "play", run: s.watchAgain } : null,
     };
   }
   if (p === "ended" && !s.summaryOpen) return { primary: { side: "patient", label: "Start a new visit", icon: "arrow", tone: "dark", run: s.newVisit }, secondary: null };

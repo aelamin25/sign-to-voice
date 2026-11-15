@@ -18,11 +18,11 @@ const canStart = (): boolean => {
   // The same moments the on-screen buttons allow. A patient who has read the doctor's reply can
   // answer straight away, without waiting for the caption to finish.
   // Not at the very start: the doctor opens the visit, so hands moving before the greeting start nothing.
-  // Nor while the screen is being turned back to the patient after the doctor's reply: what the camera
-  // sees then is the laptop moving, not signs.
-  if (s.passTo === "patient") return false;
-  return p === "uncertain" || p === "watching"
-    || (p === "speaking" && s.speech.status === "done");
+  // Nor after the doctor's reply: the screen is being turned back to the patient then, and the camera
+  // sees the laptop moving. The patient presses "Start signing" when they are ready.
+  // So a turn never starts by itself: every turn starts with a button ("Start signing", "Sign again").
+  void p;
+  return false;
 };
 
 async function onPhrase(ev: PhraseEvent) {

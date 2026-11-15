@@ -241,12 +241,9 @@ export const useStore = create<State & Actions>()((set, get) => {
     set({ gen: { progress: 1, stage: 3 } });
     await wait(350);
     if (!alive(r) || !go("VIDEO_READY")) return;
-    // One screen, passed back and forth: time to turn it back to the patient before signs are read again.
-    if (PASS_MS) {
-      window.setTimeout(() => { if (alive(r) && get().passTo === "patient") set({ passTo: null }); }, PASS_MS);
-    }
+    // Signs are not read again until the patient presses "Start signing" (the screen is turned back first).
     set((s) => ({
-      passTo: PASS_MS ? "patient" : null,
+      passTo: null,
       phase: "watching",
       reply: { text, plain: simp.plain, tone: toneOfDoctorLine(text), terms: simp.terms, clips: vid.clips, words: vid.words, clipWordIndex: vid.clipWordIndex, index: 0, playing: true, done: false, playKey: (s.reply?.playKey ?? 0) + 1 },
     }));

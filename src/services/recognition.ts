@@ -308,8 +308,10 @@ export function createBridgeRecognition(base: string): RecognitionService {
           onEvent: (ev) => handle(ev as BridgeEvent),
         });
       };
+      // The first moment after "Start signing" is the hand coming away from the button, not a sign.
+      const listenFrom = Date.now() + 1200;
       const handle = (ev: BridgeEvent) => {
-          if (stopped) return;
+          if (stopped || Date.now() < listenFrom) return;
           if (ev.type === "sign" && ev.token) {
             if (emitted === 0) h.onStatus?.({ camera: "live", message: "Signing camera: sign recognition app" });
             h.onHands?.(true);

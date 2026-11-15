@@ -168,7 +168,6 @@ export function WatchScreen() {
   const demo = useStore((s) => s.demo);
   const { reply, videoRef, onEnded } = useSignVideoPlayback();
   const [streamDown, setStreamDown] = useState(false);
-  const passing = useStore((s) => s.passTo === "patient");
   if (!reply) return null;
   const done = reply.done;
   // As on the web view: the sign reader watches the whole time, so the patient can answer as soon as
@@ -189,7 +188,7 @@ export function WatchScreen() {
               {!showCamera && <Silhouette signing={!done} />}
             </>
           )}
-          <span className="m-vtag"><i />{passing ? "Turn the screen to the patient" : showCamera ? (done ? "Camera on. Sign your answer" : "The doctor's reply") : done ? "Sign video" : "Playing sign video"}</span>
+          <span className="m-vtag"><i />{showCamera ? "The doctor's reply. Press Start signing when ready" : done ? "Sign video" : "Playing sign video"}</span>
           {done && !showCamera && <button className="m-playv" onClick={watchAgain} aria-label="Watch again"><Icon name="play" /></button>}
           <div className="m-cc">{done ? reply.plain : <Words text={reply.plain} index={reply.index} />}</div>
         </div>
@@ -206,15 +205,10 @@ export function WatchScreen() {
         )}
       </div>
       <div className="m-foot">
-        {done ? (
-          <>
-            {showCamera && <span className="m-status" style={{ color: "var(--teal)" }}><Icon name="hand" />Sign your answer. Finish with a thumbs up.</span>}
-            <button className="m-cta teal" onClick={() => void reply_()} disabled={demo} data-primary><Icon name="hand" />Reply in sign</button>
-            {!showCamera && <button className="m-link" onClick={watchAgain} disabled={demo}>Watch again</button>}
-          </>
-        ) : (
-          <span className="m-status"><Icon name={showCamera ? "hand" : "play"} />{passing ? "Turn the screen to the patient…" : showCamera ? "Read the doctor's reply. You can sign your answer now." : "Watch the doctor's reply"}</span>
-        )}
+        {/* The patient presses this when the screen is facing them and they are ready: signs are read
+            only from then on (not while the screen is still being turned round). */}
+        <button className="m-cta teal" onClick={() => void reply_()} disabled={demo} data-primary><Icon name="hand" />Start signing</button>
+        {done && !showCamera && <button className="m-link" onClick={watchAgain} disabled={demo}>Watch again</button>}
       </div>
     </>
   );
