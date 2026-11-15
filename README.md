@@ -1,9 +1,64 @@
 # SignBridge (sign-to-voice)
 
-A prototype built at Imperial AI Hack 2026 (Voice, Vision & Generative Media track, ElevenLabs and Anam).
-A Deaf patient signs to the camera, and a voice speaks the sentence to the doctor. The doctor's spoken reply comes back
-in plain words and as sign video. It recognises a small, fixed set of signs for a doctor's visit. It is a helper
-for when an interpreter isn't available, not a replacement for a certified medical interpreter.
+A Deaf patient signs to the camera, and an avatar speaks the sentence to the doctor. The doctor's spoken reply
+comes back to the patient in plain words. Built at Imperial AI Hack 2026 with ElevenLabs, Anam and Adaption.
+It is a helper for when an interpreter isn't available, not a replacement for a certified medical interpreter.
+
+## Run it (copy and paste)
+
+You need a Mac with [Node.js](https://nodejs.org) (press the LTS button) and
+[Python 3](https://www.python.org/downloads) installed. On Windows, double-click `scripts\windows-start.bat` instead.
+
+**1. Open the Terminal app and paste this.** It downloads the project.
+
+```
+git clone -b integration-all https://github.com/aelamin25/sign-to-voice.git
+```
+
+**2. Paste this.** It starts everything. The first time takes a few minutes.
+
+```
+cd sign-to-voice && sh scripts/start.sh
+```
+
+**3. Wait for the box that says "SignBridge is running". Then open this in Chrome:**
+
+```
+http://localhost:5180
+```
+
+Check the address is exactly that, ending in **5180**. Any other number is a different project.
+
+**4. To stop it,** click the Terminal window and press `Ctrl` and `C` together.
+
+That's it. Without keys it runs in **demo mode**: a scripted visit, no camera needed. Press "Play the full visit" in the menu.
+
+### To run the real thing (camera, real voice, live avatar)
+
+1. Ask Ahmed for his `.env` file, in a private message. It holds the keys. Never post it in a group chat or on GitHub.
+2. Put that file inside the `sign-to-voice` folder.
+3. Stop the app (`Ctrl` + `C`) and start it again: `sh scripts/start.sh`
+4. Sign to the camera and finish each turn with a thumbs up. The doctor taps "Doctor, tap to speak" and talks.
+
+### To use it on a phone
+
+1. Put the phone and the laptop on the same Wi-Fi (a phone hotspot works well).
+2. Start it with: `sh scripts/start.sh phone`
+3. On the phone, open the `https://...:5180` address that the box shows.
+4. The phone warns about the certificate once. Choose "Show details", then "visit this website".
+
+The patient signs to the **laptop's** camera. The phone shows the avatar, the doctor's button and the reply.
+
+### If something goes wrong
+
+| What you see | What to do |
+|---|---|
+| "Port ... is already in use" | Paste `sh scripts/stop.sh`, then start again |
+| A different app opens | The address is wrong. It must be `http://localhost:5180` |
+| The camera shows the wrong view (a nearby iPhone took over) | Start with `CAMERA=1 sh scripts/start.sh` |
+| The avatar is a drawing, not a person | Only one tab or device can have the live avatar. Close the others and reload |
+| The doctor's words are a pre-set line | In `.env`, set `VITE_MOCK_STT=false` |
+| Anything else | Look at the files `/tmp/signbridge-*.log` |
 
 ## What's in this repository
 
@@ -24,7 +79,7 @@ Three terminals, from the repository root:
 
 ```bash
 sh scripts/backend.sh     # 1. Python backend on :8000 (reads the keys in .env)
-npm run dev               # 2. web app on :5173
+npm run dev               # 2. web app on :5180
 sh scripts/signs.sh       # 3. the camera recogniser: sends each sign, then the finished turn, to the backend
 ```
 
@@ -92,12 +147,12 @@ npm run dev:phone          # demo data, https, reachable on your Wi-Fi
 npm run dev:phone:real     # real services + API server, https
 ```
 
-Vite prints a `Network: https://192.168.x.x:5173/` address. Open that on a phone on the same Wi-Fi. The
+Vite prints a `Network: https://192.168.x.x:5180/` address. Open that on a phone on the same Wi-Fi. The
 certificate is self-signed, so the browser warns once: choose "Advanced" then "Proceed" (Chrome) or
 "Show details" then "visit this website" (Safari). Then allow the camera when asked.
 
 If the laptop and phone can't see each other (guest Wi-Fi, university network), use a tunnel instead, e.g.
-`npx cloudflared tunnel --url http://localhost:5173` with `npm run dev:mock`, and open the `https://…trycloudflare.com`
+`npx cloudflared tunnel --url http://localhost:5180` with `npm run dev:mock`, and open the `https://…trycloudflare.com`
 link it prints.
 
 Notes for phones: audio and speech start after the first tap (iOS rule), the camera stops whenever you leave the
@@ -143,7 +198,7 @@ so the patient is never stuck. A turn ends on THUMBS-UP or after ~1.5 s of rest 
 
 ```bash
 npm install
-npm run dev:mock        # http://localhost:5173
+npm run dev:mock        # http://localhost:5180
 ```
 
 Everything runs on scripted mock adapters: no keys, no server, no camera. **This is the demo fallback.**

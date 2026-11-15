@@ -10,10 +10,17 @@ export default defineConfig({
   plugins: [react(), ...(process.env.HTTPS ? [basicSsl()] : [])],
   base: "./",
   server: {
-    port: 5173,
+    // 5180, and only 5180: if another project already has the port, Vite stops with an error
+    // instead of quietly moving to the next one (which sent people to the wrong app).
+    port: 5180,
+    strictPort: true,
     proxy: {
       "/api": "http://localhost:8787",
       "/sign-clips": "http://localhost:8787",
+      // For a phone: it can't reach the laptop's "localhost", so the Python backend (signs, sentences)
+      // and live.py's camera picture are also served through this address. See src/app/config.ts.
+      "/py": { target: "http://localhost:8000", ws: true, changeOrigin: true, rewrite: (p) => p.replace(/^\/py/, "") },
+      "/camera": { target: "http://localhost:8001", changeOrigin: true, rewrite: (p) => p.replace(/^\/camera/, "") },
     },
   },
 });

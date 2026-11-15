@@ -26,7 +26,17 @@ export function isMock(s: ServiceName): boolean {
 export const API_BASE = env.VITE_API_BASE ?? "";
 
 /** Python backend (model/backend) for the trained models, e.g. http://localhost:8000. Empty = not used. */
-export const PY_BACKEND = (env.VITE_PY_BACKEND ?? "").replace(/\/$/, "");
+/** A phone opening the laptop's address can't use the laptop's "localhost" settings. When the page is
+ *  not opened from localhost, a localhost address is swapped for the same service behind this page's own
+ *  address (Vite passes /py and /camera through; see vite.config.ts). On the laptop nothing changes. */
+function reachable(url: string, via: string): string {
+  if (!url || typeof location === "undefined") return url;
+  const local = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/;
+  if (!local.test(url) || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return url;
+  return location.origin + via + url.replace(local, "");
+}
+
+export const PY_BACKEND = reachable((env.VITE_PY_BACKEND ?? "").replace(/\/$/, ""), "/py");
 /** "python" = signs come from model/vision/live.py through the Python backend instead of the browser recogniser. */
 export const RECOGNITION_SOURCE = env.VITE_RECOGNITION ?? "browser";
 /** With VITE_RECOGNITION=python: a finished turn from live.py starts the patient's turn by itself,
@@ -37,6 +47,6 @@ export const AUTO_SIGN = truthy(env.VITE_AUTO_SIGN);
  *  real avatar). The tone label on the reply is shown either way. */
 export const AVATAR_REPLY = truthy(env.VITE_AVATAR_REPLY);
 /** Camera view served by model/vision/live.py --stream PORT, shown in the patient panel, e.g. http://localhost:8001/video */
-export const CAMERA_STREAM = env.VITE_CAMERA_STREAM ?? "";
+export const CAMERA_STREAM = reachable(env.VITE_CAMERA_STREAM ?? "", "/camera");
 /** True when signs come from live.py through the Python backend (it owns the camera). */
 export const PYTHON_RECOGNITION = !!PY_BACKEND && RECOGNITION_SOURCE === "python";

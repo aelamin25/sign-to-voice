@@ -26,11 +26,11 @@ if not exist "node_modules" (
 echo Starting the backend (port 8000)...
 start "SignBridge backend" cmd /k "cd /d "%CD%\model\backend" && "%CD%\.venv\Scripts\python.exe" -m uvicorn server:app --host 0.0.0.0 --port 8000"
 
-echo Starting the web app (port 5173)...
+echo Starting the web app (port 5180)...
 start "SignBridge web app" cmd /k "cd /d "%CD%" && npm run dev"
 
 echo.
-echo Open http://localhost:5173 in Chrome and click once on the page.
+echo Open http://localhost:5180 in Chrome and click once on the page.
 echo The camera tag should read "Sign recogniser ready".
 echo.
 echo When it does, press any key here to play Ahmed's five recorded turns (12 seconds apart).
