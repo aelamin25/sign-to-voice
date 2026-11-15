@@ -81,7 +81,8 @@ export function AvatarStage({ withCaption = true }: { withCaption?: boolean }) {
     return () => { clearInterval(id); };
   }, []);
   const live = REAL && !demo && services(false).avatar.isLive();
-  const soundLocked = useSoundLock(live) && voice;
+  // Not on the first screen: the doctor's opening tap is the click that switches the sound on.
+  const soundLocked = useSoundLock(live) && voice && phase !== "start";
   // The face carries what the words alone lose, in both directions:
   //   speaking for the patient  -> how the patient's face looked while signing
   //   during the doctor's reply -> how the doctor's words came across, for the patient to see

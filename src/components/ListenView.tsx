@@ -56,8 +56,8 @@ export function DoctorLast() {
   if (phase === "listening" || phase === "generating" || phase === "speaking" || phase === "watching") return null;
   return (
     <section className="card" aria-label="Doctor">
-      <div className="mtop"><span className="pair"><b>Voice</b><Icon name="arrow" /><b>Sign video</b></span><span>{last ? "Last said" : "Waiting"}</span></div>
-      <p className={`transcript${last ? "" : " ph"}`}>{last ? last.text : "When the patient has spoken, the doctor taps to reply."}</p>
+      <div className="mtop"><span className="pair"><b>Voice</b><Icon name="arrow" /><b>Sign video</b></span><span>{last ? "Last said" : phase === "start" ? "Doctor starts" : "Waiting"}</span></div>
+      <p className={`transcript${last ? "" : " ph"}`}>{last ? last.text : phase === "start" ? "The doctor starts. Tap the button and greet the patient." : "When the patient has spoken, the doctor taps to reply."}</p>
     </section>
   );
 }
