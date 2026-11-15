@@ -206,6 +206,10 @@ def main():
             return {"expression": args.expression} if args.expression else None
         if face_reader is None:
             return None
+        if resting_face.n < 10:
+            # not enough of this person's resting face seen yet to compare against: say nothing
+            turn_face.clear()
+            return None
         out = face_mod.summarise(turn_face, resting_face.get())
         turn_face.clear()
         return out
@@ -283,7 +287,8 @@ def main():
             if reading:
                 if hands_seen and not resting:
                     turn_face.append(reading)
-                else:
+                elif not tokens:
+                    # between turns only: a gap inside a turn still carries the turn's expression
                     resting_face.update(reading)
         event, frames = seg.update(vec, hands_seen and not resting, now)
 
@@ -329,9 +334,12 @@ def main():
                 if ends_turn:
                     print(json.dumps({"type": "turn_done", "by": APPROVE, "conf": round(conf, 2)}), flush=True)
                     tokens, confs = [], []
-        elif event == "phrase_end" and tokens:
-            background(finish_phrase, tokens, confs, take_expression())
-            tokens, confs = [], []
+        elif event == "phrase_end":
+            if tokens:
+                background(finish_phrase, tokens, confs, take_expression())
+                tokens, confs = [], []
+            else:
+                turn_face.clear()  # a fidget or a flicker: its face readings must not colour the next turn
 
         if frame is None:  # replay: nothing to draw
             continue
@@ -363,6 +371,7 @@ def main():
             break
         if key == ord("c"):
             tokens, confs, status["sentence"] = [], [], ""
+            turn_face.clear()
 
     if cap is not None:
         cap.release()
