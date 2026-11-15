@@ -4,8 +4,9 @@ import { useDialog } from "../components/useDialog";
 import { SIGNS, SIGN_ICON, glossLabel } from "../lib/signs";
 import { useStore, type MenuView } from "../state/store";
 import { ConversationList } from "./shared";
+import { PastVisit } from "../components/PastVisit";
 
-const TITLE: Record<MenuView, string> = { main: "Menu", log: "Conversation", signs: "Signs I understand", how: "How it works" };
+const TITLE: Record<MenuView, string> = { main: "Menu", log: "Conversation", signs: "Signs I understand", how: "How it works", past: "My last visit" };
 
 /** Bottom sheets. Uses the shared store's `menu` state, so it stays in sync with the web view. */
 export function Sheets() {
@@ -25,6 +26,7 @@ export function Sheets() {
         {view === "log" && <LogBody />}
         {view === "signs" && <SignsBody />}
         {view === "how" && <HowBody />}
+        {view === "past" && <PastVisit />}
       </div>
     </div>
   );
@@ -52,6 +54,9 @@ function MenuBody() {
     <>
       <button className="m-mi pri" onClick={() => (s.demo ? s.stopDemo() : void s.playDemo())}>
         <Icon name={s.demo ? "stop" : "play"} />{s.demo ? "Stop the demo" : "Play the full visit"}
+      </button>
+      <button className="m-mi" onClick={() => s.setMenu("past")}>
+        <Icon name="cal" /><span>My last visit<small>Show your doctor what happened last time</small></span>
       </button>
       <button className="m-mi" onClick={() => s.toggleTabletop(true)}>
         <Icon name="tabletop" /><span>Tabletop view<small>For presenting. Lay the phone flat between you.</small></span>
