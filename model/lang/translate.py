@@ -53,7 +53,9 @@ _clients = {}
 def _adaption():
     if "adaption" not in _clients:
         from adaption import Adaption
-        _clients["adaption"] = Adaption()
+        # A hosted model that never answers must not freeze the backend (it did: start-up hung for
+        # minutes on one). Give up after a few seconds; the web app then falls back to its own sentence.
+        _clients["adaption"] = Adaption(timeout=float(os.environ.get("ADAPTION_TIMEOUT", "8")), max_retries=0)
     return _clients["adaption"]
 
 
@@ -61,13 +63,20 @@ def list_models():
     return [m.id for m in _adaption().models.list().data]
 
 
+# Hosted models that answered a one-sentence request quickly and correctly when checked on
+# 15 Nov 2026 (0.3 to 0.4 s). Several others returned nothing within 60 tokens, and the first one
+# listed timed out, so "use the first listed" is not a safe default.
+PREFERRED_CHAT_MODELS = ("gemma-4-31b-it", "gemma-4-26b-a4b-it")
+
+
 def _chat_model():
     if not os.environ.get("ADAPTION_CHAT_MODEL"):
-        models = list_models()
+        models = [m for m in list_models() if not m.startswith("stack:")]
         if not models:
             raise RuntimeError("No hosted models listed; set ADAPTION_CHAT_MODEL")
-        os.environ["ADAPTION_CHAT_MODEL"] = models[0]
-        print(f"[translate] ADAPTION_CHAT_MODEL not set, using {models[0]}")
+        pick = next((m for m in PREFERRED_CHAT_MODELS if m in models), models[0])
+        os.environ["ADAPTION_CHAT_MODEL"] = pick
+        print(f"[translate] ADAPTION_CHAT_MODEL not set, using {pick}")
     return os.environ["ADAPTION_CHAT_MODEL"]
 
 
@@ -111,7 +120,7 @@ def _ask_stack(prompt):
     (file_search over the stack's dataset) and that Adaption keeps tuning from its own usage."""
     r = _adaption().responses.create(
         model="stack:" + os.environ["ADAPTION_STACK"],
-        instructions=SYSTEM + " Search the dataset for similar examples and follow their style.",
+        instructions=SYSTEM,
         input=prompt,
         tools=[{"type": "file_search"}],
         max_output_tokens=60,
@@ -156,7 +165,8 @@ SIMPLIFY = (
     "A Deaf patient didn't understand what their doctor just said and asked for it again more simply. "
     "Rewrite the doctor's line in plain everyday English a 10-year-old would understand: replace medical "
     "jargon with common words and an everyday example (e.g. 'analgesia' -> 'painkillers, like paracetamol'). "
-    "Keep the same meaning and the same question type. One short sentence, max 15 words. Reply with it only."
+    "Keep the same meaning and the same question type. Use British English and UK medicine names "
+    "(paracetamol, not Tylenol or acetaminophen). One short sentence, max 15 words. Reply with it only."
 )
 
 
