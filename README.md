@@ -208,7 +208,7 @@ Menu → **Play the full visit** runs the whole scripted conversation on its own
 
 ```bash
 cp .env.example .env    # fill in the keys, set VITE_MOCK=false
-npm run dev             # web on :5173 + API server on :8787 (Vite proxies /api)
+npm run dev             # web on :5180 + API server on :8787 (Vite proxies /api)
 ```
 
 Any service that fails (missing key, network, mic/camera denied) falls back on its own, so the flow never dead-ends:
