@@ -4,6 +4,34 @@ A Deaf patient signs to the camera, and an avatar speaks the sentence to the doc
 comes back to the patient in plain words. Built at Imperial AI Hack 2026 with ElevenLabs, Anam and Adaption.
 It is a helper for when an interpreter isn't available, not a replacement for a certified medical interpreter.
 
+## The demo, step by step
+
+**On the laptop only**
+
+1. In Terminal, inside the project folder, paste: `sh scripts/start.sh`
+2. Wait for the box that says "SignBridge is running". The page opens in Chrome by itself (`http://localhost:5180`).
+3. The doctor taps **Doctor, tap to speak**, says hello, then taps **Done speaking**.
+4. The patient reads the doctor's words, then signs to the camera and finishes with a **thumbs up**.
+5. The avatar speaks the sentence. Then the doctor taps **Doctor, tap to speak** again. Repeat.
+6. To stop: click the Terminal window and press `Ctrl` and `C` together. The camera turns off.
+
+**With a phone as the screen** (the patient still signs to the laptop's camera)
+
+1. Put the phone and the laptop on the same Wi-Fi, or connect the laptop to the phone's hotspot.
+2. In Terminal, inside the project folder, paste: `sh scripts/start.sh phone`
+3. The box shows a line **On the PHONE open:** with an address like `https://172.20.10.6:5180`. Type it into the phone's browser.
+4. The phone warns about the certificate once. Tap "Show details", then "visit this website".
+5. Carry on from step 3 above, on the phone. Allow the microphone when the phone asks.
+6. If the phone cannot open that address: open a second Terminal window, paste `sh scripts/share.sh`,
+   and open the link it prints on the phone instead.
+
+**Three rules**
+
+- Run the visit on **one screen**. Other open copies of the page just wait on the first screen; do not tap on them.
+- Practise with `AVATAR=off sh scripts/start.sh` (add `phone` for the phone). A drawing speaks, with the same
+  voice, and none of the live avatar's limited minutes are used.
+- Without keys (no `.env` file from Ahmed) everything still runs, with stand-in voices and a drawn avatar.
+
 ## Get the latest version (copy and paste)
 
 The latest version of everyone's work is on the branch called `integration-all`. The `main` branch holds the same thing.
