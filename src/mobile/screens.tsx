@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
-import { isMock } from "../app/config";
+import { useEffect, useRef, useState } from "react";
+import { CAMERA_STREAM, isMock, PYTHON_RECOGNITION } from "../app/config";
+import { LiveStream } from "../components/LiveStream";
 import { Icon } from "../components/Icon";
 import { Portrait, Silhouette } from "../components/Illustrations";
 import { useSignVideoPlayback } from "../components/SignVideoPlayer";
@@ -163,8 +164,14 @@ export function WatchScreen() {
   const reply_ = useStore((s) => s.startSigning);
   const demo = useStore((s) => s.demo);
   const { reply, videoRef, onEnded } = useSignVideoPlayback();
+  const [streamDown, setStreamDown] = useState(false);
   if (!reply) return null;
   const done = reply.done;
+  // As on the web view: the sign reader watches the whole time, so the patient can answer as soon as
+  // they have read the reply. Their own camera stays on screen with the doctor's words written over
+  // it, instead of a drawn signer "playing a sign video".
+  const camera = PYTHON_RECOGNITION && !!CAMERA_STREAM && !demo && !reply.clips.length;
+  const showCamera = camera && !streamDown;
 
   return (
     <>
@@ -173,10 +180,13 @@ export function WatchScreen() {
           {reply.clips.length ? (
             <video ref={videoRef} className="m-clip" playsInline muted onEnded={onEnded} onError={onEnded} />
           ) : (
-            <Silhouette signing={!done} />
+            <>
+              {camera && <LiveStream className="m-video" visible onDown={setStreamDown} />}
+              {!showCamera && <Silhouette signing={!done} />}
+            </>
           )}
-          <span className="m-vtag"><i />{done ? "Sign video" : "Playing sign video"}</span>
-          {done && <button className="m-playv" onClick={watchAgain} aria-label="Watch again"><Icon name="play" /></button>}
+          <span className="m-vtag"><i />{showCamera ? (done ? "Camera on. Sign your answer" : "The doctor's reply") : done ? "Sign video" : "Playing sign video"}</span>
+          {done && !showCamera && <button className="m-playv" onClick={watchAgain} aria-label="Watch again"><Icon name="play" /></button>}
           <div className="m-cc">{done ? reply.plain : <Words text={reply.plain} index={reply.index} />}</div>
         </div>
         {done && (
@@ -194,11 +204,12 @@ export function WatchScreen() {
       <div className="m-foot">
         {done ? (
           <>
+            {showCamera && <span className="m-status" style={{ color: "var(--teal)" }}><Icon name="hand" />Sign your answer. Finish with a thumbs up.</span>}
             <button className="m-cta teal" onClick={() => void reply_()} disabled={demo} data-primary><Icon name="hand" />Reply in sign</button>
-            <button className="m-link" onClick={watchAgain} disabled={demo}>Watch again</button>
+            {!showCamera && <button className="m-link" onClick={watchAgain} disabled={demo}>Watch again</button>}
           </>
         ) : (
-          <span className="m-status"><Icon name="play" />Watch the doctor's reply</span>
+          <span className="m-status"><Icon name={showCamera ? "hand" : "play"} />{showCamera ? "Read the doctor's reply. You can sign your answer now." : "Watch the doctor's reply"}</span>
         )}
       </div>
     </>
