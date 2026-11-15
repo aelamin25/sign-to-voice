@@ -199,6 +199,8 @@ def main():
     ap.add_argument("--translate", action="store_true")
     ap.add_argument("--stream", type=int, default=0, metavar="PORT",
                     help="serve the camera view (with tracking) at http://localhost:PORT/video for the web app")
+    ap.add_argument("--phone-camera", action="store_true",
+                    help="experimental: read the signs from pictures a phone sends in (POST /frame) while they arrive")
     ap.add_argument("--no-window", action="store_true", help="don't open the OpenCV window (use with --stream)")
     ap.add_argument("--rest", action="store_true",
                     help="hands lowered below the yellow line count as resting, so they need not leave the picture")
@@ -270,7 +272,7 @@ def main():
         while True:
             # A phone that has the app open sends its own camera's pictures (POST /frame). While they
             # keep arriving, read the signs from those; otherwise from this computer's camera.
-            if stream is not None and time.time() - stream.phone_at < 1.5:
+            if args.phone_camera and stream is not None and time.time() - stream.phone_at < 1.5:
                 with stream.phone_cond:
                     if stream.phone_n == seen_n:
                         stream.phone_cond.wait(timeout=0.2)

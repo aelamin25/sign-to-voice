@@ -18,7 +18,11 @@ if [ -z "$CAMERA" ] && command -v system_profiler >/dev/null 2>&1; then
     | awk -F': ' '/Model ID:/ {m=$2} /Unique ID:/ {print $2 "\t" m}' | LC_ALL=C sort \
     | awk -F'\t' '$2 !~ /^(iPhone|iPad)/ {print NR-1; exit}')
 fi
+# Experimental:  PHONE_CAMERA=1 sh scripts/start.sh phone   plus ?camera=phone on the phone's address:
+# the phone films the signer. Off by default: the model reads the laptop's camera far more surely.
+EXTRA=""
+[ -n "$PHONE_CAMERA" ] && EXTRA="--phone-camera"
 if [ -n "$WINDOW" ]; then
-  exec "$PY" live.py --camera "${CAMERA:-0}" --send "${BASE%/}/phrase" --stream 8001 2>/dev/null
+  exec "$PY" live.py --camera "${CAMERA:-0}" --send "${BASE%/}/phrase" --stream 8001 $EXTRA 2>/dev/null
 fi
-exec "$PY" live.py --plain --camera "${CAMERA:-0}" --send "${BASE%/}/phrase" --stream 8001 --no-window 2>/dev/null
+exec "$PY" live.py --plain --camera "${CAMERA:-0}" --send "${BASE%/}/phrase" --stream 8001 --no-window $EXTRA 2>/dev/null
