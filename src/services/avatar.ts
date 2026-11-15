@@ -1,6 +1,9 @@
-import { totalDuration, wait, type WordTiming } from "../lib/timing";
+import { estimateTimings, splitWords, totalDuration, wait, wordsFromCharacters, type WordTiming } from "../lib/timing";
 import { api } from "./http";
-import type { AvatarService, AvatarTool, ToolCall } from "./types";
+import type { AvatarService, AvatarTool, Playback, ToolCall } from "./types";
+
+/** Delay between sending audio to Anam and the avatar starting to speak it (captions wait for it). */
+const AVATAR_RENDER_DELAY_MS = 350;
 
 /** Tiny event bus for "Anam tool" toasts — fed by real Anam tool calls and by the app. */
 function toolBus() {
@@ -16,6 +19,8 @@ function toolBus() {
 export function createRealAvatar(): AvatarService {
   const bus = toolBus();
   let client: import("@anam-ai/js-sdk").AnamClient | null = null;
+  // ElevenLabs voice mode (audio passthrough): we send Maya ElevenLabs PCM and Anam lip-syncs to it.
+  let audioIn: import("@anam-ai/js-sdk").AgentAudioInputStream | null = null;
   let live = false;
   let connecting: Promise<boolean> | null = null;
   let cancelSpeak: (() => void) | null = null;
@@ -25,6 +30,7 @@ export function createRealAvatar(): AvatarService {
   const closeNow = () => {
     live = false;
     connecting = null;
+    audioIn = null;
     const c = client;
     client = null;
     try { void c?.stopStreaming(); } catch { /* noop */ }
@@ -42,9 +48,11 @@ export function createRealAvatar(): AvatarService {
       const attempt = async (): Promise<boolean> => {
         let c: import("@anam-ai/js-sdk").AnamClient | null = null;
         try {
-          const { sessionToken } = await api<{ sessionToken: string }>("/api/anam-session", {});
+          const { sessionToken, voice } = await api<{ sessionToken: string; voice?: "elevenlabs" | "anam" }>("/api/anam-session", {});
+          const passthrough = voice === "elevenlabs";
           const { createClient, AnamEvent } = await import("@anam-ai/js-sdk");
-          c = createClient(sessionToken);
+          // The doctor's voice goes to Scribe, never to Maya, so Maya needs no microphone.
+          c = createClient(sessionToken, passthrough ? { disableInputAudio: true } : undefined);
           const mine = c;
           // Listeners must be attached before streaming starts.
           // "Connected" is not yet "ready to speak": text sent with talk() before the session is ready
@@ -62,7 +70,9 @@ export function createRealAvatar(): AvatarService {
           // wait for the session to be ready (or 15 s at most) before saying we are live
           await Promise.race([ready, new Promise<void>((resolve) => setTimeout(resolve, 15000))]);
           // The doctor's voice goes to Scribe, not to Maya.
-          try { c.muteInputAudio(); } catch { /* older SDKs */ }
+          if (!passthrough) { try { c.muteInputAudio(); } catch { /* older SDKs */ } }
+          // Format Anam expects for passthrough: 16-bit PCM, 16 kHz, mono (what /api/tts-pcm returns).
+          audioIn = passthrough ? c.createAgentAudioInputStream({ encoding: "pcm_s16le", sampleRate: 16000, channels: 1 }) : null;
           client = c;
           live = true;
           return true;
@@ -85,8 +95,12 @@ export function createRealAvatar(): AvatarService {
       return connecting;
     },
     isLive: () => live && !!client,
+    usesExternalVoice: () => !!audioIn,
     async speak(text: string, words: WordTiming[]) {
       if (!client || !live) throw new Error("Avatar not connected");
+      // ElevenLabs voice mode has no Anam voice to talk() with: patient sentences go through
+      // voicePlayback(); anything else (e.g. VITE_AVATAR_REPLY) is skipped quietly.
+      if (audioIn) { await wait(totalDuration(words) * 1000); return; }
       await client.talk(text);
       // talk() resolves once queued; hold the step for the estimated speaking time.
       await new Promise<void>((resolve) => {
@@ -95,12 +109,62 @@ export function createRealAvatar(): AvatarService {
       });
       cancelSpeak = null;
     },
+    async voicePlayback(text: string): Promise<Playback | null> {
+      if (!client || !live || !audioIn) return null;
+      let res: { audioBase64: string; sampleRate: number; alignment?: { characters: string[]; character_start_times_seconds: number[]; character_end_times_seconds: number[] } | null };
+      try {
+        res = await api("/api/tts-pcm", { text });
+      } catch (e) {
+        console.warn("[avatar] ElevenLabs voice for Maya unavailable, falling back:", e);
+        return null;
+      }
+      const a = res.alignment;
+      let words = a ? wordsFromCharacters(a.characters, a.character_start_times_seconds, a.character_end_times_seconds) : estimateTimings(text);
+      if (words.length !== splitWords(text).length) words = estimateTimings(text);
+      const pcm = Uint8Array.from(atob(res.audioBase64), (ch) => ch.charCodeAt(0));
+      const stream = audioIn;
+      let stopped = false;
+      let resolveWait: (() => void) | null = null;
+      return {
+        words,
+        play: async (onWord) => {
+          stopped = false;
+          // Anam buffers faster-than-realtime audio and renders lip-sync at the right pace; send in ~0.5 s chunks.
+          const CHUNK = 16000; // bytes = 0.5 s at 16 kHz × 2 bytes
+          for (let i = 0; i < pcm.length && !stopped; i += CHUNK) stream.sendAudioChunk(pcm.subarray(i, i + CHUNK));
+          stream.endSequence();
+          // Captions follow the ElevenLabs word timings, offset by Anam's render delay.
+          const t0 = performance.now() + AVATAR_RENDER_DELAY_MS;
+          const dur = totalDuration(words);
+          await new Promise<void>((resolve) => {
+            resolveWait = resolve;
+            let last = -1;
+            const tick = () => {
+              if (stopped) { resolve(); return; }
+              const t = (performance.now() - t0) / 1000;
+              let i = words.findIndex((w) => t < w.end);
+              if (i === -1) i = words.length;
+              if (i !== last && t >= 0) { last = i; onWord(i); }
+              if (t >= dur) { onWord(words.length); resolve(); return; }
+              requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+          });
+        },
+        stop: () => {
+          stopped = true;
+          try { client?.interruptPersona(); } catch { /* noop */ }
+          resolveWait?.();
+        },
+      };
+    },
     stop() {
       cancelSpeak?.();
       try { client?.interruptPersona(); } catch { /* not all SDKs */ }
     },
     async disconnect() {
       live = false;
+      audioIn = null;
       connecting = null;
       try { await client?.stopStreaming(); } catch { /* noop */ }
       client = null;

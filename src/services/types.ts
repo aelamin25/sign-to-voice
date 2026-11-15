@@ -124,6 +124,11 @@ export interface AvatarService {
   isLive(): boolean;
   /** Maya says exactly this text (lip-synced). Resolves when she has finished (estimated). */
   speak(text: string, words: WordTiming[]): Promise<void>;
+  /** Optional: Maya speaks in the ElevenLabs voice (audio passthrough), with real word timings.
+      Resolves to null when not available, so the caller falls back. */
+  voicePlayback?(text: string): Promise<Playback | null>;
+  /** true when the live avatar has no voice of its own (ElevenLabs passthrough): it can only lip-sync audio sent to it */
+  usesExternalVoice?(): boolean;
   stop(): void;
   disconnect(): Promise<void>;
   /** surface a tool call (from Anam or mirrored by the app) as a toast */

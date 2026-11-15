@@ -180,7 +180,14 @@ export const useStore = create<State & Actions>()((set, get) => {
     }
 
     let pb: Playback;
-    if (S.avatar.isLive()) {
+    // Live avatar in ElevenLabs voice mode: Maya speaks the ElevenLabs audio, lip-synced.
+    const mayaVoice = S.avatar.isLive() && S.avatar.voicePlayback ? await S.avatar.voicePlayback(text) : null;
+    if (!alive(r)) { mayaVoice?.stop(); return; }
+    if (mayaVoice) {
+      pb = mayaVoice;
+    } else if (S.avatar.isLive() && !S.avatar.usesExternalVoice?.()) {
+      // Anam voice mode: Maya speaks with her own voice. (In ElevenLabs voice mode she has none,
+      // so if ElevenLabs failed above, the sentence goes to the voice below instead of silence.)
       const words = estimateTimings(text);
       const timer = timerPlayback(words);
       pb = {

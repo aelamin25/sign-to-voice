@@ -79,8 +79,9 @@ export function createRealTts(): TtsService {
       try {
         res = await api<TtsResponse>("/api/tts", { text });
       } catch (e) {
-        console.warn("[tts] falling back to captions only:", e);
-        return timerPlayback(estimateTimings(text));
+        // Keep the patient audible: use the browser's own voice (the demo voice) if ElevenLabs is unavailable.
+        console.warn("[tts] ElevenLabs unavailable, using the browser demo voice:", e);
+        return browserVoice().synthesize(text, { voice });
       }
       const a = res.alignment;
       let words = a ? wordsFromCharacters(a.characters, a.character_start_times_seconds, a.character_end_times_seconds) : estimateTimings(text);
@@ -111,6 +112,9 @@ export function createRealTts(): TtsService {
     },
   };
 }
+
+let browserVoiceTts: TtsService | null = null;
+const browserVoice = () => (browserVoiceTts ??= createMockTts());
 
 /* ── Mock: the browser's own voice ("Demo voice"), else a silent timer ── */
 export function createMockTts(): TtsService {

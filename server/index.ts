@@ -109,24 +109,57 @@ JSON only: {"said":["what the patient said, one item per message"],"doctor":["wh
 }));
 
 /* ── ElevenLabs ────────────────────────────────────────────────────── */
-app.post("/api/tts", handle(async (req, res) => {
-  const text = String(req.body?.text ?? "").slice(0, 1000);
-  if (!text.trim()) throw Object.assign(new Error("text is required"), { status: 400 });
+// Voice and model are set in .env. eleven_flash_v2_5 is ElevenLabs' lowest-latency model;
+// set ELEVENLABS_TTS_MODEL=eleven_multilingual_v2 for maximum quality instead.
+const EL_BASE = (env.ELEVENLABS_API_BASE || "https://api.elevenlabs.io").replace(/\/$/, "");
+const EL_MODEL = () => env.ELEVENLABS_TTS_MODEL || "eleven_flash_v2_5";
+const elevenLabsVoiceReady = () => !!env.ELEVENLABS_API_KEY && !!env.ELEVENLABS_VOICE_ID;
+
+/** Optional voice settings from .env (leave unset to use the voice's own defaults). */
+function voiceSettings(): Record<string, number> | undefined {
+  const out: Record<string, number> = {};
+  const map: [string, string][] = [["ELEVENLABS_STABILITY", "stability"], ["ELEVENLABS_SIMILARITY", "similarity_boost"], ["ELEVENLABS_STYLE", "style"], ["ELEVENLABS_SPEED", "speed"]];
+  for (const [k, f] of map) if (env[k] !== undefined && env[k] !== "" && !Number.isNaN(Number(env[k]))) out[f] = Number(env[k]);
+  return Object.keys(out).length ? out : undefined;
+}
+
+/** One ElevenLabs call: audio (base64) + character alignment for word-by-word captions. */
+async function synthesize(text: string, outputFormat: string) {
   const voice = need("ELEVENLABS_VOICE_ID");
-  // with-timestamps returns base64 audio + character alignment, used for word-by-word captions.
-  const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voice)}/with-timestamps?output_format=mp3_44100_128`, {
+  const r = await fetch(`${EL_BASE}/v1/text-to-speech/${encodeURIComponent(voice)}/with-timestamps?output_format=${outputFormat}`, {
     method: "POST",
     headers: { "xi-api-key": need("ELEVENLABS_API_KEY"), "content-type": "application/json" },
-    body: JSON.stringify({ text, model_id: env.ELEVENLABS_TTS_MODEL || "eleven_multilingual_v2" }),
+    body: JSON.stringify({ text, model_id: EL_MODEL(), voice_settings: voiceSettings() }),
   });
-  if (!r.ok) throw Object.assign(new Error(`ElevenLabs TTS ${r.status}: ${(await r.text()).slice(0, 300)}`), { status: 502 });
-  const d = (await r.json()) as { audio_base64: string; alignment?: unknown; normalized_alignment?: unknown };
+  if (!r.ok) {
+    const body = (await r.text()).slice(0, 300);
+    const hint = r.status === 401 ? " (check ELEVENLABS_API_KEY)" : r.status === 404 ? " (check ELEVENLABS_VOICE_ID; library voices must be added to My Voices)" : "";
+    throw Object.assign(new Error(`ElevenLabs TTS ${r.status}${hint}: ${body}`), { status: 502 });
+  }
+  return (await r.json()) as { audio_base64: string; alignment?: unknown };
+}
+
+const readText = (req: Request) => {
+  const text = String(req.body?.text ?? "").slice(0, 1000);
+  if (!text.trim()) throw Object.assign(new Error("text is required"), { status: 400 });
+  return text;
+};
+
+// Browser playback: MP3.
+app.post("/api/tts", handle(async (req, res) => {
+  const d = await synthesize(readText(req), "mp3_44100_128");
   res.json({ audioBase64: d.audio_base64, mimeType: "audio/mpeg", alignment: d.alignment ?? null });
+}));
+
+// Anam lip-sync (audio passthrough): raw 16-bit PCM, 16 kHz mono, the format Anam expects.
+app.post("/api/tts-pcm", handle(async (req, res) => {
+  const d = await synthesize(readText(req), "pcm_16000");
+  res.json({ audioBase64: d.audio_base64, sampleRate: 16000, alignment: d.alignment ?? null });
 }));
 
 app.get("/api/scribe-token", handle(async (_req, res) => {
   // Single-use token for Scribe v2 realtime (expires after 15 minutes).
-  const r = await fetch("https://api.elevenlabs.io/v1/single-use-token/realtime_scribe", {
+  const r = await fetch(`${EL_BASE}/v1/single-use-token/realtime_scribe`, {
     method: "POST",
     headers: { "xi-api-key": need("ELEVENLABS_API_KEY") },
   });
@@ -136,12 +169,19 @@ app.get("/api/scribe-token", handle(async (_req, res) => {
 }));
 
 /* ── Anam ──────────────────────────────────────────────────────────── */
+// Maya's voice:
+//  - "elevenlabs" (default when ELEVENLABS_API_KEY + ELEVENLABS_VOICE_ID are set): audio passthrough.
+//    The app sends Maya the ElevenLabs PCM audio and Anam lip-syncs to it, so the avatar speaks
+//    in the same ElevenLabs voice as the rest of the app.
+//  - "anam": Anam's own TTS via talk() (needs ANAM_VOICE_ID). Set ANAM_VOICE_SOURCE=anam to force it.
+const anamVoiceSource = () =>
+  (env.ANAM_VOICE_SOURCE || (elevenLabsVoiceReady() ? "elevenlabs" : "anam")) === "elevenlabs" && elevenLabsVoiceReady() ? "elevenlabs" : "anam";
+
 app.post("/api/anam-session", handle(async (_req, res) => {
-  const r = await fetch("https://api.anam.ai/v1/auth/session-token", {
-    method: "POST",
-    headers: { "content-type": "application/json", Authorization: `Bearer ${need("ANAM_API_KEY")}` },
-    body: JSON.stringify({
-      personaConfig: {
+  const voice = anamVoiceSource();
+  const personaConfig = voice === "elevenlabs"
+    ? { name: "Maya", avatarId: need("ANAM_AVATAR_ID"), enableAudioPassthrough: true }
+    : {
         name: "Maya",
         avatarId: need("ANAM_AVATAR_ID"),
         // Mood cues ([curious], [sad], [supportive], ...) need a Cara 4 avatar. Set ANAM_AVATAR_MODEL=cara-4
@@ -151,12 +191,15 @@ app.post("/api/anam-session", handle(async (_req, res) => {
         // Disable Anam's built-in LLM: Maya only says the patient's words, sent with talk().
         llmId: "CUSTOMER_CLIENT_V1",
         skipGreeting: true,
-      },
-    }),
+      };
+  const r = await fetch(`${(env.ANAM_API_BASE || "https://api.anam.ai").replace(/\/$/, "")}/v1/auth/session-token`, {
+    method: "POST",
+    headers: { "content-type": "application/json", Authorization: `Bearer ${need("ANAM_API_KEY")}` },
+    body: JSON.stringify({ personaConfig }),
   });
   if (!r.ok) throw Object.assign(new Error(`Anam ${r.status}: ${(await r.text()).slice(0, 300)}`), { status: 502 });
   const d = (await r.json()) as { sessionToken: string };
-  res.json({ sessionToken: d.sessionToken });
+  res.json({ sessionToken: d.sessionToken, voice });
 }));
 
 /* ── Sign video ────────────────────────────────────────────────────── */
@@ -186,14 +229,17 @@ app.get("/api/health", (_req, res) => {
   res.json({
     ok: true,
     claude: !!env.ANTHROPIC_API_KEY,
-    elevenlabs: !!env.ELEVENLABS_API_KEY && !!env.ELEVENLABS_VOICE_ID,
-    anam: !!env.ANAM_API_KEY && !!env.ANAM_AVATAR_ID && !!env.ANAM_VOICE_ID,
+    elevenlabs: elevenLabsVoiceReady(),
+    voice: elevenLabsVoiceReady() ? { provider: "elevenlabs", voiceId: env.ELEVENLABS_VOICE_ID, model: EL_MODEL() } : { provider: "browser demo voice" },
+    avatarVoice: env.ANAM_API_KEY && env.ANAM_AVATAR_ID ? anamVoiceSource() : null,
+    anam: !!env.ANAM_API_KEY && !!env.ANAM_AVATAR_ID && (anamVoiceSource() === "elevenlabs" || !!env.ANAM_VOICE_ID),
     signVideo: env.SIGN_VIDEO_API_URL ? "remote" : "local-library",
   });
 });
 
 app.listen(PORT, () => {
   console.log(`SignBridge API on http://localhost:${PORT}`);
-  const missing = ["ANTHROPIC_API_KEY", "ELEVENLABS_API_KEY", "ELEVENLABS_VOICE_ID", "ANAM_API_KEY", "ANAM_AVATAR_ID", "ANAM_VOICE_ID"].filter((k) => !env[k]);
+  const missing = ["ANTHROPIC_API_KEY", "ELEVENLABS_API_KEY", "ELEVENLABS_VOICE_ID", "ANAM_API_KEY", "ANAM_AVATAR_ID"].filter((k) => !env[k]);
+  console.log(elevenLabsVoiceReady() ? `  voice: ElevenLabs ${env.ELEVENLABS_VOICE_ID} (${EL_MODEL()})` : "  voice: browser demo voice (ElevenLabs key or voice ID not set)");
   if (missing.length) console.log(`  not set (those features fall back in the app): ${missing.join(", ")}`);
 });
