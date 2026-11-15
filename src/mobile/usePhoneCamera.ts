@@ -7,12 +7,15 @@ import { CAMERA_POST } from "../app/config";
  *  the phone films the signer and sends its pictures to the laptop about 14 times a second; live.py
  *  reads the signs from them and sends back the picture with the dots, which the sign screen shows.
  *  When the phone stops sending (page closed), live.py goes back to the laptop's camera by itself.
- *  Add ?camera=laptop to the page address to keep using the laptop's camera. */
+ *  Experimental: only when the page address ends in ?camera=phone. */
 export function usePhoneCamera(enabled: boolean) {
   useEffect(() => {
-    let wanted = enabled && !!CAMERA_POST && !!navigator.mediaDevices?.getUserMedia;
-    try { if (new URLSearchParams(window.location.search).get("camera") === "laptop") wanted = false; } catch { /* noop */ }
-    if (!wanted) return;
+    // Off unless the page address ends in ?camera=phone. Tried live on 15 Nov: from a hand-held phone the
+    // trained model was only 15 to 58 percent sure (93 to 96 from the laptop's camera, which it was
+    // trained on) and the round trip was slow. So the laptop's camera reads the signs by default.
+    let wanted = false;
+    try { wanted = new URLSearchParams(window.location.search).get("camera") === "phone"; } catch { /* noop */ }
+    if (!wanted || !enabled || !CAMERA_POST || !navigator.mediaDevices?.getUserMedia) return;
 
     let stopped = false, busy = false, opening = false, openedAt = 0;
     let stream: MediaStream | null = null;
