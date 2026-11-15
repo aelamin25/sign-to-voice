@@ -9,6 +9,10 @@ import basicSsl from "@vitejs/plugin-basic-ssl";
 export default defineConfig({
   plugins: [react(), ...(process.env.HTTPS ? [basicSsl()] : [])],
   base: "./",
+  // The avatar and transcription libraries are loaded only when first needed. Unless they are prepared
+  // at start-up, the dev server prepares them at that moment and reloads the page, which wiped the
+  // visit just as the avatar was about to speak for the first time.
+  optimizeDeps: { include: ["@anam-ai/js-sdk", "@elevenlabs/client"] },
   server: {
     // 5180, and only 5180: if another project already has the port, Vite stops with an error
     // instead of quietly moving to the next one (which sent people to the wrong app).

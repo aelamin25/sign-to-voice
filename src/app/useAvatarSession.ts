@@ -5,7 +5,9 @@ import { AVATAR_VIDEO_ID } from "../state/media";
 import { useStore } from "../state/store";
 
 const REAL = !isMock("avatar");
-/** How long the avatar stays connected after she has finished a sentence. */
+/** How long the avatar stays connected after she has finished a sentence: while the doctor is still
+ *  looking at her (until the doctor taps to speak), and once the visit has moved on. */
+const LINGER_FACING_MS = 20000;
 const LINGER_MS = 2500;
 
 /** Looks after the live avatar's session for whichever view is on screen (web or phone), and says
@@ -14,8 +16,9 @@ const LINGER_MS = 2500;
  *  Her minutes are limited (Anam's free plan: 30 a month, and it ends every session after 3), and a
  *  connected avatar uses them even when nobody is talking. So she is connected only while she speaks:
  *  she joins when a sentence is about to be spoken (the store connects her, during the pause in which
- *  the screen is turned to the doctor) and leaves a moment after she has finished it. A five-turn visit
- *  then uses well under a minute of her time, and an open page that nobody is using costs nothing. */
+ *  the screen is turned to the doctor), stays while the doctor is looking at her, and leaves a moment
+ *  after the doctor taps to speak. A five-turn visit then uses a minute or two of her time, and an open
+ *  page that nobody is using costs nothing. */
 export function useAvatarSession(): boolean {
   const [live, setLive] = useState(false);
   useEffect(() => {
@@ -29,7 +32,7 @@ export function useAvatarSession(): boolean {
       const speaking = s.phase === "speaking" && s.speech.status === "talking";
       if (!now || speaking) { quietSince = 0; return; }
       if (!quietSince) quietSince = Date.now();
-      if (Date.now() - quietSince > LINGER_MS) void avatar.disconnect();
+      if (Date.now() - quietSince > (s.phase === "speaking" ? LINGER_FACING_MS : LINGER_MS)) void avatar.disconnect();
     };
     check();
     const id = window.setInterval(check, 1000);
