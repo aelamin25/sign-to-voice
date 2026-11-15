@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { isMock } from "../app/config";
+import { useAvatarSession, useSoundLock } from "../app/useAvatarSession";
 import { Brand, Icon } from "../components/Icon";
 import { formatToolArgs, useToolToasts } from "../components/Toast";
 import { unlockAudio } from "../services/tts";
@@ -25,6 +26,9 @@ export function MobileApp() {
   const screen = screenOf(phase);
   const Current = SCREENS[screen];
   const viewRef = useRef<HTMLElement>(null);
+  // The live avatar: connected only during a visit, and silent until the page has been tapped once.
+  const avatarLive = useAvatarSession();
+  const soundLocked = useSoundLock(avatarLive) && phase !== "start";
 
   useEffect(() => {
     document.documentElement.style.setProperty("--ts", String(textSize));
@@ -65,6 +69,7 @@ export function MobileApp() {
         </main>
       </div>
       <MobileToast />
+      {soundLocked && <div className="m-soundlock" role="status"><Icon name="speaker" />Tap anywhere once to switch the sound on</div>}
       <DemoPill />
       <MobileTabletop />
       <Sheets />

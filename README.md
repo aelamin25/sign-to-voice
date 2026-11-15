@@ -81,6 +81,12 @@ open page costs nothing, but every run-through with her costs a minute or two. T
 
 The patient signs to the **laptop's** camera. The phone shows the avatar, the doctor's button and the reply.
 
+- **Use one screen only.** In phone mode, do not also open the page on the laptop: each open page runs
+  the visit by itself, so two pages would both speak, and only one of them can have the live avatar.
+- The doctor starts on the phone too: "Doctor, tap to speak". The phone asks to use its microphone; allow it.
+- To practise without using the live avatar's minutes: `AVATAR=off sh scripts/start.sh phone`
+- To see the phone layout on a laptop: add `?view=mobile` to the address.
+
 ### One link for the whole team (and any phone)
 
 1. Start the app: `sh scripts/start.sh`

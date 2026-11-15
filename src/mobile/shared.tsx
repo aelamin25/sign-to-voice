@@ -19,10 +19,10 @@ export function screenOf(phase: Phase): Screen {
 
 /** Step bar: [index, tone, label]. Teal = patient steps, coral = doctor steps (as in flow.html). */
 export const STEP: Partial<Record<Screen, [number, "p" | "d", string]>> = {
-  sign: [0, "p", "You sign"],
-  speak: [1, "p", "The doctor hears you"],
-  listen: [2, "d", "The doctor speaks"],
-  watch: [3, "d", "You watch the reply"],
+  listen: [0, "d", "The doctor speaks"],
+  watch: [1, "d", "You watch the reply"],
+  sign: [2, "p", "You sign"],
+  speak: [3, "p", "The doctor hears you"],
 };
 
 export function MWave({ n = 6 }: { n?: number }) {

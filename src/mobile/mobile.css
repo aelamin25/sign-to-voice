@@ -118,6 +118,8 @@
 .m-words .w.on { color: var(--ink); }
 .m-via { font-size: 0.85rem; color: var(--muted); margin-top: 6px; }
 .m-anam-src { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; left: 0; top: 0; }
+/* shown until the page has been tapped once: phones keep sound off until then */
+.m-soundlock { position: fixed; left: 50%; top: 84px; translate: -50% 0; z-index: 60; display: flex; gap: 8px; align-items: center; white-space: nowrap; background: var(--coral); color: #fff; border-radius: 99px; padding: 11px 18px; font-weight: 500; font-size: 0.95rem; box-shadow: 0 10px 30px rgba(0,0,0,.25); pointer-events: none; }
 
 /* listen */
 .m-lis { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; text-align: center; min-height: 0; }
