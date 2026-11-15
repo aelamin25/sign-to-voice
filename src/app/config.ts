@@ -52,5 +52,8 @@ export const AVATAR_REPLY = truthy(env.VITE_AVATAR_REPLY);
 const cameraUrl = env.VITE_CAMERA_STREAM ?? "";
 const cameraVia = reachable(cameraUrl, "/camera");
 export const CAMERA_STREAM = cameraVia === cameraUrl ? cameraUrl : cameraVia.replace(/\/video(\?.*)?$/, "/small$1");
+/** Where a phone sends its own camera's pictures, so live.py reads the signs from the phone's camera
+ *  instead of the laptop's (see src/mobile/usePhoneCamera.ts). */
+export const CAMERA_POST = CAMERA_STREAM ? CAMERA_STREAM.replace(/\/(video|small)(\?.*)?$/, "/frame") : "";
 /** True when signs come from live.py through the Python backend (it owns the camera). */
 export const PYTHON_RECOGNITION = !!PY_BACKEND && RECOGNITION_SOURCE === "python";

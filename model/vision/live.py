@@ -101,6 +101,9 @@ class _Stream:
         # a small, slower copy for viewers far away (a phone, or a shared link over a hotspot):
         # the full picture is about 600 KB a second per viewer, this one about a twentieth of that
         self.small, self.small_cond, self.small_at = b"", threading.Condition(), 0.0
+        # pictures sent in by a phone (POST /frame): when they are arriving, the signs are read from the
+        # phone's camera instead of this computer's
+        self.phone, self.phone_n, self.phone_at, self.phone_cond = b"", 0, 0.0, threading.Condition()
 
     def publish(self, frame):
         ok, buf = cv2.imencode(".jpg", frame, [int(cv2.IMWRITE_JPEG_QUALITY), 70])
@@ -127,6 +130,33 @@ def start_stream(port):
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *a):  # keep the terminal quiet
             pass
+
+        def _cors(self):
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "content-type")
+
+        def do_OPTIONS(self):
+            self.send_response(204)
+            self._cors()
+            self.end_headers()
+
+        def do_POST(self):
+            # one camera picture (a JPEG) from the phone's browser
+            if not self.path.startswith("/frame"):
+                self.send_response(404)
+                self.end_headers()
+                return
+            n = int(self.headers.get("Content-Length") or 0)
+            data = self.rfile.read(n) if 0 < n < 3_000_000 else b""
+            if data:
+                with stream.phone_cond:
+                    stream.phone, stream.phone_at = data, time.time()
+                    stream.phone_n += 1
+                    stream.phone_cond.notify_all()
+            self.send_response(204)
+            self._cors()
+            self.end_headers()
 
         def do_GET(self):
             if not (self.path.startswith("/video") or self.path.startswith("/small")):
@@ -236,10 +266,24 @@ def main():
 
     def camera_frames():
         """One item per camera frame: (picture, time, features, hands seen, points to draw)."""
+        seen_n = 0
         while True:
-            ok, frame = cap.read()
-            if not ok:
-                continue
+            # A phone that has the app open sends its own camera's pictures (POST /frame). While they
+            # keep arriving, read the signs from those; otherwise from this computer's camera.
+            if stream is not None and time.time() - stream.phone_at < 1.5:
+                with stream.phone_cond:
+                    if stream.phone_n == seen_n:
+                        stream.phone_cond.wait(timeout=0.2)
+                    if stream.phone_n == seen_n:
+                        continue
+                    seen_n, data = stream.phone_n, stream.phone
+                frame = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
+                if frame is None:
+                    continue
+            else:
+                ok, frame = cap.read()
+                if not ok:
+                    continue
             frame = cv2.flip(frame, 1)
             now = time.time()
             vec, hands_seen, points = tracker.process(frame, (now - t0) * 1000)

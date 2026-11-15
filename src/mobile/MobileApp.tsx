@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { isMock } from "../app/config";
+import { isMock, PYTHON_RECOGNITION } from "../app/config";
 import { useAvatarSession, useSoundLock } from "../app/useAvatarSession";
 import { Brand, Icon } from "../components/Icon";
 import { formatToolArgs, useToolToasts } from "../components/Toast";
@@ -10,6 +10,7 @@ import { MobileTabletop } from "./MobileTabletop";
 import { EndScreen, ListenScreen, SignScreen, SpeakScreen, StartScreen, WatchScreen } from "./screens";
 import { screenOf, STEP, type Screen } from "./shared";
 import { Sheets } from "./Sheets";
+import { usePhoneCamera } from "./usePhoneCamera";
 
 const SCREENS: Record<Screen, () => React.ReactNode> = {
   start: StartScreen, sign: SignScreen, speak: SpeakScreen, listen: ListenScreen, watch: WatchScreen, end: EndScreen,
@@ -29,6 +30,9 @@ export function MobileApp() {
   // The live avatar: connected only during a visit, and silent until the page has been tapped once.
   const avatarLive = useAvatarSession();
   const soundLocked = useSoundLock(avatarLive) && phase !== "start";
+  // The phone films the signer: its camera's pictures go to the sign reader on the laptop.
+  const demo = useStore((s) => s.demo);
+  usePhoneCamera(PYTHON_RECOGNITION && !demo);
 
   useEffect(() => {
     document.documentElement.style.setProperty("--ts", String(textSize));

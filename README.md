@@ -15,14 +15,20 @@ It is a helper for when an interpreter isn't available, not a replacement for a 
 5. The avatar speaks the sentence. Then the doctor taps **Doctor, tap to speak** again. Repeat.
 6. To stop: click the Terminal window and press `Ctrl` and `C` together. The camera turns off.
 
-**With a phone as the screen** (the patient still signs to the laptop's camera)
+**With a phone** (the phone is the screen AND the camera: the patient signs to the phone)
 
 1. Put the phone and the laptop on the same Wi-Fi, or connect the laptop to the phone's hotspot.
 2. In Terminal, inside the project folder, paste: `sh scripts/start.sh phone`
 3. The box shows a line **On the PHONE open:** with an address like `https://172.20.10.6:5180`. Type it into the phone's browser.
 4. The phone warns about the certificate once. Tap "Show details", then "visit this website".
-5. Carry on from step 3 above, on the phone. Allow the microphone when the phone asks.
-6. If the phone cannot open that address: open a second Terminal window, paste `sh scripts/share.sh`,
+5. Allow the **camera** and the **microphone** when the phone asks. The phone films the signer and sends
+   its pictures to the laptop, where the signs are read.
+6. Stand the phone upright about an arm's length away, so your head, shoulders and both hands are in the
+   picture (the sign screen shows what it sees, with dots on your hands).
+7. Carry on from step 3 above, on the phone.
+8. To show the phone on a big screen: plug the phone into the Mac, open QuickTime Player, File > New Movie
+   Recording, click the arrow next to the red button and choose the iPhone. The window shows the phone live.
+9. If the phone cannot open that address: open a second Terminal window, paste `sh scripts/share.sh`,
    and open the link it prints on the phone instead.
 
 **Three rules**
@@ -107,7 +113,8 @@ open page costs nothing, but every run-through with her costs a minute or two. T
 3. On the phone, open the `https://...:5180` address that the box shows.
 4. The phone warns about the certificate once. Choose "Show details", then "visit this website".
 
-The patient signs to the **laptop's** camera. The phone shows the avatar, the doctor's button and the reply.
+The patient signs to the **phone's** camera: the phone sends its pictures to the laptop, which reads the
+signs. To use the laptop's camera instead, add `?camera=laptop` to the address on the phone.
 
 - **Use one screen only.** In phone mode, do not also open the page on the laptop: each open page runs
   the visit by itself, so two pages would both speak, and only one of them can have the live avatar.
