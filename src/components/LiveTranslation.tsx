@@ -9,7 +9,7 @@ export function LiveTranslation() {
 
   let tone = "";
   let status: React.ReactNode = <span>Live translation</span>;
-  let body: React.ReactNode = <p className="sent ph">Start signing. Your words are spoken for you.</p>;
+  let body: React.ReactNode = <p className="sent ph">Sign your reply. Your words are spoken for you.</p>;
   let warn: React.ReactNode = null;
   let pipe = 0;
 

@@ -16,7 +16,8 @@ const canStart = (): boolean => {
   const p = s.phase;
   // The same moments the on-screen buttons allow. A patient who has read the doctor's reply can
   // answer straight away, without waiting for the caption to finish.
-  return p === "start" || p === "uncertain" || p === "watching"
+  // Not at the very start: the doctor opens the visit, so hands moving before the greeting start nothing.
+  return p === "uncertain" || p === "watching"
     || (p === "speaking" && s.speech.status === "done");
 };
 

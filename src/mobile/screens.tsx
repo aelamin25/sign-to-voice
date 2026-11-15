@@ -21,11 +21,11 @@ export function StartScreen() {
       <div className="m-hero">
         <div className="m-orb" aria-hidden="true"><i /><i /><i /><span><Icon name="hand" /></span></div>
         <h2>Ready when<br />you are.</h2>
-        <p>Sign to the camera. SignBridge speaks for you.</p>
+        <p>The doctor speaks first. Then sign to the camera, and SignBridge speaks for you.</p>
       </div>
       <div className="m-foot">
-        <button className="m-cta teal" onClick={() => void start()} disabled={demo} data-primary><Icon name="hand" />Start signing</button>
-        <button className="m-link" onClick={() => void doctorFirst()} disabled={demo}>Doctor speaks first</button>
+        <button className="m-cta coral" onClick={() => void doctorFirst()} disabled={demo} data-primary><Icon name="mic" />Doctor, tap to speak</button>
+        <button className="m-link" onClick={() => void start()} disabled={demo}>Sign first instead</button>
       </div>
     </>
   );

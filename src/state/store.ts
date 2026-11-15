@@ -341,6 +341,9 @@ export const useStore = create<State & Actions>()((set, get) => {
       cancelActive();
       const r = ++run;
       set({ phase: "listening", transcript: "", sttError: null, gen: { progress: 0, stage: 0 } });
+      // The avatar joins while the doctor is talking, so she is ready for the patient's answer.
+      const A = svc().avatar;
+      if (A.kind === "real" && !A.isLive()) void A.connect(AVATAR_VIDEO_ID).catch(() => false);
       try {
         const session = await svc().stt.start({
           onPartial: (t) => { if (alive(r)) set({ transcript: t }); },
@@ -378,6 +381,8 @@ export const useStore = create<State & Actions>()((set, get) => {
       cancelActive();
       ++run;
       tool("create_visit_summary", { messages: get().log.length });
+      // the visit is over: stop using the avatar's minutes
+      void services(false).avatar.disconnect().catch(() => undefined);
       set({ phase: "ended", menu: null, camera: { state: "off" }, summary: null, summaryOpen: true, saved: null });
       const summary = await svc().translate.summarize(get().log);
       set({ summary });
@@ -422,6 +427,7 @@ export const useStore = create<State & Actions>()((set, get) => {
       };
       try {
         await pause(600);
+        await doctor(); // the doctor opens the visit with a greeting
         await patient();
         await doctor();
         await unclear();

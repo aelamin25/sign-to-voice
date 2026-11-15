@@ -6,9 +6,9 @@ export function StepBar() {
   const cur = stepOf(phase);
   const current = STEPS.find((s) => s.n === cur);
   const announce =
-    phase === "start" ? "Ready. Step 1 of 4: You sign."
+    phase === "start" ? "Ready. Step 1 of 4: Doctor speaks."
       : phase === "ended" ? "Visit ended."
-        : phase === "uncertain" ? "Step 1 of 4: Not sure. Please sign again."
+        : phase === "uncertain" ? "Step 3 of 4: Not sure. Please sign again."
           : `Step ${cur} of 4: ${current?.label}.`;
   return (
     <nav className="stepbar" aria-label="Conversation steps">
@@ -16,7 +16,7 @@ export function StepBar() {
       <ol className="steps">
         {STEPS.map((s) => {
           const state = cur === 5 || s.n < cur ? "done" : s.n === cur ? "cur" : "";
-          const amber = phase === "uncertain" && s.n === 1;
+          const amber = phase === "uncertain" && s.n === 3;
           return (
             <li
               key={s.n}

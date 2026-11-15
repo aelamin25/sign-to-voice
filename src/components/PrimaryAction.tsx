@@ -13,11 +13,10 @@ export function usePrimary(): { primary: Action | null; secondary: Secondary | n
 
 function derive(s: ReturnType<typeof useStore.getState>): { primary: Action | null; secondary: Secondary | null; also?: Action } {
   const p = s.phase;
-  // Either person can open the visit: the patient by signing, or the doctor with a greeting.
+  // The doctor opens the visit with a greeting. The patient going first is still possible, quietly.
   if (p === "start") return {
-    primary: { side: "patient", label: "Start signing", icon: "hand", tone: "teal", run: s.startSigning },
-    secondary: null,
-    also: { side: "doctor", label: "Doctor, tap to speak", icon: "mic", tone: "coral", run: s.doctorSpeak },
+    primary: { side: "doctor", label: "Doctor, tap to speak", icon: "mic", tone: "coral", run: s.doctorSpeak },
+    secondary: { side: "patient", label: "Sign first instead", icon: "hand", run: s.startSigning },
   };
   if (p === "signing") return { primary: { side: "patient", label: s.checking ? "Checking your signs…" : "Done signing", icon: "stop", tone: "teal", run: s.doneSigning, disabled: s.checking }, secondary: null };
   if (p === "uncertain") return { primary: { side: "patient", label: "Sign again", icon: "again", tone: "dark", run: s.startSigning }, secondary: null };

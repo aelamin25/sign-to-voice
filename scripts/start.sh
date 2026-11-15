@@ -3,6 +3,7 @@
 #   sh scripts/start.sh            on this laptop:  http://localhost:5180
 #   sh scripts/start.sh phone      also for a phone on the same Wi-Fi or hotspot (https)
 #   CAMERA=0 sh scripts/start.sh   choose the camera by hand (0, 1, ...) if the picture comes from the wrong one
+#   AVATAR=off sh scripts/start.sh practice mode: a drawing speaks, and none of the live avatar's minutes are used
 # The first run sets everything up (a few minutes). Stop it with Ctrl+C.
 cd "$(dirname "$0")/.." || exit 1
 MODE="${1:-laptop}"
@@ -100,6 +101,12 @@ else
   echo " Keep ONE tab only: the avatar works in one tab at a time."
 fi
 echo " Keys found: $KEYS"
+if [ "$AVATAR" = "off" ]; then
+  echo " PRACTICE MODE: a drawing speaks instead of the live avatar. No avatar minutes are used."
+elif [ "$VITE_MOCK_AVATAR" = "false" ]; then
+  echo " LIVE AVATAR is on. Her minutes are limited (free plan: 30 a month, 3 a visit)."
+  echo "   To practise without using them:   AVATAR=off sh scripts/start.sh"
+fi
 if [ -n "$CAMERA_NOTE" ]; then
   echo " BUT THE CAMERA DID NOT START. To fix it:"
   echo "   1. Close anything else using the camera (FaceTime, Zoom, Photo Booth)."
@@ -110,7 +117,7 @@ else
   echo " You should see YOURSELF in the left box."
   echo "   (wrong camera? start with:   CAMERA=0 sh scripts/start.sh )"
 fi
-echo " CLICK ONCE anywhere on the page: that switches the sound on."
+echo " The DOCTOR starts: tap \"Doctor, tap to speak\" and greet the patient. That tap also switches the sound on."
 echo " To stop (this also turns the camera off): press Ctrl+C in this window,"
 echo "   or from any window:   sh scripts/stop.sh"
 echo " For a link other people can open: in a second window   sh scripts/share.sh"

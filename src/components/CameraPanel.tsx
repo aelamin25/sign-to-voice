@@ -48,7 +48,8 @@ export function CameraPanel({ compact = false }: { compact?: boolean }) {
           : phase === "uncertain" ? "Paused" : "Live on this device, not recorded";
   // What the patient should do now, when live.py has the camera (it watches all the time).
   const bridgeHint = signing ? "Reading your signs…"
-    : phase === "start" || phase === "uncertain" ? "Sign to the camera. Finish with a thumbs up."
+    : phase === "start" ? "The doctor speaks first. Then sign your reply."
+      : phase === "uncertain" ? "Sign to the camera. Finish with a thumbs up."
       : talking ? "Your words are being spoken to the doctor."
         : "Wait for the doctor, then sign your reply.";
   const showStream = useStream && !streamDown;

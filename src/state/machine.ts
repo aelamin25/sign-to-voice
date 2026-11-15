@@ -1,6 +1,6 @@
 // The single conversation state machine.
-// start → signing → speaking → listening → generating → watching → (reply) signing …
-// The doctor can also open the visit: start → listening → generating → watching → signing …
+// The doctor opens the visit: start → listening → generating → watching → signing → speaking → listening …
+// (The patient can still go first, start → signing, from the quiet link on the first screen.)
 // plus: signing → uncertain (confidence < 0.6, nothing spoken), and any → ended.
 
 export type Phase = "start" | "signing" | "uncertain" | "speaking" | "listening" | "generating" | "watching" | "ended";
@@ -27,24 +27,25 @@ export function next(phase: Phase, ev: MachineEvent): Phase | null {
 
 /** Step bar: 4 segments. Teal = patient steps, coral = doctor steps. */
 export const STEPS = [
-  { n: 1, label: "You sign", tone: "teal" },
-  { n: 2, label: "Doctor hears you", tone: "coral" },
-  { n: 3, label: "Doctor speaks", tone: "coral" },
-  { n: 4, label: "You watch", tone: "teal" },
+  { n: 1, label: "Doctor speaks", tone: "coral" },
+  { n: 2, label: "You watch", tone: "teal" },
+  { n: 3, label: "You sign", tone: "teal" },
+  { n: 4, label: "Doctor hears you", tone: "coral" },
 ] as const;
 
 export function stepOf(phase: Phase): number {
   switch (phase) {
     case "start": return 0;
-    case "signing": case "uncertain": return 1;
-    case "speaking": return 2;
-    case "listening": case "generating": return 3;
-    case "watching": return 4;
+    case "listening": case "generating": return 1;
+    case "watching": return 2;
+    case "signing": case "uncertain": return 3;
+    case "speaking": return 4;
     case "ended": return 5;
   }
 }
 
 /** Which column is in focus. Only that column shows a primary button. */
 export function activeSide(phase: Phase): "patient" | "doctor" {
-  return phase === "speaking" || phase === "listening" || phase === "generating" ? "doctor" : "patient";
+  // "start" belongs to the doctor: the doctor opens the visit.
+  return phase === "start" || phase === "speaking" || phase === "listening" || phase === "generating" ? "doctor" : "patient";
 }

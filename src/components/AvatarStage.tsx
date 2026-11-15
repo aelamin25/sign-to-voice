@@ -9,6 +9,9 @@ import { useStore } from "../state/store";
 import { services } from "../services";
 
 const REAL = !isMock("avatar");
+/** How long the avatar stays connected with nothing happening: in the middle of a visit, and after it. */
+const IDLE_MS = 45000;
+const AFTER_VISIT_MS = 3000;
 
 /** Browsers refuse to start a video that has sound until the page has been clicked or a key pressed.
  *  Hands-free, nobody ever clicks: the avatar connected but her panel stayed blank, with only the words.
@@ -53,28 +56,29 @@ export function AvatarStage({ withCaption = true }: { withCaption?: boolean }) {
   const demo = useStore((s) => s.demo);
   const talking = phase === "speaking" && speech.status === "talking";
   const listening = phase === "listening";
-  // Maya connects as soon as the page opens, so the doctor sees her from the start (not a drawing
-  // until the first signed turn). If the session drops while idle, try again a few times.
+  // Maya's minutes are limited (Anam's free plan: 30 a month, and it ends every session after 3), and a
+  // connected avatar uses them even when nobody is talking. So she is connected only during a visit:
+  // she joins at the visit's first turn (the store connects her), and leaves when the visit is over or
+  // when nothing has happened for a while. An open page that nobody is using costs nothing. If her
+  // session ends in the middle of a visit, the next turn brings her back.
   const [, setTick] = useState(0);
   useEffect(() => {
     if (!REAL) return;
     const avatar = services(false).avatar;
-    let failures = 0, busy = false, was = false, stopped = false;
+    let was = false, lastPhase = useStore.getState().phase, changedAt = Date.now();
     const check = () => {
       const now = avatar.isLive();
       if (now !== was) { was = now; setTick((t) => t + 1); }
-      if (now) { failures = 0; return; }
-      if (busy || failures >= 3 || document.hidden || useStore.getState().demo) return;
-      busy = true;
-      void avatar.connect(AVATAR_VIDEO_ID).catch(() => false).then((ok) => {
-        busy = false;
-        if (!ok) failures++;
-        if (!stopped) check();
-      });
+      const s = useStore.getState();
+      if (s.phase !== lastPhase) { lastPhase = s.phase; changedAt = Date.now(); }
+      if (!now || (s.phase === "speaking" && s.speech.status === "talking")) return;
+      const quietFor = Date.now() - changedAt;
+      const over = s.phase === "start" || s.phase === "ended";
+      if (quietFor > (over ? AFTER_VISIT_MS : IDLE_MS)) void avatar.disconnect();
     };
     check();
     const id = window.setInterval(check, 1000);
-    return () => { stopped = true; clearInterval(id); };
+    return () => { clearInterval(id); };
   }, []);
   const live = REAL && !demo && services(false).avatar.isLive();
   const soundLocked = useSoundLock(live) && voice;
@@ -132,7 +136,7 @@ export function AvatarStage({ withCaption = true }: { withCaption?: boolean }) {
       <div className="portrait" style={{ opacity: live ? 0 : 1 }}><Portrait mood={mood} /></div>
       {REAL && <video id={AVATAR_VIDEO_ID} className={`anam${live ? " live" : ""}`} autoPlay playsInline />}
       <span className="avtag"><i><Icon name="steth" /></i><b>Maya</b>by Anam</span>
-      <span className="demo">{live ? "Live avatar" : voice ? "Demo voice" : "Voice off"}</span>
+      <span className="demo">{live ? "Live avatar" : REAL ? "Avatar joins at the first turn" : voice ? "Demo voice" : "Voice off"}</span>
       {soundLocked && <span className="soundlock" role="status"><Icon name="speaker" />Click anywhere once to switch the sound on</span>}
       {withCaption && cap}
     </div>
