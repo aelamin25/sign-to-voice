@@ -51,6 +51,9 @@ Two optional pieces, both off unless switched on, so the default behaviour is un
   `python model/lang/usage_log.py` turns them into the same rows `adaption_pipeline.py` trains on. A person who
   signs should check them first.
 
+**Windows:** double-click `scripts\windows-start.bat`. It sets up Python the first time, starts the backend and the web app,
+and plays the five recorded demo turns. The backend reads its keys from `.env` by itself on every platform.
+
 No camera or signer to hand? `sh scripts/replay.sh` plays the five demo turns from recorded takes
 (`model/vision/samples/`) through the same recogniser, so the backend and web app can be tested by anyone.
 `sh scripts/replay.sh 3` plays only turn 3. The web app must be waiting for the patient: set `VITE_AUTO_SIGN=true`
