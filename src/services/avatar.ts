@@ -31,12 +31,18 @@ export function createRealAvatar(): AvatarService {
           const { createClient, AnamEvent } = await import("@anam-ai/js-sdk");
           const c = createClient(sessionToken);
           // Listeners must be attached before streaming starts.
-          c.addListener(AnamEvent.CONNECTION_ESTABLISHED, () => { live = true; });
+          // "Connected" is not yet "ready to speak": text sent with talk() before the session is ready
+          // is silently dropped (seen with the real service: the first sentence never reached the avatar).
+          let markReady: () => void = () => undefined;
+          const ready = new Promise<void>((resolve) => { markReady = resolve; });
+          c.addListener(AnamEvent.SESSION_READY, () => markReady());
           c.addListener(AnamEvent.CONNECTION_CLOSED, () => { live = false; client = null; connecting = null; });
           c.addListener(AnamEvent.TOOL_CALL_STARTED, (e) => {
             bus.emit({ name: e.toolName, args: e.arguments ?? {}, at: Date.now(), source: "anam" });
           });
           await c.streamToVideoElement(videoElementId);
+          // wait for the session to be ready (or 8 s at most) before saying we are live
+          await Promise.race([ready, new Promise<void>((resolve) => setTimeout(resolve, 8000))]);
           // The doctor's voice goes to Scribe, not to Maya.
           try { c.muteInputAudio(); } catch { /* older SDKs */ }
           client = c;
