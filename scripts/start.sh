@@ -57,6 +57,7 @@ npx tsx server/index.ts > /tmp/signbridge-api.log 2>&1 &
 if [ "$MODE" = "phone" ]; then HTTPS=1 npx vite --host > /tmp/signbridge-web.log 2>&1 &
 else npx vite > /tmp/signbridge-web.log 2>&1 & fi
 sh scripts/signs.sh > /tmp/signbridge-signs.log 2>&1 &
+SIGNS=$!
 
 # Wait until every part answers (the first start of the day can take a minute), then say what is wrong
 # if one of them did not come up, instead of saying "running" when it is not.
@@ -67,17 +68,13 @@ camera_up() { lsof -ti tcp:8001 -sTCP:LISTEN >/dev/null 2>&1; }
 i=0
 while [ $i -lt 90 ]; do
   up http://localhost:8000/health && up "$WEB" && camera_up && break
+  # the sign reader has already given up (no camera): don't wait a minute and a half for it
+  up http://localhost:8000/health && up "$WEB" && ! kill -0 $SIGNS 2>/dev/null && break
   i=$((i + 1)); sleep 1
 done
 PROBLEM=""
 up "$WEB" || PROBLEM="The web page did not start. Details: /tmp/signbridge-web.log"
 up http://localhost:8000/health || PROBLEM="The Python backend did not start. Details: /tmp/signbridge-backend.log"
-if ! camera_up; then
-  PROBLEM="The sign reader could not open the camera.
-   1. Close anything else that is using the camera (FaceTime, Zoom, Photo Booth, another copy of this).
-   2. System Settings > Privacy & Security > Camera: switch on Terminal.
-   3. Run this again. If the picture comes from the wrong camera:  CAMERA=0 sh scripts/start.sh"
-fi
 if [ -n "$PROBLEM" ]; then
   echo
   echo "SignBridge did NOT start properly:"
@@ -85,6 +82,9 @@ if [ -n "$PROBLEM" ]; then
   sh scripts/stop.sh quiet
   exit 1
 fi
+# No camera is not the end: the page, the voice and the recorded turns (sh scripts/replay.sh) still work.
+CAMERA_NOTE=""
+camera_up || CAMERA_NOTE=yes
 IP=$(ipconfig getifaddr en0 2>/dev/null || hostname -I 2>/dev/null | awk '{print $1}')
 echo
 echo "=================================================="
@@ -100,7 +100,16 @@ else
   echo " Keep ONE tab only: the avatar works in one tab at a time."
 fi
 echo " Keys found: $KEYS"
-echo " You should see YOURSELF in the left box."
+if [ -n "$CAMERA_NOTE" ]; then
+  echo " BUT THE CAMERA DID NOT START. To fix it:"
+  echo "   1. Close anything else using the camera (FaceTime, Zoom, Photo Booth)."
+  echo "   2. System Settings > Privacy & Security > Camera: switch on Terminal."
+  echo "   3. Press Ctrl+C here and start again."
+  echo "   Without a camera you can still try it:   sh scripts/replay.sh"
+else
+  echo " You should see YOURSELF in the left box."
+  echo "   (wrong camera? start with:   CAMERA=0 sh scripts/start.sh )"
+fi
 echo " CLICK ONCE anywhere on the page: that switches the sound on."
 echo " To stop (this also turns the camera off): press Ctrl+C in this window,"
 echo "   or from any window:   sh scripts/stop.sh"
