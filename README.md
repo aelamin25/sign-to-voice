@@ -4,6 +4,30 @@ A Deaf patient signs to the camera, and an avatar speaks the sentence to the doc
 comes back to the patient in plain words. Built at Imperial AI Hack 2026 with ElevenLabs, Anam and Adaption.
 It is a helper for when an interpreter isn't available, not a replacement for a certified medical interpreter.
 
+## Get the latest version (copy and paste)
+
+The latest version of everyone's work is on the branch called `integration-all`.
+
+**If you already have the project on your computer**, open Terminal, go into the project folder, and paste:
+
+```
+git fetch origin && git checkout integration-all && git pull origin integration-all
+```
+
+**If you don't have it yet**, open Terminal and paste:
+
+```
+git clone -b integration-all https://github.com/aelamin25/sign-to-voice.git
+```
+
+Then start it:
+
+```
+cd sign-to-voice && sh scripts/start.sh
+```
+
+and open `http://localhost:5180` in Chrome. (If you were already inside the project folder, leave out `cd sign-to-voice &&`.)
+
 ## Run it (copy and paste)
 
 You need a Mac with [Node.js](https://nodejs.org) (press the LTS button) and
