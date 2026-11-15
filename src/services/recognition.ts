@@ -1,3 +1,4 @@
+import { openBridgeEvents } from "./bridgeEvents";
 import type {
   GlossEvent, Landmark, LandmarkFrame, RecognitionHandlers, RecognitionService, RecognitionSession,
   RecognitionStartOptions, SignClassifier,
@@ -275,8 +276,7 @@ export function createBridgeRecognition(base: string): RecognitionService {
     kind: "real",
     async start(_opts: RecognitionStartOptions, h: RecognitionHandlers): Promise<RecognitionSession> {
       h.onStatus?.({ camera: "starting", message: "Connecting to the sign recogniser…" });
-      const url = base.replace(/^http/, "ws") + "/ws?replay=0";
-      let ws: WebSocket | null = null;
+      let channel: { close(): void } | null = null;
       let stopped = false;
       let emitted = 0; // signs already shown this turn
       const emit = (token: string, conf: number) => {
@@ -298,22 +298,15 @@ export function createBridgeRecognition(base: string): RecognitionService {
       };
       const connect = () => {
         if (stopped) return;
-        try { ws = new WebSocket(url); } catch {
-          h.onStatus?.({ camera: "unavailable", message: `Invalid backend address: ${base}` });
-          return;
-        }
-        ws.onopen = () => { h.onStatus?.({ camera: "live", message: "Signing camera: sign recognition app" }); armIdleHint(); };
-        ws.onclose = () => {
-          if (stopped) return;
-          clearTimeout(idleTimer);
-          h.onStatus?.({ camera: "unavailable", message: `Can't reach the sign recogniser at ${base}. Start model/backend (uvicorn server:app --port 8000). Retrying…` });
-          setTimeout(connect, 1500);
-        };
-        ws.onmessage = (m) => {
-          let ev: BridgeEvent;
-          try { ev = JSON.parse(String(m.data)); } catch { return; }
-          handle(ev);
-        };
+        channel = openBridgeEvents(base, {
+          onOpen: () => { if (!stopped) { h.onStatus?.({ camera: "live", message: "Signing camera: sign recognition app" }); armIdleHint(); } },
+          onDown: () => {
+            if (stopped) return;
+            clearTimeout(idleTimer);
+            h.onStatus?.({ camera: "unavailable", message: `Can't reach the sign recogniser at ${base}. Start model/backend (uvicorn server:app --port 8000). Retrying…` });
+          },
+          onEvent: (ev) => handle(ev as BridgeEvent),
+        });
       };
       const handle = (ev: BridgeEvent) => {
           if (stopped) return;
@@ -337,7 +330,7 @@ export function createBridgeRecognition(base: string): RecognitionService {
           stopped = true;
           if (activeBridge === handle) activeBridge = null;
           clearTimeout(idleTimer);
-          try { ws?.close(); } catch { /* already closed */ }
+          channel?.close();
         },
       };
     },

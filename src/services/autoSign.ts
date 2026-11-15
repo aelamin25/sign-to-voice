@@ -1,5 +1,6 @@
 import { AUTO_SIGN, PY_BACKEND, RECOGNITION_SOURCE } from "../app/config";
 import { useStore } from "../state/store";
+import { openBridgeEvents } from "./bridgeEvents";
 import { injectBridgeEvent, shownSigns } from "./recognition";
 
 // Hands-free turns. The trained recogniser (model/vision/live.py) owns the camera and sends a
@@ -36,15 +37,11 @@ export function startAutoSign() {
   const w = window as unknown as { __signbridgeAutoSign?: boolean };
   if (w.__signbridgeAutoSign) return; // one listener, even across hot reloads
   w.__signbridgeAutoSign = true;
-  const url = PY_BACKEND.replace(/^http/, "ws") + "/ws?replay=0";
-  const connect = () => {
-    const ws = new WebSocket(url);
-    ws.onmessage = (m) => {
-      let ev: PhraseEvent;
-      try { ev = JSON.parse(String(m.data)); } catch { return; }
-      if (ev.type === "phrase") void onPhrase(ev);
-    };
-    ws.onclose = () => setTimeout(connect, 1500);
-  };
-  connect();
+  // one listener for the page's whole life; it reconnects by itself
+  openBridgeEvents(PY_BACKEND, {
+    onEvent: (e) => {
+      const ev = e as PhraseEvent;
+      if (ev?.type === "phrase") void onPhrase(ev);
+    },
+  });
 }

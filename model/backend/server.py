@@ -89,12 +89,15 @@ async def warm_up():
         print("Warm-up call failed (check API keys):", e)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-state = {"doctor_said": None, "history": []}
+state = {"doctor_said": None, "history": [], "seq": 0, "recent": []}
 clients: set[WebSocket] = set()
 
 
 async def broadcast(event: dict):
     state["history"] = (state["history"] + [event])[-50:]
+    # numbered copies for pages that fetch events instead of holding a socket open (see /events)
+    state["seq"] += 1
+    state["recent"] = (state["recent"] + [(state["seq"], event)])[-50:]
     for ws in list(clients):
         try:
             await ws.send_json(event)
@@ -255,6 +258,17 @@ async def favicon():
 async def health():
     return {"ok": True, "elevenlabs": bool(EL_KEY), "llm": os.environ.get("LLM_PROVIDER", "adaption"),
             "translate_backend": os.environ.get("TRANSLATE_BACKEND", "fewshot")}
+
+
+@app.get("/events")
+async def events(after: int = -1):
+    """The same events as /ws, for a page that cannot hold a WebSocket open: an iPhone on the laptop's
+    https address refuses the socket because the certificate is home-made. The page asks a few times a
+    second for everything after the last number it has seen. A first call (after=-1), or a number from
+    before this backend restarted, starts from now."""
+    if after < 0 or after > state["seq"]:
+        return {"last": state["seq"], "events": []}
+    return {"last": state["seq"], "events": [e for n, e in state["recent"] if n > after]}
 
 
 @app.websocket("/ws")
