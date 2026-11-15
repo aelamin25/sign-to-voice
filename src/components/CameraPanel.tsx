@@ -26,8 +26,8 @@ export function CameraPanel({ compact = false }: { compact?: boolean }) {
   const useStream = bridge && !!CAMERA_STREAM && !compact;
   const [streamDown, setStreamDown] = useState(false);
   // Python mode: a non-blocking note when live.py sends nothing, or its camera view is missing.
-  const bridgeNote = !bridge || compact || camera.state === "unavailable" ? null
-    : signing && camera.state === "live" && camera.message?.startsWith("No signs") ? camera.message
+  const bridgeNote = !bridge || compact || !signing || camera.state !== "live" ? null
+    : camera.message?.startsWith("No signs") ? camera.message
       : useStream && streamDown ? STREAM_DOWN_MESSAGE : null;
 
   useEffect(() => {

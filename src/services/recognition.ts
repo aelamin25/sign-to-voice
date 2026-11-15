@@ -268,7 +268,7 @@ function toGloss(t: string): Gloss | null {
 }
 
 /** How long to wait for the first sign from live.py before hinting that it may not be running. */
-export const BRIDGE_IDLE_HINT_MS = 8000;
+export const BRIDGE_IDLE_HINT_MS = 20000; // a first turn is a whole movement (signs + thumbs up) and can take well over 8 s
 
 export function createBridgeRecognition(base: string): RecognitionService {
   return {
