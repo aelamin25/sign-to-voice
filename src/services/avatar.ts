@@ -84,8 +84,10 @@ export function createRealAvatar(): AvatarService {
         }
       };
       connecting = (async () => {
-        for (let i = 0; i < 3; i++) {
-          if (i > 0) await wait(3000);
+        // Two quick tries, so that when the avatar cannot come (her minutes are used up) the sentence
+        // is spoken by the stand-in voice after a second or two, not after a long silence.
+        for (let i = 0; i < 2; i++) {
+          if (i > 0) await wait(1200);
           if (await attempt()) return true;
         }
         console.warn("[avatar] Anam unavailable, using the portrait + ElevenLabs voice");

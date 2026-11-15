@@ -2,8 +2,11 @@ import { pickDoctor } from "../mocks/script";
 import { api } from "./http";
 import type { SttService } from "./types";
 
-/** Silence after the last committed segment before we treat the doctor as finished. */
-const END_AFTER_SILENCE_MS = 1800;
+/** Silence after the last committed segment before we treat the doctor as finished.
+ *  Long on purpose: a doctor pauses between sentences ("I'm sorry to hear that. ... How long has it been
+ *  going on?"), and at 1.8 seconds the second sentence was cut off. The doctor ends the turn with the
+ *  "Done speaking" button; this is only the safety net for when nobody presses it. */
+const END_AFTER_SILENCE_MS = 6000;
 
 /* ── Real: ElevenLabs Scribe v2 realtime, single-use token from /api/scribe-token ── */
 export function createRealStt(): SttService {
@@ -16,7 +19,8 @@ export function createRealStt(): SttService {
         token,
         modelId: "scribe_v2_realtime",
         commitStrategy: CommitStrategy.VAD,
-        vadSilenceThresholdSecs: 0.6,
+        vadSilenceThresholdSecs: 1.0,
+        languageCode: "en",
         microphone: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       });
 

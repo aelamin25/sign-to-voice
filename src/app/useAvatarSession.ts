@@ -5,33 +5,31 @@ import { AVATAR_VIDEO_ID } from "../state/media";
 import { useStore } from "../state/store";
 
 const REAL = !isMock("avatar");
-/** How long the avatar stays connected with nothing happening: in the middle of a visit, and after it. */
-const IDLE_MS = 45000;
-const AFTER_VISIT_MS = 3000;
+/** How long the avatar stays connected after she has finished a sentence. */
+const LINGER_MS = 2500;
 
 /** Looks after the live avatar's session for whichever view is on screen (web or phone), and says
  *  whether she is live.
  *
  *  Her minutes are limited (Anam's free plan: 30 a month, and it ends every session after 3), and a
- *  connected avatar uses them even when nobody is talking. So she is connected only during a visit:
- *  she joins at the visit's first turn (the store connects her), and leaves when the visit is over or
- *  when nothing has happened for a while. An open page that nobody is using costs nothing. If her
- *  session ends in the middle of a visit, the next turn brings her back. */
+ *  connected avatar uses them even when nobody is talking. So she is connected only while she speaks:
+ *  she joins when a sentence is about to be spoken (the store connects her, during the pause in which
+ *  the screen is turned to the doctor) and leaves a moment after she has finished it. A five-turn visit
+ *  then uses well under a minute of her time, and an open page that nobody is using costs nothing. */
 export function useAvatarSession(): boolean {
   const [live, setLive] = useState(false);
   useEffect(() => {
     if (!REAL) return;
     const avatar = services(false).avatar;
-    let lastPhase = useStore.getState().phase, changedAt = Date.now();
+    let quietSince = 0;
     const check = () => {
       const now = avatar.isLive();
       setLive(now);
       const s = useStore.getState();
-      if (s.phase !== lastPhase) { lastPhase = s.phase; changedAt = Date.now(); }
-      if (!now || (s.phase === "speaking" && s.speech.status === "talking")) return;
-      const quietFor = Date.now() - changedAt;
-      const over = s.phase === "start" || s.phase === "ended";
-      if (quietFor > (over ? AFTER_VISIT_MS : IDLE_MS)) void avatar.disconnect();
+      const speaking = s.phase === "speaking" && s.speech.status === "talking";
+      if (!now || speaking) { quietSince = 0; return; }
+      if (!quietSince) quietSince = Date.now();
+      if (Date.now() - quietSince > LINGER_MS) void avatar.disconnect();
     };
     check();
     const id = window.setInterval(check, 1000);

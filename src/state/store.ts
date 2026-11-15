@@ -177,7 +177,7 @@ export const useStore = create<State & Actions>()((set, get) => {
     // almost at once, so the first sentence used to be spoken by the stand-in voice while the avatar
     // was still connecting. Give the connection a few seconds before falling back.
     const joining = S.avatar.kind === "real" && !S.avatar.isLive()
-      ? Promise.race([S.avatar.connect(AVATAR_VIDEO_ID).catch(() => false), wait(20000)])
+      ? Promise.race([S.avatar.connect(AVATAR_VIDEO_ID).catch(() => false), wait(9000)])
       : Promise.resolve(true);
     // One screen, passed back and forth: give them time to turn it to the doctor before anything is said.
     if (PASS_MS && opts.log) {
@@ -284,7 +284,6 @@ export const useStore = create<State & Actions>()((set, get) => {
         camera: { state: "starting" }, speech: IDLE_SPEECH, sttError: null,
       });
       const S = svc();
-      if (S.avatar.kind === "real" && !S.avatar.isLive()) void S.avatar.connect(AVATAR_VIDEO_ID);
       // Let the view that owns the camera element mount first (the mobile sign screen appears
       // only after this state change). One frame; no visible effect on the web view.
       await new Promise<void>((done) => requestAnimationFrame(() => done()));
@@ -353,9 +352,6 @@ export const useStore = create<State & Actions>()((set, get) => {
       cancelActive();
       const r = ++run;
       set({ passTo: null, phase: "listening", transcript: "", sttError: null, gen: { progress: 0, stage: 0 } });
-      // The avatar joins while the doctor is talking, so she is ready for the patient's answer.
-      const A = svc().avatar;
-      if (A.kind === "real" && !A.isLive()) void A.connect(AVATAR_VIDEO_ID).catch(() => false);
       try {
         const session = await svc().stt.start({
           onPartial: (t) => { if (alive(r)) set({ transcript: t }); },
