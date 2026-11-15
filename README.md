@@ -1,5 +1,29 @@
 # Sign to voice (working title)
 
+> ## The latest version is on the `integration-all` branch
+>
+> This page shows an older version. Everyone's latest work is on the branch `integration-all`.
+>
+> **Already have the project?** Open Terminal, go into the project folder, and paste:
+>
+> ```
+> git fetch origin && git checkout integration-all && git pull origin integration-all
+> ```
+>
+> **Don't have it yet?** Open Terminal and paste:
+>
+> ```
+> git clone -b integration-all https://github.com/aelamin25/sign-to-voice.git
+> ```
+>
+> **Then start it:**
+>
+> ```
+> cd sign-to-voice && sh scripts/start.sh
+> ```
+>
+> and open `http://localhost:5180` in Chrome. Full steps: [README on integration-all](https://github.com/aelamin25/sign-to-voice/tree/integration-all#readme).
+
 A prototype built at Imperial AI Hack 2026. A Deaf patient signs to the camera, sees the sentence the
 system understood, and approves it with a thumbs up. Only then does a voice speak it to the doctor.
 The doctor's spoken reply comes back as a short caption.
