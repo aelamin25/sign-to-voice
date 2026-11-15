@@ -38,9 +38,9 @@ function useSoundLock(live: boolean): boolean {
       if (v) { v.muted = false; void v.play().catch(() => undefined); }
       setLocked(false);
     };
-    window.addEventListener("pointerdown", unlock);
-    window.addEventListener("keydown", unlock);
-    return () => { window.removeEventListener("pointerdown", unlock); window.removeEventListener("keydown", unlock); };
+    const kinds = ["pointerdown", "click", "keydown"];
+    kinds.forEach((k) => window.addEventListener(k, unlock));
+    return () => { kinds.forEach((k) => window.removeEventListener(k, unlock)); };
   }, [locked]);
   return locked;
 }

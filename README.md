@@ -101,6 +101,8 @@ phone hotspot or busy Wi-Fi it lags. Close the link with Ctrl+C in its window (t
 |---|---|
 | "Port ... is already in use" | Paste `sh scripts/stop.sh`, then start again |
 | A different app opens | The address is wrong. It must be `http://localhost:5180` |
+| No avatar, or she is silent | Use Chrome, not Safari, and keep the page open in one tab of one browser only |
+| The avatar leaves in the middle | Anam's free plan ends a session after 3 minutes; she comes back at the next turn. If she never comes, the month's 30 minutes are used up: put a teammate's Anam key in `.env` |
 | The camera light stays on after you have finished | Paste `sh scripts/stop.sh`. It stops every part, also ones left running with no window |
 | The camera shows the wrong view | The app picks the Mac's own camera, not a nearby iPhone's. To choose by hand: `CAMERA=0 sh scripts/start.sh` (then try `CAMERA=1`) |
 | The avatar is a drawing, not a person | Only one tab or device can have the live avatar. Close the others and reload |
