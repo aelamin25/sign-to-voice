@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Icon } from "./Icon";
 import { Silhouette } from "./Illustrations";
 import { Highlighted, Words } from "./Words";
+import { DOCTOR_TONE_LABEL } from "../lib/expression";
 import { totalDuration } from "../lib/timing";
 import { useStore } from "../state/store";
 
@@ -66,6 +67,7 @@ export function SignVideoPlayer() {
           <Silhouette signing={playing} />
         )}
         <span className={`vtag${playing ? " rec" : ""}`}><i />{playing ? "Playing sign video" : "Sign video"}</span>
+        {DOCTOR_TONE_LABEL[reply.tone] && <span className={`tonetag ${reply.tone}`}>{DOCTOR_TONE_LABEL[reply.tone]}</span>}
         {!playing && (
           <button className="playv" onClick={watchAgain} aria-label="Play the sign video again"><Icon name="play" /></button>
         )}

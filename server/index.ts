@@ -144,6 +144,9 @@ app.post("/api/anam-session", handle(async (_req, res) => {
       personaConfig: {
         name: "Maya",
         avatarId: need("ANAM_AVATAR_ID"),
+        // Mood cues ([curious], [sad], [supportive], ...) need a Cara 4 avatar. Set ANAM_AVATAR_MODEL=cara-4
+        // to ask for it; left unset, the request is exactly as before.
+        ...(env.ANAM_AVATAR_MODEL ? { avatarModel: env.ANAM_AVATAR_MODEL } : {}),
         voiceId: need("ANAM_VOICE_ID"),
         // Disable Anam's built-in LLM: Maya only says the patient's words, sent with talk().
         llmId: "CUSTOMER_CLIENT_V1",

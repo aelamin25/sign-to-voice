@@ -2,6 +2,7 @@ import type {
   GlossEvent, Landmark, LandmarkFrame, RecognitionHandlers, RecognitionService, RecognitionSession,
   RecognitionStartOptions, SignClassifier,
 } from "./types";
+import { isExpression } from "../lib/expression";
 import { isKnownGloss, type Gloss } from "../lib/signs";
 import { pickPatient } from "../mocks/script";
 
@@ -246,7 +247,7 @@ export function createMockRecognition(): RecognitionService {
      live.py --send http://<backend>:8000/phrase   → {"type":"phrase","tokens":[...],"confs":[...]}
    A phrase ends the patient's turn (live.py sends it on THUMBS-UP or after ~1.5 s of rest).
    ════════════════════════════════════════════════════════════════════ */
-type BridgeEvent = { type?: string; token?: string; conf?: number; tokens?: string[]; confs?: number[] };
+type BridgeEvent = { type?: string; token?: string; conf?: number; tokens?: string[]; confs?: number[]; expression?: string };
 /** The running bridge session's event handler, so a turn that arrived just before the session
  *  started (see services/autoSign.ts) can still be handed to it. Null when nobody is signing. */
 let activeBridge: ((ev: BridgeEvent) => void) | null = null;
@@ -305,6 +306,7 @@ export function createBridgeRecognition(base: string): RecognitionService {
             // Any signs not already shown live, then the turn is over.
             const signs = ev.tokens.map((t, i) => ({ t, c: ev.confs?.[i] ?? 0.9 })).filter((x) => toGloss(x.t) !== null);
             signs.slice(emitted).forEach((x) => emit(x.t, x.c));
+            if (isExpression(ev.expression)) h.onExpression?.(ev.expression);
             h.onHands?.(false);
             if (emitted > 0) h.onAutoEnd();
           }

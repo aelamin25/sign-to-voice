@@ -1,6 +1,7 @@
 import { isMock } from "../app/config";
 import { Icon, Wave } from "./Icon";
-import { Portrait } from "./Illustrations";
+import { Portrait, type Mood } from "./Illustrations";
+import { DOCTOR_TONE_LABEL } from "../lib/expression";
 import { Words } from "./Words";
 import { AVATAR_VIDEO_ID } from "../state/media";
 import { useStore } from "../state/store";
@@ -14,10 +15,21 @@ export function AvatarStage({ withCaption = true }: { withCaption?: boolean }) {
   const speech = useStore((s) => s.speech);
   const pain = useStore((s) => s.pain);
   const voice = useStore((s) => s.voice);
+  const expression = useStore((s) => s.expression);
+  const reply = useStore((s) => s.reply);
   const demo = useStore((s) => s.demo);
   const talking = phase === "speaking" && speech.status === "talking";
   const listening = phase === "listening";
   const live = REAL && !demo && services(false).avatar.isLive();
+  // The face carries what the words alone lose, in both directions:
+  //   speaking for the patient  -> how the patient's face looked while signing
+  //   during the doctor's reply -> how the doctor's words came across, for the patient to see
+  const showingReply = phase === "watching" && !!reply;
+  const mood: Mood =
+    phase === "speaking" && expression === "question" ? "question"
+      : phase === "speaking" && expression === "strained" ? "strained"
+        : showingReply && reply.tone !== "neutral" ? reply.tone
+          : "neutral";
 
   let cap: React.ReactNode;
   if (talking || (phase === "speaking" && speech.status === "done")) {
@@ -25,6 +37,13 @@ export function AvatarStage({ withCaption = true }: { withCaption?: boolean }) {
       <div className="cap" aria-live="off">
         <small><Icon name="speaker" />{live ? "Anam avatar, ElevenLabs voice" : "ElevenLabs voice, Anam lip-sync"}</small>
         <Words text={speech.text} index={speech.index} />
+      </div>
+    );
+  } else if (showingReply) {
+    cap = (
+      <div className="cap">
+        <small>For the patient</small>
+        <span className="quietline">{DOCTOR_TONE_LABEL[reply.tone] ?? "The doctor's reply, in plain words"}</span>
       </div>
     );
   } else if (listening || phase === "generating") {
@@ -53,7 +72,7 @@ export function AvatarStage({ withCaption = true }: { withCaption?: boolean }) {
   return (
     <div className={`av${talking ? " spk" : ""}${listening ? " lis" : ""}`} aria-label="Maya, the speaking assistant" role="img">
       <div className="halo" />
-      <div className="portrait" style={{ opacity: live ? 0 : 1 }}><Portrait /></div>
+      <div className="portrait" style={{ opacity: live ? 0 : 1 }}><Portrait mood={mood} /></div>
       {REAL && <video id={AVATAR_VIDEO_ID} className={`anam${live ? " live" : ""}`} autoPlay playsInline />}
       <span className="avtag"><i><Icon name="steth" /></i><b>Maya</b>by Anam</span>
       <span className="demo">{live ? "Live avatar" : voice ? "Demo voice" : "Voice off"}</span>
