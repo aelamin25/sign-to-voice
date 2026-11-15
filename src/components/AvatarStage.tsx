@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { isMock } from "../app/config";
 import { Icon, Wave } from "./Icon";
 import { Portrait, type Mood } from "./Illustrations";
@@ -20,6 +21,29 @@ export function AvatarStage({ withCaption = true }: { withCaption?: boolean }) {
   const demo = useStore((s) => s.demo);
   const talking = phase === "speaking" && speech.status === "talking";
   const listening = phase === "listening";
+  // Maya connects as soon as the page opens, so the doctor sees her from the start (not a drawing
+  // until the first signed turn). If the session drops while idle, try again a few times.
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    if (!REAL) return;
+    const avatar = services(false).avatar;
+    let failures = 0, busy = false, was = false, stopped = false;
+    const check = () => {
+      const now = avatar.isLive();
+      if (now !== was) { was = now; setTick((t) => t + 1); }
+      if (now) { failures = 0; return; }
+      if (busy || failures >= 3 || document.hidden || useStore.getState().demo) return;
+      busy = true;
+      void avatar.connect(AVATAR_VIDEO_ID).catch(() => false).then((ok) => {
+        busy = false;
+        if (!ok) failures++;
+        if (!stopped) check();
+      });
+    };
+    check();
+    const id = window.setInterval(check, 1000);
+    return () => { stopped = true; clearInterval(id); };
+  }, []);
   const live = REAL && !demo && services(false).avatar.isLive();
   // The face carries what the words alone lose, in both directions:
   //   speaking for the patient  -> how the patient's face looked while signing
