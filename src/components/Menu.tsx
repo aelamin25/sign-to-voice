@@ -1,11 +1,13 @@
 import { ALL_MOCK, isMock, type ServiceName } from "../app/config";
 import { ConversationLog } from "./ConversationLog";
+import { PastVisit } from "./PastVisit";
+import { savedVisits, visitDateLabel } from "../lib/visits";
 import { Icon } from "./Icon";
 import { useDialog } from "./useDialog";
 import { NUMBERS, SIGNS, SIGN_ICON, glossLabel } from "../lib/signs";
 import { useStore, type MenuView } from "../state/store";
 
-const TITLES: Record<MenuView, string> = { main: "Menu", log: "Conversation", signs: "Signs I understand", how: "How it works" };
+const TITLES: Record<MenuView, string> = { main: "Menu", log: "Conversation", signs: "Signs I understand", how: "How it works", past: "My last visit" };
 
 /** Everything secondary lives here, never on the main screen. */
 export function Menu() {
@@ -29,6 +31,7 @@ export function Menu() {
         {view === "log" && <ConversationLog />}
         {view === "signs" && <SignsGrid />}
         {view === "how" && <HowItWorks />}
+        {view === "past" && <PastVisit />}
       </aside>
     </div>
   );
@@ -49,6 +52,7 @@ function MainMenu() {
   return (
     <>
       <ul className="mlist">
+        {(() => { const last = savedVisits()[0]; return item("cal", "My last visit", last ? `${visitDateLabel(last.date)} · Show your doctor` : "Nothing saved yet", () => s.setMenu("past"), { chev: true }); })()}
         {item("log", "Conversation", n ? `${n} message${n > 1 ? "s" : ""} · End visit from here` : "Nothing yet", () => s.setMenu("log"), { chev: true })}
         {item(s.demo ? "stop" : "play", s.demo ? "Stop the demo" : "Play the full visit", "Scripted demo, start to finish", () => (s.demo ? s.stopDemo() : void s.playDemo()))}
         {item("table", "Tabletop view", "For presenting: the doctor's half faces them", () => s.toggleTabletop(true))}

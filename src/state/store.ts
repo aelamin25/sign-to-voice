@@ -38,7 +38,7 @@ export interface Reply {
   done: boolean;
   playKey: number;
 }
-export type MenuView = "main" | "log" | "signs" | "how";
+export type MenuView = "main" | "log" | "signs" | "how" | "past";
 export type CameraState = { state: "off" | "starting" | "live" | "unavailable"; message?: string };
 
 export interface State {

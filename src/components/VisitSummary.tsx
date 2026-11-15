@@ -1,6 +1,7 @@
 import { Icon } from "./Icon";
 import { useDialog } from "./useDialog";
 import { useStore } from "../state/store";
+import { downloadSummary } from "../lib/visits";
 
 const todayLabel = () => new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long" });
 
@@ -63,9 +64,15 @@ export function VisitSummary() {
               </div>
             ) : (
               <p className={`saved${saved ? "" : " no"}`} role="status">
-                <Icon name="check" />{saved ? "Saved on this device only." : "Not saved. Nothing was stored."}
+                <Icon name="check" />{saved ? "Saved on this device only. Find it next time under Menu, My last visit." : "Not saved. Nothing was stored."}
               </p>
             )}
+            <div className="dacts" style={{ marginTop: 10 }}>
+              <button className="btn" onClick={() => downloadSummary(summary)}><Icon name="save" />Download my copy</button>
+            </div>
+            <p style={{ color: "var(--muted)", margin: "8px 0 0", fontSize: ".9rem" }}>
+              Keep your copy and show it at your next visit, so you don't have to start again.
+            </p>
           </>
         )}
       </div>
