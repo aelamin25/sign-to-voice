@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { compose, painFromGlosses } from "../lib/compose";
 import { SPEAK_THRESHOLD, type Gloss } from "../lib/signs";
 import { toneOfDoctorLine, withCue, withDoctorCue, type DoctorTone, type Expression } from "../lib/expression";
-import { AVATAR_REPLY } from "../app/config";
+import { AVATAR_REPLY, PASS_MS } from "../app/config";
 import { estimateTimings, wait, type WordTiming } from "../lib/timing";
 import { DOCTOR_OPENING, pickDoctor, pickPatient, UNCLEAR_TURN } from "../mocks/script";
 import { services } from "../services";
@@ -60,6 +60,8 @@ export interface State {
   sttError: string | null;
   gen: { progress: number; stage: 0 | 1 | 2 | 3 };
   reply: Reply | null;
+  /** The screen is being turned round to this person: nothing is spoken or read until it has arrived. */
+  passTo: "doctor" | "patient" | null;
   /* visit */
   log: LogItem[];
   patientTurn: number;
@@ -108,11 +110,11 @@ const IDLE_SPEECH: Speech = { text: "", words: [], index: 0, status: "idle", con
 
 const visitDefaults = (): Pick<State,
   "phase" | "chips" | "expression" | "lastChips" | "liveSentence" | "checking" | "uncertainConfidence" | "camera" | "handsVisible" |
-  "speech" | "pain" | "transcript" | "sttError" | "gen" | "reply" | "log" | "patientTurn" | "doctorTurn" |
+  "speech" | "pain" | "transcript" | "sttError" | "gen" | "reply" | "passTo" | "log" | "patientTurn" | "doctorTurn" |
   "unclearNext" | "summary" | "summaryOpen" | "saved"> => ({
   phase: "start", chips: [], expression: null, lastChips: [], liveSentence: "", checking: false, uncertainConfidence: 0,
   camera: { state: "off" }, handsVisible: false, speech: IDLE_SPEECH, pain: null, transcript: "", sttError: null,
-  gen: { progress: 0, stage: 0 }, reply: null, log: [], patientTurn: 0, doctorTurn: 0, unclearNext: false,
+  gen: { progress: 0, stage: 0 }, reply: null, passTo: null, log: [], patientTurn: 0, doctorTurn: 0, unclearNext: false,
   summary: null, summaryOpen: false, saved: null,
 });
 
@@ -158,7 +160,7 @@ export const useStore = create<State & Actions>()((set, get) => {
     cancelActive();
     const r = ++run;
     const S = svc();
-    set({ phase: "speaking", speech: { text, words: estimateTimings(text), index: 0, status: "talking", confidence: opts.confidence }, camera: { state: "off" } });
+    set({ passTo: null, phase: "speaking", speech: { text, words: estimateTimings(text), index: 0, status: "talking", confidence: opts.confidence }, camera: { state: "off" } });
 
     if (opts.log && opts.glosses) {
       const pain = painFromGlosses(opts.glosses);
@@ -174,10 +176,18 @@ export const useStore = create<State & Actions>()((set, get) => {
     // The avatar starts connecting when the patient's turn starts, and a turn from live.py can end
     // almost at once, so the first sentence used to be spoken by the stand-in voice while the avatar
     // was still connecting. Give the connection a few seconds before falling back.
-    if (S.avatar.kind === "real" && !S.avatar.isLive()) {
-      await Promise.race([S.avatar.connect(AVATAR_VIDEO_ID).catch(() => false), wait(20000)]);
+    const joining = S.avatar.kind === "real" && !S.avatar.isLive()
+      ? Promise.race([S.avatar.connect(AVATAR_VIDEO_ID).catch(() => false), wait(20000)])
+      : Promise.resolve(true);
+    // One screen, passed back and forth: give them time to turn it to the doctor before anything is said.
+    if (PASS_MS && opts.log) {
+      set({ passTo: "doctor" });
+      await wait(PASS_MS);
       if (!alive(r)) return;
+      set({ passTo: null });
     }
+    await joining;
+    if (!alive(r)) return;
 
     let pb: Playback;
     // Live avatar in ElevenLabs voice mode: Maya speaks the ElevenLabs audio, lip-synced.
@@ -231,7 +241,12 @@ export const useStore = create<State & Actions>()((set, get) => {
     set({ gen: { progress: 1, stage: 3 } });
     await wait(350);
     if (!alive(r) || !go("VIDEO_READY")) return;
+    // One screen, passed back and forth: time to turn it back to the patient before signs are read again.
+    if (PASS_MS) {
+      window.setTimeout(() => { if (alive(r) && get().passTo === "patient") set({ passTo: null }); }, PASS_MS);
+    }
     set((s) => ({
+      passTo: PASS_MS ? "patient" : null,
       phase: "watching",
       reply: { text, plain: simp.plain, tone: toneOfDoctorLine(text), terms: simp.terms, clips: vid.clips, words: vid.words, clipWordIndex: vid.clipWordIndex, index: 0, playing: true, done: false, playKey: (s.reply?.playKey ?? 0) + 1 },
     }));
@@ -267,7 +282,7 @@ export const useStore = create<State & Actions>()((set, get) => {
       finishing = false;
       const s = get();
       set({
-        phase: "signing", chips: [], expression: null, liveSentence: "", checking: false, handsVisible: false,
+        passTo: null, phase: "signing", chips: [], expression: null, liveSentence: "", checking: false, handsVisible: false,
         lastChips: s.chips.length ? s.chips.map((c) => c.gloss) : s.lastChips,
         camera: { state: "starting" }, speech: IDLE_SPEECH, sttError: null,
       });
@@ -340,7 +355,7 @@ export const useStore = create<State & Actions>()((set, get) => {
       if (!go("DOCTOR_SPEAK")) return;
       cancelActive();
       const r = ++run;
-      set({ phase: "listening", transcript: "", sttError: null, gen: { progress: 0, stage: 0 } });
+      set({ passTo: null, phase: "listening", transcript: "", sttError: null, gen: { progress: 0, stage: 0 } });
       // The avatar joins while the doctor is talking, so she is ready for the patient's answer.
       const A = svc().avatar;
       if (A.kind === "real" && !A.isLive()) void A.connect(AVATAR_VIDEO_ID).catch(() => false);

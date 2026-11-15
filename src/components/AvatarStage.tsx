@@ -17,6 +17,7 @@ export function AvatarStage({ withCaption = true }: { withCaption?: boolean }) {
   const expression = useStore((s) => s.expression);
   const reply = useStore((s) => s.reply);
   const demo = useStore((s) => s.demo);
+  const passTo = useStore((s) => s.passTo);
   const talking = phase === "speaking" && speech.status === "talking";
   const listening = phase === "listening";
   const connected = useAvatarSession();
@@ -37,7 +38,7 @@ export function AvatarStage({ withCaption = true }: { withCaption?: boolean }) {
   if (talking || (phase === "speaking" && speech.status === "done")) {
     cap = (
       <div className="cap" aria-live="off">
-        <small><Icon name="speaker" />{live ? "Anam avatar, ElevenLabs voice" : "ElevenLabs voice, Anam lip-sync"}</small>
+        <small><Icon name="speaker" />{passTo === "doctor" ? "Turn the screen to the doctor…" : live ? "Anam avatar, ElevenLabs voice" : "ElevenLabs voice, Anam lip-sync"}</small>
         <Words text={speech.text} index={speech.index} />
       </div>
     );

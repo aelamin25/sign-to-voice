@@ -18,6 +18,9 @@ const canStart = (): boolean => {
   // The same moments the on-screen buttons allow. A patient who has read the doctor's reply can
   // answer straight away, without waiting for the caption to finish.
   // Not at the very start: the doctor opens the visit, so hands moving before the greeting start nothing.
+  // Nor while the screen is being turned back to the patient after the doctor's reply: what the camera
+  // sees then is the laptop moving, not signs.
+  if (s.passTo === "patient") return false;
   return p === "uncertain" || p === "watching"
     || (p === "speaking" && s.speech.status === "done");
 };

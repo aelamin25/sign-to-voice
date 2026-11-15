@@ -42,6 +42,12 @@ export const RECOGNITION_SOURCE = env.VITE_RECOGNITION ?? "browser";
 /** With VITE_RECOGNITION=python: a finished turn from live.py starts the patient's turn by itself,
  *  so nobody has to press "Start signing" / "Reply in sign" with their hands full. Off unless set to true. */
 export const AUTO_SIGN = truthy(env.VITE_AUTO_SIGN);
+/** One screen is passed back and forth between the patient and the doctor. This is the pause, in
+ *  milliseconds, that gives them time to turn it round: before the avatar speaks the patient's sentence
+ *  (turn it to the doctor), and before signs are read again after the doctor's reply (turn it back).
+ *  VITE_PASS_SECONDS sets it; 0 switches it off (two screens, or the tabletop view). */
+const passSeconds = Number(env.VITE_PASS_SECONDS ?? "4");
+export const PASS_MS = Number.isFinite(passSeconds) && passSeconds > 0 ? passSeconds * 1000 : 0;
 /** With a live Anam avatar: the avatar also performs the doctor's plain-words reply for the patient,
  *  silently, with a face that matches the doctor's tone. Off unless set to true (not yet tried with a
  *  real avatar). The tone label on the reply is shown either way. */

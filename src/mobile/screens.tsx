@@ -73,6 +73,7 @@ export function SpeakScreen() {
   const doctorSpeak = useStore((s) => s.doctorSpeak);
   const sayAgain = useStore((s) => s.sayAgain);
   const done = speech.status === "done";
+  const passing = useStore((s) => s.passTo === "doctor");
   const mirror = useRef<HTMLVideoElement>(null);
   const live = !isMock("avatar") && !demo && services(false).avatar.isLive();
 
@@ -101,7 +102,9 @@ export function SpeakScreen() {
             <button className="m-link" onClick={() => void sayAgain()} disabled={demo}>Say it again</button>
           </>
         ) : (
-          <span className="m-status" style={{ color: "var(--teal)" }}><MWave n={6} />Speaking to the doctor</span>
+          passing
+            ? <span className="m-status" style={{ color: "var(--coral)" }}><Icon name="arrow" />Turn the screen to the doctor…</span>
+            : <span className="m-status" style={{ color: "var(--teal)" }}><MWave n={6} />Speaking to the doctor</span>
         )}
       </div>
     </>
@@ -165,6 +168,7 @@ export function WatchScreen() {
   const demo = useStore((s) => s.demo);
   const { reply, videoRef, onEnded } = useSignVideoPlayback();
   const [streamDown, setStreamDown] = useState(false);
+  const passing = useStore((s) => s.passTo === "patient");
   if (!reply) return null;
   const done = reply.done;
   // As on the web view: the sign reader watches the whole time, so the patient can answer as soon as
@@ -185,7 +189,7 @@ export function WatchScreen() {
               {!showCamera && <Silhouette signing={!done} />}
             </>
           )}
-          <span className="m-vtag"><i />{showCamera ? (done ? "Camera on. Sign your answer" : "The doctor's reply") : done ? "Sign video" : "Playing sign video"}</span>
+          <span className="m-vtag"><i />{passing ? "Turn the screen to the patient" : showCamera ? (done ? "Camera on. Sign your answer" : "The doctor's reply") : done ? "Sign video" : "Playing sign video"}</span>
           {done && !showCamera && <button className="m-playv" onClick={watchAgain} aria-label="Watch again"><Icon name="play" /></button>}
           <div className="m-cc">{done ? reply.plain : <Words text={reply.plain} index={reply.index} />}</div>
         </div>
@@ -209,7 +213,7 @@ export function WatchScreen() {
             {!showCamera && <button className="m-link" onClick={watchAgain} disabled={demo}>Watch again</button>}
           </>
         ) : (
-          <span className="m-status"><Icon name={showCamera ? "hand" : "play"} />{showCamera ? "Read the doctor's reply. You can sign your answer now." : "Watch the doctor's reply"}</span>
+          <span className="m-status"><Icon name={showCamera ? "hand" : "play"} />{passing ? "Turn the screen to the patient…" : showCamera ? "Read the doctor's reply. You can sign your answer now." : "Watch the doctor's reply"}</span>
         )}
       </div>
     </>

@@ -68,6 +68,7 @@ export function SignVideoPlayer() {
 
   const demo = useStore((s) => s.demo);
   const [streamDown, setStreamDown] = useState(false);
+  const passing = useStore((st) => st.passTo === "patient");
 
   if (!reply) return null;
   const playing = reply.playing;
@@ -88,7 +89,7 @@ export function SignVideoPlayer() {
             {!showCamera && <Silhouette signing={playing} />}
           </>
         )}
-        <span className={`vtag${playing ? " rec" : ""}`}><i />{showCamera ? (playing ? "The doctor's reply" : "Camera on. Sign your answer") : playing ? "Playing sign video" : "Sign video"}</span>
+        <span className={`vtag${playing ? " rec" : ""}`}><i />{passing ? "Turn the screen to the patient" : showCamera ? (playing ? "The doctor's reply" : "Camera on. Sign your answer") : playing ? "Playing sign video" : "Sign video"}</span>
         {DOCTOR_TONE_LABEL[reply.tone] && <span className={`tonetag ${reply.tone}`}>{DOCTOR_TONE_LABEL[reply.tone]}</span>}
         {!playing && !showCamera && (
           <button className="playv" onClick={watchAgain} aria-label="Play the sign video again"><Icon name="play" /></button>
