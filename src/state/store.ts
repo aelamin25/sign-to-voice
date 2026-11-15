@@ -171,6 +171,14 @@ export const useStore = create<State & Actions>()((set, get) => {
     }
     tool("speak_patient_message", { text });
 
+    // The avatar starts connecting when the patient's turn starts, and a turn from live.py can end
+    // almost at once, so the first sentence used to be spoken by the stand-in voice while the avatar
+    // was still connecting. Give the connection a few seconds before falling back.
+    if (S.avatar.kind === "real" && !S.avatar.isLive()) {
+      await Promise.race([S.avatar.connect(AVATAR_VIDEO_ID).catch(() => false), wait(12000)]);
+      if (!alive(r)) return;
+    }
+
     let pb: Playback;
     if (S.avatar.isLive()) {
       const words = estimateTimings(text);
