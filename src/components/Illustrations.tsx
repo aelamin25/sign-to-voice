@@ -38,9 +38,28 @@ export function Silhouette({ signing }: { signing: boolean }) {
   );
 }
 
-export function Portrait() {
+/** How the illustrated Maya's face looks. With a live Anam avatar the same moods are sent as
+ *  Director Notes cues instead; this is the stand-in, so the idea is visible without keys. */
+export type Mood = "neutral" | "question" | "strained" | "reassuring" | "concerned";
+
+const BROWS: Record<Mood, string> = {
+  neutral: "M77 88 Q85 84 93 88M107 88 Q115 84 123 88",
+  question: "M76 84 Q85 77 94 83M106 83 Q115 77 124 84",      // both brows raised
+  strained: "M77 90 Q86 87 93 84M107 84 Q114 87 123 90",       // inner ends up, outer ends down
+  reassuring: "M77 88 Q85 84.5 93 88M107 88 Q115 84.5 123 88",
+  concerned: "M77 89 Q86 86 93 85M107 85 Q114 86 123 89",      // a milder version of strained
+};
+const SMILE: Record<Mood, string> = {
+  neutral: "M90 125 Q100 131 110 125",
+  question: "M91 126 Q100 129 109 126",
+  strained: "M90 129 Q100 124 110 129",                         // turned down
+  reassuring: "M88 124 Q100 134 112 124",                       // a warmer smile
+  concerned: "M91 127 Q100 126 109 127",                        // flat
+};
+
+export function Portrait({ mood = "neutral" }: { mood?: Mood }) {
   return (
-    <svg viewBox="0 0 200 230" aria-hidden="true">
+    <svg viewBox="0 0 200 230" aria-hidden="true" data-mood={mood}>
       <defs>
         <radialGradient id="sk" cx="45%" cy="38%" r="70%"><stop offset="0" stopColor="#E2AC8A" /><stop offset=".7" stopColor="#C98A66" /><stop offset="1" stopColor="#B07352" /></radialGradient>
         <linearGradient id="hr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#3A2A22" /><stop offset="1" stopColor="#18100C" /></linearGradient>
@@ -55,7 +74,7 @@ export function Portrait() {
       <ellipse cx="100" cy="96" rx="38" ry="47" fill="url(#sk)" />
       <path d="M60 92 C 58 52 96 40 120 50 C 138 58 144 74 142 92 C 132 70 112 62 92 66 C 76 70 66 80 60 92Z" fill="url(#hr)" />
       <path d="M96 52 C 110 50 128 56 134 66" stroke="#5A4236" strokeWidth="2" fill="none" strokeLinecap="round" opacity=".6" />
-      <path d="M77 88 Q85 84 93 88M107 88 Q115 84 123 88" stroke="#2A1A12" strokeWidth="2.4" fill="none" strokeLinecap="round" />
+      <path className="brows" d={BROWS[mood]} stroke="#2A1A12" strokeWidth="2.4" fill="none" strokeLinecap="round" />
       <g className="eyes">
         <ellipse cx="85" cy="99" rx="5" ry="3.6" fill="#fff" /><ellipse cx="115" cy="99" rx="5" ry="3.6" fill="#fff" />
         <circle cx="85.5" cy="99" r="3" fill="#2B1B13" /><circle cx="115.5" cy="99" r="3" fill="#2B1B13" />
@@ -63,7 +82,7 @@ export function Portrait() {
       </g>
       <circle cx="76" cy="114" r="8" fill="#E8826F" opacity=".18" /><circle cx="124" cy="114" r="8" fill="#E8826F" opacity=".18" />
       <path d="M100 102 Q96 114 102 116" stroke="#9A5E42" strokeWidth="2" fill="none" strokeLinecap="round" opacity=".8" />
-      <path d="M90 125 Q100 131 110 125" stroke="#8E4A3F" strokeWidth="2.2" fill="none" strokeLinecap="round" opacity=".55" />
+      <path className="smile" d={SMILE[mood]} stroke="#8E4A3F" strokeWidth="2.2" fill="none" strokeLinecap="round" opacity=".55" />
       <ellipse className="mouth" cx="100" cy="127" rx="8" ry="2.2" fill="#80403A" />
       <circle cx="61" cy="112" r="2.4" fill="#E9D7B5" /><circle cx="139" cy="112" r="2.4" fill="#E9D7B5" />
     </svg>

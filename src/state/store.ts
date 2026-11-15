@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { compose, painFromGlosses } from "../lib/compose";
 import { SPEAK_THRESHOLD, type Gloss } from "../lib/signs";
+import { toneOfDoctorLine, withCue, withDoctorCue, type DoctorTone, type Expression } from "../lib/expression";
+import { AVATAR_REPLY } from "../app/config";
 import { estimateTimings, wait, type WordTiming } from "../lib/timing";
 import { pickDoctor, pickPatient, UNCLEAR_TURN } from "../mocks/script";
 import { services } from "../services";
@@ -25,6 +27,8 @@ export interface Speech {
 export interface Reply {
   text: string;
   plain: string;
+  /** how the doctor's line comes across (asking, reassuring, concerned), shown to the patient */
+  tone: DoctorTone;
   terms: SimplifyResult["terms"];
   clips: string[];
   words: WordTiming[];
@@ -41,6 +45,8 @@ export interface State {
   phase: Phase;
   /* patient */
   chips: Chip[];
+  /** the patient's face during this turn, when the recogniser reads it; null = not read */
+  expression: Expression | null;
   lastChips: Gloss[];
   liveSentence: string;
   checking: boolean;
@@ -101,10 +107,10 @@ export interface Actions {
 const IDLE_SPEECH: Speech = { text: "", words: [], index: 0, status: "idle", confidence: 0 };
 
 const visitDefaults = (): Pick<State,
-  "phase" | "chips" | "lastChips" | "liveSentence" | "checking" | "uncertainConfidence" | "camera" | "handsVisible" |
+  "phase" | "chips" | "expression" | "lastChips" | "liveSentence" | "checking" | "uncertainConfidence" | "camera" | "handsVisible" |
   "speech" | "pain" | "transcript" | "sttError" | "gen" | "reply" | "log" | "patientTurn" | "doctorTurn" |
   "unclearNext" | "summary" | "summaryOpen" | "saved"> => ({
-  phase: "start", chips: [], lastChips: [], liveSentence: "", checking: false, uncertainConfidence: 0,
+  phase: "start", chips: [], expression: null, lastChips: [], liveSentence: "", checking: false, uncertainConfidence: 0,
   camera: { state: "off" }, handsVisible: false, speech: IDLE_SPEECH, pain: null, transcript: "", sttError: null,
   gen: { progress: 0, stage: 0 }, reply: null, log: [], patientTurn: 0, doctorTurn: 0, unclearNext: false,
   summary: null, summaryOpen: false, saved: null,
@@ -171,7 +177,8 @@ export const useStore = create<State & Actions>()((set, get) => {
       const timer = timerPlayback(words);
       pb = {
         words,
-        play: async (onWord) => { await Promise.all([S.avatar.speak(text, words).catch(() => undefined), timer.play(onWord)]); },
+        // the avatar gets a delivery cue from the patient's expression; captions and the log keep the plain text
+        play: async (onWord) => { await Promise.all([S.avatar.speak(withCue(text, get().expression), words).catch(() => undefined), timer.play(onWord)]); },
         stop: () => { timer.stop(); S.avatar.stop(); },
       };
     } else {
@@ -209,8 +216,19 @@ export const useStore = create<State & Actions>()((set, get) => {
     if (!alive(r) || !go("VIDEO_READY")) return;
     set((s) => ({
       phase: "watching",
-      reply: { text, plain: simp.plain, terms: simp.terms, clips: vid.clips, words: vid.words, clipWordIndex: vid.clipWordIndex, index: 0, playing: true, done: false, playKey: (s.reply?.playKey ?? 0) + 1 },
+      reply: { text, plain: simp.plain, tone: toneOfDoctorLine(text), terms: simp.terms, clips: vid.clips, words: vid.words, clipWordIndex: vid.clipWordIndex, index: 0, playing: true, done: false, playKey: (s.reply?.playKey ?? 0) + 1 },
     }));
+    // Optional (VITE_AVATAR_REPLY=true, live Anam avatar only): the avatar performs the plain-words
+    // reply for the patient with a face that matches the doctor's tone. Its sound is switched off
+    // for this, because the doctor has just said it aloud.
+    if (AVATAR_REPLY && S.avatar.isLive()) {
+      const el = document.getElementById(AVATAR_VIDEO_ID) as HTMLVideoElement | null;
+      const wasMuted = el?.muted ?? false;
+      if (el) el.muted = true;
+      void S.avatar.speak(withDoctorCue(simp.plain, toneOfDoctorLine(text)), vid.words)
+        .catch(() => undefined)
+        .finally(() => { if (el) el.muted = wasMuted; });
+    }
   }
 
   return {
@@ -232,7 +250,7 @@ export const useStore = create<State & Actions>()((set, get) => {
       finishing = false;
       const s = get();
       set({
-        phase: "signing", chips: [], liveSentence: "", checking: false, handsVisible: false,
+        phase: "signing", chips: [], expression: null, liveSentence: "", checking: false, handsVisible: false,
         lastChips: s.chips.length ? s.chips.map((c) => c.gloss) : s.lastChips,
         camera: { state: "starting" }, speech: IDLE_SPEECH, sttError: null,
       });
@@ -251,6 +269,7 @@ export const useStore = create<State & Actions>()((set, get) => {
           set((st) => ({ chips: [...st.chips, { id: ++uid, gloss: e.gloss, confidence: e.confidence }], liveSentence: compose(glosses) }));
         },
         onHands: (p) => { if (alive(r)) set({ handsVisible: p }); },
+        onExpression: (e) => { if (alive(r) && !finishing) set({ expression: e }); },
         onAutoEnd: () => { if (alive(r)) void get().doneSigning(); },
         onStatus: (st) => { if (alive(r)) set({ camera: { state: st.camera, message: st.message } }); },
       });

@@ -159,6 +159,12 @@ def main():
                     help="hands lowered below the yellow line count as resting, so they need not leave the picture")
     ap.add_argument("--plain", action="store_true",
                     help="camera window shows only the picture and the dots, no words (for the demo)")
+    ap.add_argument("--face", action="store_true",
+                    help="also read the face (question / strained / neutral) and send it with each turn; see face.py")
+    ap.add_argument("--face-every", type=int, default=3, metavar="N",
+                    help="read the face on every Nth camera frame (keeps the camera fast for the hands)")
+    ap.add_argument("--expression", choices=["question", "strained", "neutral"],
+                    help="with --replay: attach this expression to every replayed turn, to test the link")
     ap.add_argument("--replay", nargs="+", metavar="TAKE.npy",
                     help="no camera: feed these recorded takes through the recogniser, one turn each")
     ap.add_argument("--replay-pause", type=float, default=0.0,
@@ -186,6 +192,23 @@ def main():
             raise SystemExit(1)
 
     stream = start_stream(args.stream) if args.stream else None
+
+    # The face, alongside the hands (optional). Readings taken while the hands are out of the picture
+    # teach it this person's resting face; readings during a turn are compared with that.
+    face_reader, resting_face, turn_face = None, None, []
+    if args.face and not replaying:
+        import face as face_mod
+        face_reader, resting_face = face_mod.FaceReader(every=args.face_every), face_mod.Resting()
+
+    def take_expression():
+        """The expression for the turn that just ended, or None when the face isn't being read."""
+        if replaying:
+            return {"expression": args.expression} if args.expression else None
+        if face_reader is None:
+            return None
+        out = face_mod.summarise(turn_face, resting_face.get())
+        turn_face.clear()
+        return out
 
     t0 = time.time()
 
@@ -240,8 +263,12 @@ def main():
             # on the normal output, so it is seen even when the start scripts hide the error stream
             print(json.dumps({"type": "send_failed", "to": args.send, "error": str(e)}), flush=True)
 
-    def finish_phrase(toks, cs):
+    def finish_phrase(toks, cs, expr=None):
         msg = {"type": "phrase", "tokens": toks, "confs": cs}
+        if expr and expr.get("expression") in ("question", "strained", "neutral"):
+            msg["expression"] = expr["expression"]
+            if "frames" in expr:
+                msg["expression_detail"] = {k: expr[k] for k in ("brows_up", "strain", "frames")}
         print(json.dumps(msg), flush=True)
         post(msg)
         if translate:
@@ -251,6 +278,13 @@ def main():
 
     for frame, now, vec, hands_seen, points in (replay_frames() if replaying else camera_frames()):
         resting = args.rest and hands_resting(vec)
+        if face_reader is not None and frame is not None:
+            reading = face_reader.process(frame, now * 1000)
+            if reading:
+                if hands_seen and not resting:
+                    turn_face.append(reading)
+                else:
+                    resting_face.update(reading)
         event, frames = seg.update(vec, hands_seen and not resting, now)
 
         if event == "sign":
@@ -264,7 +298,7 @@ def main():
                 # A thumbs up on its own is the patient approving the sentence on screen.
                 if label == APPROVE and conf >= args.threshold and tokens:
                     print(json.dumps({"type": "turn_done", "by": APPROVE, "conf": round(conf, 2)}), flush=True)
-                    background(finish_phrase, tokens, confs)
+                    background(finish_phrase, tokens, confs, take_expression())
                     tokens, confs = [], []
                     continue
                 # A half-seen thumbs up after real signs must not spoil the turn: it only meant "done",
@@ -286,7 +320,7 @@ def main():
                     print(json.dumps(msg), flush=True)
                     msgs.append(msg)
                 # one thread, so the page gets the signs in order
-                def send_all(ms=msgs, done=(list(tokens), list(confs)) if ends_turn else None):
+                def send_all(ms=msgs, done=(list(tokens), list(confs), take_expression()) if ends_turn else None):
                     for m in ms if signs_too else []:
                         post(m)
                     if done:
@@ -296,7 +330,7 @@ def main():
                     print(json.dumps({"type": "turn_done", "by": APPROVE, "conf": round(conf, 2)}), flush=True)
                     tokens, confs = [], []
         elif event == "phrase_end" and tokens:
-            background(finish_phrase, tokens, confs)
+            background(finish_phrase, tokens, confs, take_expression())
             tokens, confs = [], []
 
         if frame is None:  # replay: nothing to draw

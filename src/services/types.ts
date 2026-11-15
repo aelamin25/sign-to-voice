@@ -37,6 +37,8 @@ export interface RecognitionHandlers {
   /** recogniser decided the patient finished (hands lowered ~1.2 s, or script ended) */
   onAutoEnd(): void;
   onStatus?(s: { camera: "starting" | "live" | "unavailable"; message?: string }): void;
+  /** the patient's face during the turn, when the recogniser reads it (live.py --face) */
+  onExpression?(e: import("../lib/expression").Expression): void;
 }
 
 export interface RecognitionStartOptions {

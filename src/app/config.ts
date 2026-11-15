@@ -32,5 +32,9 @@ export const RECOGNITION_SOURCE = env.VITE_RECOGNITION ?? "browser";
 /** With VITE_RECOGNITION=python: a finished turn from live.py starts the patient's turn by itself,
  *  so nobody has to press "Start signing" / "Reply in sign" with their hands full. Off unless set to true. */
 export const AUTO_SIGN = truthy(env.VITE_AUTO_SIGN);
+/** With a live Anam avatar: the avatar also performs the doctor's plain-words reply for the patient,
+ *  silently, with a face that matches the doctor's tone. Off unless set to true (not yet tried with a
+ *  real avatar). The tone label on the reply is shown either way. */
+export const AVATAR_REPLY = truthy(env.VITE_AVATAR_REPLY);
 /** Camera view served by model/vision/live.py --stream PORT, shown in the patient panel, e.g. http://localhost:8001/video */
 export const CAMERA_STREAM = env.VITE_CAMERA_STREAM ?? "";

@@ -170,6 +170,9 @@ async def phrase_only(body: dict):
     tokens, confs = body.get("tokens") or [], body.get("confs") or []
     pairs = [(t, confs[i] if i < len(confs) else None) for i, t in enumerate(tokens) if t not in skip]
     event = {"type": "phrase", "tokens": [t for t, _ in pairs], "confs": [c for _, c in pairs]}
+    # live.py --face: how the patient's face looked during the turn (sign language uses the face too)
+    if body.get("expression") in ("question", "strained", "neutral"):
+        event["expression"] = body["expression"]
     await broadcast(event)
     return event
 
