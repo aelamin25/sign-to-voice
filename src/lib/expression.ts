@@ -36,7 +36,11 @@ export function withCue(text: string, expression: Expression | null | undefined)
 
 export type DoctorTone = "question" | "reassuring" | "concerned" | "neutral";
 
-const REASSURING = /\b(don'?t worry|no need to worry|nothing serious|not serious|that'?s (good|fine|normal)|it'?s (okay|ok|fine|common)|should (ease|settle|pass|get better|improve)|sounds like a tension|take care|feel better|good news|well done|you'?re doing)\b/i;
+const REASSURING = /\b(don'?t worry|no need to worry|nothing serious|not serious|that'?s (good|fine|normal)|it'?s (okay|ok|fine)|should (ease|settle|pass|get better|improve)|sounds like a tension|take care|feel better|well done)\b/i;
+/** "nothing serious", "no need to go to hospital", "I'm not worried": a worrying word that is being ruled out. */
+const RULED_OUT = /\b(nothing|not|no need|don'?t need|doesn'?t need|isn'?t|aren'?t)\b[^.?!]{0,25}\b(serious|worr|urgent|hospital|emergency|concern)/i;
+/** "not good news", "afraid": never label these as reassuring. */
+const BAD_NEWS = /\b(afraid|unfortunately|not good news|bad news)\b/i;
 const CONCERNED = /\b(i'?m sorry|sorry to hear|worried|concern(ed|ing)?|serious|urgent(ly)?|emergency|hospital|straight away|immediately|right away|call 999)\b/i;
 
 /** How the doctor's line should come across. A question wins: the patient most needs to know
@@ -45,6 +49,8 @@ export function toneOfDoctorLine(text: string): DoctorTone {
   const t = text.trim();
   if (!t) return "neutral";
   if (/\?\s*$/.test(t)) return "question";
+  if (BAD_NEWS.test(t)) return "concerned";
+  if (RULED_OUT.test(t)) return "reassuring";
   if (CONCERNED.test(t)) return "concerned";
   if (REASSURING.test(t)) return "reassuring";
   return "neutral";

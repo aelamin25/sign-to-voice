@@ -39,11 +39,11 @@ export function AvatarStage({ withCaption = true }: { withCaption?: boolean }) {
         <Words text={speech.text} index={speech.index} />
       </div>
     );
-  } else if (showingReply) {
+  } else if (showingReply && reply.tone !== "neutral") {
     cap = (
       <div className="cap">
         <small>For the patient</small>
-        <span className="quietline">{DOCTOR_TONE_LABEL[reply.tone] ?? "The doctor's reply, in plain words"}</span>
+        <span className="quietline">{DOCTOR_TONE_LABEL[reply.tone]}</span>
       </div>
     );
   } else if (listening || phase === "generating") {
