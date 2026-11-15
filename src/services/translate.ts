@@ -105,7 +105,26 @@ export function createModelTranslate(base: string, inner: TranslateService): Tra
     },
     async simplify(text) {
       lastDoctor = text;
-      return inner.simplify(text);
+      const first = await inner.simplify(text);
+      // The inner adapter (Claude, or the scripted lines) changed the wording: use it, it also explains the jargon.
+      if (first.plain.trim() && first.plain.trim() !== text.trim()) return first;
+      // It could not (no Claude key, or a line it doesn't know): ask our own language model in the
+      // Python backend, which runs on the team's Adaption-hosted model by default.
+      try {
+        const r = await fetch(`${base}/simplify`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+          signal: AbortSignal.timeout(6000),
+        });
+        if (!r.ok) throw new Error(`model backend ${r.status}`);
+        const { text: plain } = (await r.json()) as { text: string };
+        if (!plain?.trim()) throw new Error("empty plain-words line");
+        return { ...first, plain: plain.trim() };
+      } catch (e) {
+        console.warn("[simplify] model backend failed, keeping the exact words:", e);
+        return first;
+      }
     },
     summarize: (log) => inner.summarize(log),
   };
