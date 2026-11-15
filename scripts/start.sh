@@ -8,20 +8,31 @@ cd "$(dirname "$0")/.." || exit 1
 MODE="${1:-laptop}"
 
 command -v node >/dev/null || { echo "Node.js is missing. Install it from https://nodejs.org (the LTS button), then run this again."; exit 1; }
-# Python 3.12, 3.11 or 3.10 have ready-made packages for everything here; newer or unusual ones can take
-# very long or fail, so prefer those when they are installed.
-PYTHON=""
-for p in python3.12 python3.11 python3.10 python3; do
-  if command -v $p >/dev/null 2>&1; then PYTHON=$p; break; fi
-done
-[ -n "$PYTHON" ] || { echo "Python 3 is missing. Install Python 3.12 from https://www.python.org/downloads, then run this again."; exit 1; }
+command -v python3 >/dev/null || { echo "Python 3 is missing. Install Python 3.12 from https://www.python.org/downloads, then run this again."; exit 1; }
 
 if [ ! -d node_modules ]; then echo "First run: installing the web app's parts..."; npm install || exit 1; fi
 if [ ! -x model/.venv/bin/python ]; then
-  echo "First run: installing the Python parts (this is the slow one)..."
-  "$PYTHON" -m venv model/.venv && model/.venv/bin/python -m pip install -q --upgrade pip \
-    && model/.venv/bin/python -m pip install -q --only-binary=:all: -r requirements.txt \
-    || { rm -rf model/.venv; echo "The Python parts did not install with $($PYTHON -V 2>&1)."; echo "Install Python 3.12 from https://www.python.org/downloads, then run this again."; exit 1; }
+  echo "First run: installing the Python parts (this is the slow one, a few minutes)..."
+  # Computers often have several Pythons, and not every one can install these packages (too new, or
+  # built for a different chip). Try each in turn, best first, until one works. Only ready-made
+  # packages are used, so a Python that can't do it fails in seconds instead of building for an hour.
+  DONE=""
+  for name in python3.12 python3.11 python3.10 python3.13 python3; do
+    for py in $(which -a $name 2>/dev/null); do
+      rm -rf model/.venv
+      if "$py" -m venv model/.venv >/dev/null 2>&1 \
+        && model/.venv/bin/python -m pip install -q --only-binary=:all: -r requirements.txt >/tmp/signbridge-pip.log 2>&1; then
+        DONE="$py"; break 2
+      fi
+    done
+  done
+  if [ -z "$DONE" ]; then
+    rm -rf model/.venv
+    echo "None of the Pythons on this computer could install the packages."
+    echo "Install Python 3.12 from https://www.python.org/downloads, then run this again."
+    exit 1
+  fi
+  echo "Python parts installed with $DONE"
 fi
 [ -f .env ] || cp .env.example .env
 

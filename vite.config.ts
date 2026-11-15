@@ -14,6 +14,8 @@ export default defineConfig({
     // instead of quietly moving to the next one (which sent people to the wrong app).
     port: 5180,
     strictPort: true,
+    // a shared link (scripts/share.sh) reaches this server under a trycloudflare.com name
+    allowedHosts: [".trycloudflare.com"],
     proxy: {
       "/api": "http://localhost:8787",
       "/sign-clips": "http://localhost:8787",

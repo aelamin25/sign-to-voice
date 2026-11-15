@@ -73,6 +73,16 @@ That's it. Without keys it runs in **demo mode**: a scripted visit, no camera ne
 
 The patient signs to the **laptop's** camera. The phone shows the avatar, the doctor's button and the reply.
 
+### One link for the whole team (and any phone)
+
+1. Start the app: `sh scripts/start.sh`
+2. Open a second Terminal window in the project folder and paste: `sh scripts/share.sh`
+3. It prints a link like `https://something.trycloudflare.com`. Send that link to the team.
+
+Anyone can open the link on a phone or laptop, anywhere, and sees the app running on this laptop, live:
+this laptop's camera, the signs, the sentences. No installing. The link stops when that window is closed.
+Only one screen at a time gets the live avatar. Share the link with the team only: it uses this laptop's keys.
+
 ### If something goes wrong
 
 | What you see | What to do |
