@@ -25,3 +25,6 @@ wandb/
 
 # backend
 **/backend/audio_cache/
+# the Python environment and installed packages, whether a folder or a link to one
+.venv
+node_modules
