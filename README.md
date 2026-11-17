@@ -4,6 +4,9 @@ A Deaf patient signs to the camera, and an avatar speaks the sentence to the doc
 comes back to the patient in plain words. Built at Imperial AI Hack 2026 with ElevenLabs, Anam and Adaption.
 It is a helper for when an interpreter isn't available, not a replacement for a certified medical interpreter.
 
+© 2026 The SignBridge team. All rights reserved. This repository is public for reading only; it is not
+open source. Please ask before reusing any of it. See [LICENSE](LICENSE).
+
 ## The demo, step by step
 
 **On the laptop only**

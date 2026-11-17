@@ -1,0 +1,26 @@
+Copyright (c) 2026 The SignBridge team. All rights reserved.
+
+SignBridge was built at Imperial AI Hack 2026. "The SignBridge team" means the
+people who wrote this repository; the commit history shows who wrote what.
+
+This repository is public so that hackathon judges, recruiters and other
+readers can see the code and how it works. It is not open source, and no
+licence to use it is granted.
+
+You may read the code here on GitHub, and view or fork it on GitHub as
+GitHub's Terms of Service allow.
+
+Without written permission from the team, you may not copy, change, publish,
+share or sell this work, or use any part of it in another project, product or
+service. "This work" covers the code, the trained sign model, the data files,
+the text and the designs in this repository.
+
+Software and services made by others (the packages listed in package.json and
+requirements.txt, and the ElevenLabs, Anam and Adaption services) keep their
+own licences and terms. This notice covers only the team's own work.
+
+The work is provided as it is, with no warranty of any kind. It is a hackathon
+prototype and is not a medical device.
+
+To ask for permission, open an issue on the GitHub repository:
+https://github.com/aelamin25/sign-to-voice
